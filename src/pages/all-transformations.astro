@@ -1,0 +1,125 @@
+---
+import Layout from '../layouts/Layout.astro';
+import fs from 'fs';
+import path from 'path';
+
+const imagesDir = path.join(process.cwd(), 'public', 'all-transformations');
+let images = [];
+try {
+	images = fs.readdirSync(imagesDir)
+		.filter(file => file.endsWith('.jpg') || file.endsWith('.png') || file.endsWith('.jpeg'));
+} catch (e) {
+	console.error('Could not read transformations directory', e);
+}
+
+const imagePaths = images.map(img => `/all-transformations/${img}`);
+---
+
+<Layout title="All Transformations - Salakawy | Diet & Gym Coach">
+	<main class="page-container">
+		<div class="container container-content fade-in-up">
+			<a href="/#transformations" class="back-link">← Back to Home</a>
+			
+			<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; margin-bottom: 3rem; margin-top: 2rem;">
+				<h1 class="section-title fade-in-up" style="margin-bottom: 0; position: relative; transform: none; display: inline-block;">All Transformations</h1>
+				<span class="badge fade-in-up" style="margin-bottom: 0;">Wall of Fame</span>
+				<p class="page-desc fade-in-up delay-100" style="margin-top: 0;">Witness the massive vault of real success stories and body transformations. Every journey matters!</p>
+			</div>
+
+			<div class="masonry-grid fade-in-up delay-200">
+				{imagePaths.map((image, i) => (
+					<div class="masonry-item">
+						<img src={image} alt={`Transformation ${i + 1}`} loading="lazy" />
+					</div>
+				))}
+			</div>
+		</div>
+	</main>
+</Layout>
+
+<style>
+	.page-container {
+		background-color: var(--surface-color);
+		min-height: 100vh;
+		padding-top: 100px; /* Offset for sticky nav */
+		padding-bottom: 5rem;
+	}
+
+	.back-link {
+		display: inline-flex;
+		align-items: center;
+		color: var(--text-muted);
+		font-weight: 500;
+		font-size: 1.1rem;
+		margin-bottom: 2rem;
+		transition: color var(--transition);
+	}
+
+	.back-link:hover {
+		color: var(--accent-color);
+	}
+
+	.badge {
+		display: inline-block;
+		padding: 6px 16px;
+		background: rgba(255, 255, 0, 0.1);
+		color: var(--accent-color);
+		border: 1px solid rgba(255, 255, 0, 0.3);
+		border-radius: 30px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		margin-bottom: 1rem;
+		text-transform: uppercase;
+	}
+
+	.page-desc {
+		max-width: 600px;
+		margin: 1rem auto 0 auto;
+		color: var(--text-muted);
+		font-size: 1.1rem;
+	}
+
+	.masonry-grid {
+		column-count: 3;
+		column-gap: 1.5rem;
+	}
+
+	.masonry-item {
+		break-inside: avoid;
+		margin-bottom: 1.5rem;
+		border-radius: var(--radius);
+		overflow: hidden;
+		background: var(--bg-color);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+		transition: transform var(--transition);
+		border: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.masonry-item:hover {
+		transform: translateY(-5px);
+		border-color: rgba(255, 255, 0, 0.3);
+	}
+
+	.masonry-item img {
+		width: 100%;
+		display: block;
+		height: auto;
+		transition: transform var(--transition);
+	}
+
+	.masonry-item:hover img {
+		transform: scale(1.03);
+	}
+
+	@media (max-width: 900px) {
+		.masonry-grid {
+			column-count: 2;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.masonry-grid {
+			column-count: 1;
+		}
+	}
+</style>

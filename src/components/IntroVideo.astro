@@ -1,0 +1,52 @@
+---
+---
+<section id="video" class="section video-bg">
+	<div class="container">
+		<div style="text-align: center; width: 100%; margin-bottom: 3rem;">
+			<h2 class="section-title fade-in-up" style="margin-bottom: 1rem;">The Hardest Step is the First One</h2>
+			<p class="video-desc fade-in-up delay-100">Take it now and thank yourself later.</p>
+		</div>
+		
+		<div class="video-container fade-in-up delay-200">
+			<iframe 
+				src="https://www.youtube.com/embed/Li4FZgfQnxc" 
+				title="The hardest step is the first one - take it now and thank yourself later!" 
+				frameborder="0" 
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+				allowfullscreen>
+			</iframe>
+		</div>
+	</div>
+</section>
+
+<style>
+	.video-bg {
+		background-color: var(--bg-color);
+	}
+
+	.video-desc {
+		color: var(--text-muted);
+		font-size: 1.1rem;
+		margin: 0 auto;
+	}
+
+	.video-container {
+		position: relative;
+		padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+		height: 0;
+		overflow: hidden;
+		max-width: 100%;
+		background: #000;
+		border-radius: var(--radius);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+	}
+
+	.video-container iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border-radius: var(--radius);
+	}
+</style>

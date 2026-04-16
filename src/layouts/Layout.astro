@@ -1,0 +1,122 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content="I don't sell a simple diet plan or workout routine. I sell a mindset and lifestyle you can follow for life. Salakawy." />
+		<title>{title}</title>
+		
+		<!-- Google Fonts: Outfit for a modern elegant look -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<!-- Header / Nav -->
+		<header class="navbar">
+			<div class="container nav-content">
+				<a href="/" class="logo"><img src="https://salakawy7.com/wp-content/uploads/2024/09/S7-Logo-04.png" alt="Salakawy Gym Coach Logo"></a>
+				<nav class="nav-links">
+					<a href="#hero">Home</a>
+					<a href="#transformations">Transformations</a>
+					<a href="#packages">Packages</a>
+				</nav>
+			</div>
+		</header>
+
+		<slot />
+
+		<footer class="footer">
+			<div class="container">
+				<p>&copy; {new Date().getFullYear()} Salakawy. All rights reserved.</p>
+				<div class="social-links">
+					<a href="https://www.instagram.com/salakawy7" target="_blank" rel="noopener">Instagram</a>
+					<a href="https://www.facebook.com/profile.php?id=61551820782943" target="_blank" rel="noopener">Facebook</a>
+					<a href="https://www.tiktok.com/@salakawy7_" target="_blank" rel="noopener">TikTok</a>
+				</div>
+			</div>
+		</footer>
+
+		<style>
+			.navbar {
+				position: fixed;
+				top: 0;
+				width: 100%;
+				background: rgba(13, 14, 18, 0.85);
+				backdrop-filter: blur(10px);
+				-webkit-backdrop-filter: blur(10px);
+				z-index: 1000;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+			}
+
+			.nav-content {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				height: 80px;
+			}
+
+			.logo img {
+				height: 60px;
+				width: auto;
+				display: block;
+			}
+
+			.nav-links {
+				display: flex;
+				gap: 2rem;
+			}
+
+			.nav-links a {
+				font-weight: 600;
+				font-size: 1rem;
+				color: var(--text-muted);
+			}
+
+			.nav-links a:hover {
+				color: var(--text-main);
+			}
+
+			.footer {
+				background-color: var(--surface-color);
+				padding: 3rem 0;
+				text-align: center;
+				border-top: 1px solid rgba(255, 255, 255, 0.05);
+			}
+			
+			.footer p {
+				color: var(--text-muted);
+				margin-bottom: 1rem;
+			}
+
+			.social-links {
+				display: flex;
+				justify-content: center;
+				gap: 1.5rem;
+			}
+
+			.social-links a {
+				color: var(--accent-color);
+				font-weight: 600;
+			}
+
+			@media (max-width: 768px) {
+				.nav-links {
+					display: none; /* simple mobile handling */
+				}
+			}
+		</style>
+	</body>
+</html>

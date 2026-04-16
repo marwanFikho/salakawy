@@ -1,0 +1,398 @@
+---
+const transformations = [
+	{
+		image: "/transformations/2.jpg",
+		text: "Eyad Is Just 8 years old! The hero eyad was able to transform in just two months and continues to shock us to this day.",
+		fullText: "Eyad Is Just 8 years old, and he managed to lose 9kg in only 3 months. He Beat months of cravings - just because i made a super fun and tasty diet."
+	},
+	{
+		image: "/transformations/3.jpg",
+		text: "Viola Is A Dental Student with zero time—and it was tough. However, she managed to transform her body in just 90 days.",
+		fullText: "Viola Is A Dental Student with zero time for workouts or strict diets - her schedule is insane. But Guess What? We managed to drop 17.5kg in just 3 months,"
+	},
+	{
+		image: "/transformations/4.jpg",
+		text: "Mahmoud lost 41kg in just 9 months, and we're not planning to stop!",
+		fullText: "Mahmoud lost 41kg in just 9 months - and never got bored. Why? Because I was checking in with him every single day, and he was always eating food he actually loves and staying full. That's what kept him going. And we're not done yet - we're on our way to losing 60kg together!"
+	},
+	{
+		image: "/transformations/5.jpg",
+		text: "Dina trained with me for only a month — and it happened to be during Ramadan! In one month, we burned 6kg of fat.",
+		fullText: "Dina trained with me for only a month — and it happened to be during Ramadan! In just 30 days, she lost 4 kg. But the real transformation wasn’t just the scale — it was body recomposition."
+	},
+	{
+		image: "/transformations/6.jpg",
+		text: "With Ritta, we crushed a 90-day challenge and are still moving forward.",
+		fullText: "With Ritta, we crushed a 90-day challenge and dropped her body fat percentage big time. Her body got super toned, and her abs are starting to show! Just 3 months of commitment and smart work."
+	},
+	{
+		image: "/transformations/7.jpg",
+		text: "Sara's transformation is the most important one I've done in my life. Sara went through tough conditions from being diagnosed with insolin resistance...",
+		fullText: "Sara's transformation is the most important one i've done in my life. It was one of my first - and definitely one of the hardest. She had insulin resistance, and we managed to lose 30kg in just 6 months. This one means so much to me."
+	},
+	{
+		image: "/transformations/8.jpg",
+		text: "Samira is 45 years old and lives in Dubai... despite her insulin resistance, we've broken all limits!",
+		fullText: "Samira is 45 years old and lives in Dubai. In exactly 3 months - during a busy job change - she achieved one of the best body recompositions with me. Age and stress weren't excuses...she made it happen."
+	},
+	{
+		image: "/transformations/9.jpg",
+		text: "One Of the Most Special Transformations For me was my mom. At 53 years old...",
+		fullText: "One Of the Most Special Transformations For me was my mom, She's 53 years old, a busy professor with no time for workouts and I helped her lose 15kg in 13 months, just with diet."
+	}
+];
+---
+
+<section id="transformations" class="section transformations-bg">
+	<div class="container">
+		<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; margin-bottom: 3rem;">
+			<h2 class="section-title fade-in-up" style="margin-bottom: 0;">Transformations</h2>
+			<span class="badge fade-in-up" style="margin-bottom: 0;">Success Stories</span>
+			<p class="trans-desc fade-in-up delay-100" style="margin-top: 0;">See what happens when you combine the right lifestyle, a tailored diet, and real dedication. Real results from our amazing clients!</p>
+		</div>
+
+		<div class="scroller-container fade-in-up delay-200">
+			<div class="transformations-slider">
+				{transformations.map((item, index) => (
+					<div class="transform-card" data-fulltext={item.fullText} data-imgsrc={item.image}>
+						<div class="transform-img-wrap">
+							<img src={item.image} alt={`Transformation ${index + 1}`} loading="lazy" />
+							<div class="transform-overlay">
+								<span class="view-text">Before & After</span>
+							</div>
+						</div>
+						<div class="transform-text">
+							<p>{item.text}</p>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+
+		<div style="text-align: center; margin-top: 3rem;" class="fade-in-up delay-300">
+			<a href="/all-transformations" class="btn btn-primary">Show All Transformations</a>
+		</div>
+	</div>
+</section>
+
+<!-- Modal -->
+<div id="trans-modal" class="modal">
+    <div class="modal-content fade-in-up">
+        <span class="close-modal">&times;</span>
+        <div class="modal-body">
+            <img id="modal-img" src="" alt="Transformation Full view" loading="lazy" />
+            <div class="modal-info">
+                <p id="modal-text"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+	.transformations-bg {
+		background-color: var(--surface-color);
+	}
+
+	.badge {
+		display: inline-block;
+		padding: 6px 16px;
+		background: rgba(255, 255, 0, 0.1);
+		color: var(--accent-color);
+		border: 1px solid rgba(255, 255, 0, 0.3);
+		border-radius: 30px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		margin-bottom: 1rem;
+		text-transform: uppercase;
+	}
+
+	.trans-desc {
+		max-width: 600px;
+		margin: 1rem auto 0 auto;
+		color: var(--text-muted);
+		font-size: 1.1rem;
+	}
+
+	.scroller-container {
+		width: 100%;
+		/* Adds the fade effect on the left and right edges */
+		-webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+		mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+		padding: 1rem 0;
+	}
+
+	.transformations-slider {
+		display: flex;
+		gap: 2rem;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		padding: 0 10%; /* Extra padding to allow snapping into the center perfectly */
+		scrollbar-width: none; /* Hide scrollbar for Firefox */
+		-ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+	}
+
+	.transformations-slider::-webkit-scrollbar {
+		display: none; /* Hide scrollbar for Webkit */
+	}
+
+	.transform-card {
+		flex: 0 0 calc(33.333% - 1.5rem); /* Default 3 cards visible */
+		min-width: 300px;
+		max-width: 400px;
+		scroll-snap-align: center;
+		background: var(--bg-color);
+		border-radius: var(--radius);
+		overflow: hidden;
+		transition: transform var(--transition);
+		border: 1px solid rgba(255, 255, 255, 0.05);
+		display: flex;
+		flex-direction: column;
+	}
+
+	.transform-card:hover {
+		transform: translateY(-5px);
+		border-color: rgba(255, 255, 0, 0.2);
+	}
+
+	.transform-img-wrap {
+		position: relative;
+		overflow: hidden;
+		width: 100%;
+		height: 350px;
+	}
+
+	.transform-img-wrap img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform var(--transition);
+	}
+
+	.transform-card:hover .transform-img-wrap img {
+		transform: scale(1.05);
+	}
+
+	.transform-overlay {
+		position: absolute;
+		top: 0; left: 0; width: 100%; height: 100%;
+		background: rgba(0, 0, 0, 0.6);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		transition: opacity var(--transition);
+	}
+
+	.transform-card:hover .transform-overlay {
+		opacity: 1;
+	}
+
+	.view-text {
+		color: var(--text-main);
+		font-weight: 600;
+		border: 1px solid var(--accent-color);
+		padding: 8px 20px;
+		border-radius: 30px;
+		transform: translateY(20px);
+		transition: transform var(--transition);
+	}
+
+	.transform-card:hover .view-text {
+		transform: translateY(0);
+	}
+
+	.transform-text {
+		padding: 1.5rem;
+		flex-grow: 1;
+		display: flex;
+		align-items: center;
+	}
+
+	.transform-text p {
+		color: var(--text-muted);
+		font-size: 0.95rem;
+		line-height: 1.6;
+		margin: 0;
+	}
+
+	/* Dragging styles */
+	.transformations-slider {
+		cursor: grab;
+	}
+	
+	.transformations-slider.active {
+		cursor: grabbing;
+		scroll-snap-type: none;
+	}
+
+	.transform-card {
+		cursor: pointer;
+	}
+
+	.transform-img-wrap img {
+		pointer-events: none; /* Prevent native image dragging */
+	}
+
+	/* Modal Styles */
+	.modal {
+		position: fixed;
+		top: 0; left: 0; width: 100%; height: 100%;
+		background: rgba(0,0,0,0.85);
+		z-index: 9999;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		padding: 2rem;
+		backdrop-filter: blur(5px);
+	}
+
+	.modal.show {
+		display: flex;
+		animation: fadeIn 0.3s ease;
+	}
+
+	.modal-content {
+		background: var(--surface-color);
+		border-radius: var(--radius);
+		max-width: 900px;
+		width: 100%;
+		max-height: 90vh;
+		overflow-y: auto;
+		position: relative;
+		border: 1px solid rgba(255,255,0,0.2);
+		display: flex;
+		flex-direction: column;
+	}
+
+	.close-modal {
+		position: absolute;
+		top: 1rem;
+		right: 1.5rem;
+		font-size: 2.5rem;
+		color: var(--text-muted);
+		cursor: pointer;
+		z-index: 2;
+		transition: color var(--transition);
+		line-height: 1;
+	}
+
+	.close-modal:hover {
+		color: var(--accent-color);
+	}
+
+	.modal-body {
+		display: flex;
+		flex-direction: column;
+	}
+
+	@media (min-width: 768px) {
+		.modal-body {
+			flex-direction: row;
+		}
+	}
+
+	#modal-img {
+		width: 100%;
+		flex: 1 1 50%;
+		max-width: 500px;
+		object-fit: cover;
+	}
+
+	.modal-info {
+		padding: 2.5rem;
+		flex: 1 1 50%;
+		display: flex;
+		align-items: center;
+		background: var(--bg-color);
+	}
+
+	#modal-text {
+		font-size: 1.2rem;
+		line-height: 1.8;
+		color: var(--text-main);
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+</style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const slider = document.querySelector('.transformations-slider');
+		const modal = document.getElementById('trans-modal');
+		const modalImg = document.getElementById('modal-img');
+		const modalText = document.getElementById('modal-text');
+		const closeBtn = document.querySelector('.close-modal');
+		
+		let isDown = false;
+		let startX;
+		let scrollLeft;
+		let isDragging = false;
+
+		if (slider) {
+			slider.addEventListener('mousedown', (e) => {
+				isDown = true;
+				isDragging = false;
+				slider.classList.add('active');
+				startX = e.pageX - slider.offsetLeft;
+				scrollLeft = slider.scrollLeft;
+			});
+
+			slider.addEventListener('mouseleave', () => {
+				isDown = false;
+				slider.classList.remove('active');
+			});
+
+			slider.addEventListener('mouseup', () => {
+				isDown = false;
+				slider.classList.remove('active');
+			});
+
+			slider.addEventListener('mousemove', (e) => {
+				if (!isDown) return;
+				e.preventDefault();
+				const x = e.pageX - slider.offsetLeft;
+				const walk = (x - startX) * 2; 
+				if (Math.abs(walk) > 5) {
+					isDragging = true;
+				}
+				slider.scrollLeft = scrollLeft - walk;
+			});
+
+			// Handle card clicks
+			const cards = document.querySelectorAll('.transform-card');
+			cards.forEach(card => {
+				card.addEventListener('click', (e) => {
+					if (isDragging) {
+						e.preventDefault();
+						return;
+					}
+					const fullText = card.getAttribute('data-fulltext');
+					const imgSrc = card.getAttribute('data-imgsrc');
+					if(modalImg && modalText && modal) {
+						modalImg.src = imgSrc;
+						modalText.textContent = fullText;
+						modal.classList.add('show');
+						document.body.style.overflow = 'hidden';
+					}
+				});
+			});
+		}
+
+		if (closeBtn && modal) {
+			closeBtn.addEventListener('click', () => {
+				modal.classList.remove('show');
+				document.body.style.overflow = '';
+			});
+
+			modal.addEventListener('click', (e) => {
+				if (e.target === modal) {
+					modal.classList.remove('show');
+					document.body.style.overflow = '';
+				}
+			});
+		}
+	});
+</script>

@@ -1,0 +1,39 @@
+HTTrack3.49-5 launched on Thu, 16 Apr 2026 00:14:59 at https://salakawy7.com
+(httrack https://salakawy7.com -O ./downloaded-site )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+00:18:39	Error: 	"Bad Request" (400) at link https://salakawy7.com/wp-admin/admin-ajax.php (from https://salakawy7.com/)
+00:18:39	Error: 	"Not Found" (404) at link https://salakawy7.com/revslider/revslider.php (from https://salakawy7.com/)
+00:18:39	Error: 	"Not Found" (404) at link https://salakawy7.com/${e?.bg?.image.src} (from https://salakawy7.com/)
+00:21:30	Warning: 	Moved Permanently for https://salakawy7.com/?page_id=1083
+00:21:30	Warning: 	File has moved from https://salakawy7.com/?page_id=1083 to https://salakawy7.com/packages/
+00:21:30	Warning: 	Moved Permanently for https://salakawy7.com/?page_id=348
+00:21:30	Warning: 	File has moved from https://salakawy7.com/?page_id=348 to https://salakawy7.com/transformations/
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/wp-content/themes/vosio/assets/css/owl.video.play.png (from https://salakawy7.com/wp-content/themes/vosio/assets/css/owl.css?ver=6.8.5)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/wp-content/themes/vosio/assets/css/mCSB_buttons.html (from https://salakawy7.com/wp-content/themes/vosio/assets/css/scrollbar.css?ver=6.8.5)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/wp-content/themes/vosio/assets/images/icons/icon-1.png (from https://salakawy7.com/wp-content/themes/vosio/assets/css/custom.css?ver=6.8.5)
+00:21:40	Warning: 	Moved Permanently for https://salakawy7.com/?p=1083
+00:21:40	Warning: 	File has moved from https://salakawy7.com/?p=1083 to https://salakawy7.com/packages/
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/packages/revslider/revslider.php (from https://salakawy7.com/packages/)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/packages/${e?.bg?.image.src} (from https://salakawy7.com/packages/)
+00:21:40	Warning: 	Moved Permanently for https://salakawy7.com/?p=348
+00:21:40	Warning: 	File has moved from https://salakawy7.com/?p=348 to https://salakawy7.com/transformations/
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/transformations/revslider/revslider.php (from https://salakawy7.com/transformations/)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/transformations/${e?.bg?.image.src} (from https://salakawy7.com/transformations/)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/wp-content/uploads/revslider/futuristic-hairstyles-slider/img5.jpg (from https://salakawy7.com/transformations/)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/wp-content/uploads/revslider/futuristic-hairstyles-slider/img4.jpg (from https://salakawy7.com/transformations/)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/wp-content/uploads/revslider/futuristic-hairstyles-slider/img3.jpg (from https://salakawy7.com/transformations/)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/wp-content/uploads/revslider/futuristic-hairstyles-slider/img1.jpg (from https://salakawy7.com/transformations/)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/wp-content/uploads/revslider/futuristic-hairstyles-slider/img2.jpg (from https://salakawy7.com/transformations/)
+00:21:40	Error: 	"Not Found" (404) at link https://salakawy7.com/wp-content/uploads/2025/08/insta-image.jpg (from https://salakawy7.com/transformations/)
+00:21:44	Warning: 	Moved Permanently for https://salakawy7.com/?p=154
+00:21:44	Warning: 	File has moved from https://salakawy7.com/?p=154 to https://salakawy7.com/payment-via-whatsapp/
+00:21:44	Error: 	"Not Found" (404) at link https://salakawy7.com/payment-via-whatsapp/revslider/revslider.php (from https://salakawy7.com/payment-via-whatsapp/)
+00:21:44	Error: 	"Not Found" (404) at link https://salakawy7.com/payment-via-whatsapp/${e?.bg?.image.src} (from https://salakawy7.com/payment-via-whatsapp/)
+
+HTTrack Website Copier/3.49-5 mirror complete in 6 minutes 45 seconds : 353 links scanned, 329 files written (36759779 bytes overall) [28879359 bytes received at 71307 bytes/sec], 12859323 bytes transferred using HTTP compression in 195 files, ratio 33%, 20.5 requests per connection
+(18 errors, 10 warnings, 0 messages)

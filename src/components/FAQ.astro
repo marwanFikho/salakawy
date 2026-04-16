@@ -1,0 +1,186 @@
+---
+const faqs = [
+	{
+		q: "What happens after I subscribe to your program?",
+		a: "1. Personalized Plan Creation: You’ll receive a detailed questionnaire to gather all the necessary information about your lifestyle, including your daily routine and favorite foods.\n2. Tailored to Your Life: Your plan will be customized to fit seamlessly into your schedule, without requiring drastic changes.\n3. Quick Turnaround: Once you submit the questionnaire and complete the payment, your fully customized plan will be ready within 4-5 days."
+	},
+	{
+		q: "What does the program include?",
+		a: "1. Flexible Diet Plan: Adjusted to your needs, preferences, and BMR, focusing on your favorite foods.\n2. Daily Check-ins & Updates: Stay motivated with daily support.\n3. WhatsApp Q&A: Got questions? I’m here for you anytime.\n4. Supplement Recommendations (optional): Provided only if you’re interested.\n5. Cardio & Abs Routines: To help you tone up and shed fat.\n6. Gym & Home Workouts: Includes videos to ensure perfect form.\n7. Direct Access to Me: You’ll have my personal number for any support."
+	},
+	{
+		q: "What are the available package options?",
+		a: "🌟 Golden Package: Get daily responses on WhatsApp! You can message us anytime, and we’ll be there to support you every day (Custom Price).\n\n🌟 Silver Package: Get weekly responses on WhatsApp! We’ll check in once a week to keep you on track (Affordable Price).\n\nBoth packages offer the same great program!"
+	},
+	{
+		q: "Refund Policy?",
+		a: "• 1-Month Package: No refunds are available once your plan has started, even if only 1 day has passed.\n• 3-Month Package:\n- First 30 days: charged for 1 month, remaining balance refunded.\n- Between 30 - 60 days: charged for 2 months, remaining balance refunded.\n- After 60 days: no refunds available."
+	}
+];
+---
+
+<section id="faqs" class="section faq-bg">
+	<div class="container">
+		<div class="faq-header fade-in-up" style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+			<h2 class="section-title" style="margin-bottom: 0;">All You Need To Know</h2>
+			<span class="badge" style="margin-bottom: 0;">FAQs</span>
+		</div>
+
+		<div class="faq-list fade-in-up delay-200">
+			{faqs.map((faq, index) => (
+				<div class="faq-item">
+					<button class="faq-question">
+						{faq.q}
+						<span class="icon">+</span>
+					</button>
+					<div class="faq-answer-wrapper">
+						<div class="faq-answer-inner">
+							<div class="faq-answer-content">
+								{faq.a.split('\n').map((line) => (
+									<p>{line}</p>
+								))}
+							</div>
+						</div>
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<script>
+	// Client side script to handle the accordion logic
+	const faqQuestions = document.querySelectorAll('.faq-question');
+	faqQuestions.forEach(question => {
+		question.addEventListener('click', () => {
+			const item = question.parentElement;
+			const wasOpen = item.classList.contains('active');
+			
+			// Close all other items (Accordion effect)
+			document.querySelectorAll('.faq-item').forEach(el => {
+				el.classList.remove('active');
+			});
+
+			if (!wasOpen) {
+				item.classList.add('active');
+			}
+		});
+	});
+</script>
+
+<style>
+	.faq-bg {
+		background-color: var(--surface-color);
+	}
+
+	.faq-header {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	.badge {
+		display: inline-block;
+		padding: 6px 16px;
+		background: rgba(255, 255, 0, 0.1);
+		color: var(--accent-color);
+		border: 1px solid rgba(255, 255, 0, 0.3);
+		border-radius: 30px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		margin-bottom: 1rem;
+		text-transform: uppercase;
+	}
+
+	.faq-list {
+		max-width: 800px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.faq-item {
+		background: var(--bg-color);
+		border: 1px solid rgba(255, 255, 255, 0.05);
+		border-radius: 8px;
+		overflow: hidden;
+		transition: all var(--transition);
+	}
+
+	.faq-item:hover {
+		border-color: rgba(255, 255, 0, 0.2);
+	}
+
+	.faq-question {
+		padding: 1.5rem;
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--text-main);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		cursor: pointer;
+		background: none;
+		border: none;
+		width: 100%;
+		text-align: left;
+		font-family: inherit;
+		outline: none;
+	}
+
+	.faq-question .icon {
+		font-size: 1.5rem;
+		color: var(--accent-color);
+		font-weight: 400;
+		transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.faq-item.active .faq-question .icon {
+		transform: rotate(45deg);
+	}
+
+	/* Beautiful Grid-Based height transition for smooth sliding panels */
+	.faq-answer-wrapper {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.faq-item.active .faq-answer-wrapper {
+		grid-template-rows: 1fr;
+	}
+
+	.faq-answer-inner {
+		overflow: hidden;
+	}
+
+	.faq-answer-content {
+		padding: 0 1.5rem 1.5rem;
+		color: var(--text-muted);
+		line-height: 1.7;
+	}
+	
+	/* The text pop-up fading effect kept gracefully! */
+	.faq-item.active .faq-answer-content {
+		animation: expandFaqText 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+	}
+
+	@keyframes expandFaqText {
+		from {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.faq-answer-content p {
+		margin-bottom: 0.5rem;
+	}
+
+	.faq-answer-content p:last-child {
+		margin-bottom: 0;
+	}
+</style>
