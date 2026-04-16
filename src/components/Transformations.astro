@@ -54,7 +54,7 @@ const transformations = [
 		<div class="scroller-container fade-in-up delay-200">
 			<div class="transformations-slider">
 				{transformations.map((item, index) => (
-					<div class="transform-card" data-fulltext={item.fullText} data-imgsrc={item.image}>
+					<div class="transform-card glass-panel glass-panel-hover" data-fulltext={item.fullText} data-imgsrc={item.image}>
 						<div class="transform-img-wrap">
 							<img src={item.image} alt={`Transformation ${index + 1}`} loading="lazy" />
 							<div class="transform-overlay">
@@ -319,7 +319,7 @@ const transformations = [
 </style>
 
 <script>
-	document.addEventListener('DOMContentLoaded', () => {
+	document.addEventListener('astro:page-load', () => {
 		const slider = document.querySelector('.transformations-slider');
 		const modal = document.getElementById('trans-modal');
 		const modalImg = document.getElementById('modal-img');

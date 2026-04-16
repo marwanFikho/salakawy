@@ -6,8 +6,24 @@ import path from 'path';
 const imagesDir = path.join(process.cwd(), 'public', 'all-transformations');
 let images = [];
 try {
-	images = fs.readdirSync(imagesDir)
-		.filter(file => file.endsWith('.jpg') || file.endsWith('.png') || file.endsWith('.jpeg'));
+	const allFiles = fs.readdirSync(imagesDir)
+		.filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file));
+	
+	const filtered = new Map();
+	
+	allFiles.forEach(file => {
+		// Strip common suffixes to find the base identity
+		// Handles: -373x400, -scaled, -1, -v2, etc.
+		const baseIdentity = file.replace(/(-(\d+x\d+|scaled|1|2|3|v\d+))(\.(jpg|jpeg|png|webp))$/i, '$3');
+		
+		// If we haven't seen this base identity, or if the current file is "better" (e.g. not a thumbnail)
+		// We prioritize files without 'x' dimensions in the name
+		if (!filtered.has(baseIdentity) || (!file.includes('x') && filtered.get(baseIdentity).includes('x'))) {
+			filtered.set(baseIdentity, file);
+		}
+	});
+	
+	images = Array.from(filtered.values());
 } catch (e) {
 	console.error('Could not read transformations directory', e);
 }
@@ -28,20 +44,28 @@ const imagePaths = images.map(img => `/all-transformations/${img}`);
 
 			<div class="masonry-grid fade-in-up delay-200">
 				{imagePaths.map((image, i) => (
-					<div class="masonry-item">
-						<img src={image} alt={`Transformation ${i + 1}`} loading="lazy" />
+					<div class="masonry-item glass-panel glass-panel-hover" style="padding: 10px; border-radius: 12px;">
+						<img src={image} alt={`Transformation ${i + 1}`} loading="lazy" style="border-radius: 8px;" />
 					</div>
 				))}
 			</div>
 		</div>
 	</main>
+
+    <!-- Gallery Modal -->
+    <div id="gallery-modal" class="modal">
+        <span class="close-modal" aria-label="Close">&times;</span>
+        <span class="nav-btn prev-btn" aria-label="Previous">&#10094;</span>
+        <img id="gallery-modal-img" class="modal-content-img" src="" alt="Full view" />
+        <span class="nav-btn next-btn" aria-label="Next">&#10095;</span>
+    </div>
 </Layout>
 
 <style>
 	.page-container {
 		background-color: var(--surface-color);
 		min-height: 100vh;
-		padding-top: 100px; /* Offset for sticky nav */
+		padding-top: 100px;
 		padding-bottom: 5rem;
 	}
 
@@ -93,6 +117,7 @@ const imagePaths = images.map(img => `/all-transformations/${img}`);
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 		transition: transform var(--transition);
 		border: 1px solid rgba(255, 255, 255, 0.05);
+        cursor: pointer;
 	}
 
 	.masonry-item:hover {
@@ -111,15 +136,170 @@ const imagePaths = images.map(img => `/all-transformations/${img}`);
 		transform: scale(1.03);
 	}
 
+    /* Modal Styles */
+	.modal {
+		position: fixed;
+		top: 0; left: 0; width: 100%; height: 100%;
+		background: rgba(0,0,0,0.9);
+		z-index: 9999;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		backdrop-filter: blur(5px);
+	}
+
+	.modal.show {
+		display: flex;
+		animation: fadeIn 0.3s ease;
+	}
+
+	.modal-content-img {
+		max-width: 90%;
+		max-height: 85vh;
+		object-fit: contain;
+		border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+	}
+
+	.close-modal {
+		position: absolute;
+		top: 2rem;
+		right: 2.5rem;
+		font-size: 3rem;
+		color: #fff;
+		cursor: pointer;
+		z-index: 2;
+		transition: color var(--transition);
+		line-height: 1;
+	}
+
+	.close-modal:hover {
+		color: var(--accent-color);
+	}
+
+    .nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 3rem;
+        color: #fff;
+        cursor: pointer;
+        user-select: none;
+        padding: 1rem;
+        transition: color var(--transition);
+        z-index: 2;
+    }
+
+    .nav-btn:hover {
+        color: var(--accent-color);
+    }
+
+    .prev-btn { left: 2rem; }
+    .next-btn { right: 2rem; }
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
 	@media (max-width: 900px) {
 		.masonry-grid {
 			column-count: 2;
 		}
+        .prev-btn { left: 0.5rem; }
+        .next-btn { right: 0.5rem; }
 	}
 
 	@media (max-width: 600px) {
 		.masonry-grid {
-			column-count: 1;
+			column-count: 2;
 		}
 	}
 </style>
+
+<script>
+    document.addEventListener('astro:page-load', () => {
+        const modal = document.getElementById('gallery-modal');
+        const modalImg = document.getElementById('gallery-modal-img');
+        const closeBtn = document.querySelector('.close-modal');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        const items = document.querySelectorAll('.masonry-item img');
+
+        if(modal && modalImg && items.length > 0) {
+            let currentIndex = 0;
+            const imagesSrc = Array.from(items).map(img => img.getAttribute('src'));
+
+            function showImage(index) {
+                if (index < 0) index = imagesSrc.length - 1;
+                if (index >= imagesSrc.length) index = 0;
+                currentIndex = index;
+                modalImg.setAttribute('src', imagesSrc[currentIndex]);
+            }
+
+            items.forEach((item, index) => {
+                item.closest('.masonry-item').addEventListener('click', () => {
+                    showImage(index);
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+                document.body.style.overflow = '';
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showImage(currentIndex - 1);
+            });
+
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showImage(currentIndex + 1);
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if(modal.classList.contains('show')) {
+                    if (e.key === 'Escape') closeBtn.click();
+                    if (e.key === 'ArrowLeft') prevBtn.click();
+                    if (e.key === 'ArrowRight') nextBtn.click();
+                }
+            });
+
+            // Touch Swipe Support
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            modalImg.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            modalImg.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, {passive: true});
+
+            function handleSwipe() {
+                const swipeThreshold = 50; // minimum pixel distance to register a swipe
+                if (touchEndX < touchStartX - swipeThreshold) {
+                    // Swiped Left - go to next
+                    nextBtn.click();
+                }
+                if (touchEndX > touchStartX + swipeThreshold) {
+                    // Swiped Right - go to prev
+                    prevBtn.click();
+                }
+            }
+        }
+    });
+</script>

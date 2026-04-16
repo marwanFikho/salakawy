@@ -1,0 +1,408 @@
+---
+import Layout from '../layouts/Layout.astro';
+import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
+
+const recipes = [
+    {
+        title: "High-Protein Chicken & Rice Bowl",
+        image: "/recipes/healthy_chicken_bowl_1776345885990.png",
+        macros: "Protein: 45g | Carbs: 55g | Fats: 12g",
+        calories: "520 kcal",
+        category: "Lunch / Dinner"
+    },
+    {
+        title: "Macro-Friendly Grilled Steak",
+        image: "/recipes/macro_beef_steak_1776345929014.png",
+        macros: "Protein: 50g | Carbs: 10g | Fats: 25g",
+        calories: "480 kcal",
+        category: "Dinner"
+    },
+    {
+        title: "Anabolic Berry Pancakes",
+        image: "/recipes/protein_pancakes_1776345904880.png",
+        macros: "Protein: 35g | Carbs: 45g | Fats: 8g",
+        calories: "390 kcal",
+        category: "Breakfast / Dessert"
+    }
+];
+
+const tips = [
+    {
+        title: "Understanding Progressive Overload",
+        content: "If you want to build muscle or tone up, you have to challenge your body more than you did last week. Add 1kg to your lifts, or do 1 extra rep.",
+        icon: "🏋️‍♂️"
+    },
+    {
+        title: "Why You're Not Losing Fat on 'Healthy Foods'",
+        content: "Nuts, olive oil, and avocados are healthy—but they are extremely calorie-dense. You still need to be in a caloric deficit to lose weight.",
+        icon: "🥑"
+    },
+    {
+        title: "The Role of Sleep in Fat Loss",
+        content: "Lack of sleep spikes cortisol and ghrelin (the hunger hormone). Getting 7-8 hours makes sticking to your diet 10x easier.",
+        icon: "💤"
+    }
+];
+---
+
+<Layout title="Free Resources & Cookbook | Salakawy">
+    <main class="resources-page">
+        <!-- Hero Section -->
+        <section class="resources-hero section">
+            <div class="container text-center">
+                <span class="badge fade-in-up">Free Value</span>
+                <h1 class="hero-title fade-in-up delay-100">Nutrition & Training Vault</h1>
+                <p class="hero-desc fade-in-up delay-200">The most delicious diet recipes and the most effective training secrets. Everything you need to supercharge your transformation, absolutely free.</p>
+            </div>
+            <div class="glow-bg"></div>
+        </section>
+
+        <!-- Cookbook Grid -->
+        <section class="section" id="cookbook">
+            <div class="container">
+                <div class="section-header fade-in-up">
+                    <h2 class="section-title">The Anabolic Cookbook</h2>
+                    <p class="header-desc">Eating a diet shouldn't feel like a punishment. These are the exact meals I program for my clients' insane transformations.</p>
+                </div>
+
+                <div class="recipe-grid">
+                    {recipes.map((recipe, index) => (
+                        <div class="recipe-card glass-panel glass-panel-hover fade-in-up" style={`animation-delay: ${index * 100}ms`}>
+                            <div class="recipe-img-wrap">
+                                <img src={recipe.image} alt={recipe.title} loading="lazy" />
+                                <span class="category-tag">{recipe.category}</span>
+                            </div>
+                            <div class="recipe-info">
+                                <h3>{recipe.title}</h3>
+                                <div class="macro-chips">
+                                    <span class="chip cal">{recipe.calories}</span>
+                                    <span class="chip">{recipe.macros}</span>
+                                </div>
+                                <button class="btn btn-primary w-100 unlock-btn">Unlock Recipe</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        <!-- Training Tips Grid -->
+        <section class="section" id="tips">
+            <div class="container">
+                <div class="section-header fade-in-up">
+                    <h2 class="section-title">Ultimate Training Secrets</h2>
+                    <p class="header-desc">Stop listening to TikTok noise. Here is the actual science behind changing your body composition.</p>
+                </div>
+
+                <div class="tips-grid">
+                    {tips.map((tip, index) => (
+                        <div class="tip-card glass-panel fade-in-up" style={`animation-delay: ${index * 100}ms`}>
+                            <div class="tip-icon">{tip.icon}</div>
+                            <h3>{tip.title}</h3>
+                            <p>{tip.content}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+        
+        <!-- CTA Section -->
+        <section class="section cta-section">
+            <div class="container text-center">
+                <h2>Ready for Your Custom Plan?</h2>
+                <p>Stop guessing. Get the meals, the workouts, and the accountability directly injected into your daily routine.</p>
+                <div class="btn-group">
+                    <a href="/#packages" class="btn btn-primary">View Packages</a>
+                    <a href="https://wa.me/201217720267" class="btn btn-outline" target="_blank" rel="noopener">Chat With Me</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    <WhatsappFloatingButton />
+</Layout>
+
+<style>
+    .resources-page {
+        padding-top: 80px; 
+    }
+
+    .resources-hero {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8rem 0 4rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .glow-bg {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255, 255, 0, 0.1) 0%, rgba(0,0,0,0) 70%);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+    }
+
+    .text-center {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 16px;
+        background: rgba(255, 255, 0, 0.1);
+        color: var(--accent-color);
+        border: 1px solid rgba(255, 255, 0, 0.3);
+        border-radius: 30px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.1;
+        background: linear-gradient(90deg, #fff, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .header-desc {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    /* Cookbook Grid */
+    .recipe-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .recipe-card {
+        border-radius: var(--radius);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform var(--transition);
+    }
+
+    .recipe-img-wrap {
+        position: relative;
+        height: 250px;
+        overflow: hidden;
+    }
+
+    .recipe-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform var(--transition);
+    }
+
+    .recipe-card:hover .recipe-img-wrap img {
+        transform: scale(1.05);
+    }
+
+    .category-tag {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(5px);
+        color: #fff;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .recipe-info {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .recipe-info h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: var(--text-main);
+    }
+
+    .macro-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .chip {
+        background: rgba(255,255,255,0.05);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .chip.cal {
+        background: rgba(255,255,0,0.1);
+        color: var(--accent-color);
+        font-weight: 600;
+    }
+
+    .w-100 {
+        width: 100%;
+        margin-top: auto;
+    }
+
+    .unlock-btn {
+        background: transparent;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+    }
+
+    .unlock-btn:hover {
+        background: var(--accent-color);
+        color: #000;
+    }
+
+    /* Tips Grid */
+    .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .tip-card {
+        padding: 2rem;
+        border-radius: var(--radius);
+        transition: transform var(--transition);
+        border-top: 3px solid var(--text-muted);
+    }
+
+    .tip-card:hover {
+        transform: translateY(-5px);
+        border-top-color: var(--accent-color);
+    }
+
+    .tip-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .tip-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: #fff;
+    }
+
+    .tip-card p {
+        color: var(--text-muted);
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(to top, rgba(255,255,0,0.05), transparent);
+        padding: 6rem 0;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn-outline {
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #fff;
+    }
+
+    .btn-outline:hover {
+        background: rgba(255,255,255,0.1);
+    }
+
+    @media (max-width: 1024px) {
+        .recipe-grid, .tips-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 3rem;
+        }
+        .recipe-grid, .tips-grid {
+            grid-template-columns: 1fr;
+        }
+        .btn-group {
+            flex-direction: column;
+            width: 100%;
+        }
+        .btn-group .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    // Add simple interaction to unlock buttons
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('.unlock-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.innerHTML = "Subscribers Only 🔒";
+                this.style.background = 'transparent';
+                this.style.color = '#aa0000';
+                this.style.borderColor = '#aa0000';
+                setTimeout(() => {
+                    alert("This full recipe vault is managed directly via Salakawy's premium WhatsApp coaching packages.");
+                }, 300);
+            });
+        });
+    });
+</script>
