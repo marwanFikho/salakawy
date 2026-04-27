@@ -389,23 +389,56 @@ const transformations = [
 		const closeBtn = document.querySelector('.close-modal');
 		const scrollHint = document.getElementById('scroll-hint');
 
-		// Dismiss hint on first interaction
+		let userInteracted = false;
 		function dismissHint() {
 			if (scrollHint) {
 				scrollHint.classList.add('hidden');
 				setTimeout(() => scrollHint.remove(), 500);
 			}
 		}
-		
+
 		let isDown = false;
 		let startX;
 		let scrollLeft;
 		let isDragging = false;
 
 		if (slider) {
-			slider.addEventListener('scroll',     dismissHint, { once: true, passive: true });
-			slider.addEventListener('mousedown',  dismissHint, { once: true });
-			slider.addEventListener('touchstart', dismissHint, { once: true, passive: true });
+			// Auto-scroll logic
+			let autoScrollInterval;
+			let isAutoScrolling = false;
+			
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting && !userInteracted) {
+						setTimeout(() => {
+							if (!userInteracted && !isAutoScrolling) {
+								isAutoScrolling = true;
+								autoScrollInterval = setInterval(() => {
+									if (!userInteracted) {
+										slider.scrollBy({ left: 1.5, behavior: 'auto' });
+									}
+								}, 25);
+							}
+						}, 3000);
+						observer.disconnect();
+					}
+				});
+			}, { threshold: 0.5 });
+			observer.observe(slider);
+
+			const stopAutoScroll = () => {
+				userInteracted = true;
+				isAutoScrolling = false;
+				if(autoScrollInterval) clearInterval(autoScrollInterval);
+				dismissHint();
+			};
+
+			slider.addEventListener('scroll', () => {
+				if(!isAutoScrolling) stopAutoScroll();
+			}, { once: true, passive: true });
+			
+			slider.addEventListener('mousedown', stopAutoScroll, { once: true });
+			slider.addEventListener('touchstart', stopAutoScroll, { once: true, passive: true });
 
 			slider.addEventListener('mousedown', (e) => {
 				isDown = true;
