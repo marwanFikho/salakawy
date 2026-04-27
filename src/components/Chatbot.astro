@@ -1,0 +1,509 @@
+---
+---
+
+<button id="chatbot-fab" class="chatbot-fab" aria-label="Open virtual coach chatbot">
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
+		<path d="M12 2C6.48 2 2 5.96 2 10.83c0 2.66 1.34 5.04 3.48 6.64L4 22l4.82-2.19C9.84 20.1 10.91 20.26 12 20.26c5.52 0 10-3.96 10-8.83S17.52 2 12 2z"/>
+	</svg>
+</button>
+
+<!-- Chatbot Window -->
+<div id="chatbot-window" class="chatbot-window" aria-hidden="true">
+	<div class="chatbot-header">
+		<div style="display:flex; align-items:center; gap: 0.6rem;">
+			<div class="chatbot-avatar">
+				<img src="/coach.jpg" alt="Coach Salakawy" />
+			</div>
+			<div>
+				<h4 style="margin:0; font-size: 1rem; color: #fff; font-weight:600;">Salakawy Assistant</h4>
+				<small style="color:#aaa; display:flex; align-items:center; gap:4px; font-size:0.78rem;">
+					<span class="online-dot"></span>Powered by AI
+				</small>
+			</div>
+		</div>
+		<button id="close-chatbot" class="close-chatbot-btn" aria-label="Close chatbot">&times;</button>
+	</div>
+
+	<div class="chatbot-messages" id="chatbot-messages">
+		<div class="chat-msg bot">
+			<p style="margin:0">Hey champion! 👋 I'm Coach Salakawy's AI Assistant. I know everything about his plans, coaching approach, and how to get started. What can I help you with?</p>
+		</div>
+		<!-- Typing indicator -->
+		<div class="chat-msg bot typing-indicator" id="chatbot-typing" style="display: none;">
+			<span></span><span></span><span></span>
+		</div>
+	</div>
+
+	<!-- Quick action chips pinned above input -->
+	<div class="chat-chips-container" id="chat-chips">
+		<button class="chip" data-msg="What plans are available?">📋 View Plans</button>
+		<button class="chip" data-msg="How do I pay?">💳 How to Pay</button>
+		<button class="chip" data-msg="Show me real transformations">💪 Results</button>
+		<button class="chip" data-msg="I need motivation to start">🔥 Get Motivated</button>
+	</div>
+
+	<form class="chatbot-input-area" id="chatbot-form">
+		<input type="text" id="chatbot-input" placeholder="Ask me anything..." autocomplete="off" />
+		<button type="submit" class="chatbot-send-btn" aria-label="Send message">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+				<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+			</svg>
+		</button>
+	</form>
+</div>
+
+<style is:global>
+	/* ── FAB Button ── */
+	.chatbot-fab {
+		position: fixed;
+		bottom: 30px;
+		left: 30px;
+		width: 58px;
+		height: 58px;
+		background: var(--accent-color, #e2ff00);
+		color: #000;
+		border: none;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 4px 20px rgba(226, 255, 0, 0.45);
+		z-index: 1000;
+		cursor: pointer;
+		transition: transform 0.25s ease, box-shadow 0.25s ease;
+	}
+	.chatbot-fab:hover {
+		transform: scale(1.1) translateY(-2px);
+		box-shadow: 0 6px 28px rgba(226, 255, 0, 0.65);
+	}
+
+	/* ── Chat Window ── */
+	.chatbot-window {
+		position: fixed;
+		bottom: 100px;
+		left: 30px;
+		width: 360px;
+		max-width: calc(100vw - 48px);
+		height: 520px;
+		max-height: calc(100vh - 120px);
+		background: #1a1b1f;
+		border-radius: 16px;
+		box-shadow: 0 12px 50px rgba(0,0,0,0.6);
+		border: 1px solid rgba(226,255,0,0.12);
+		display: flex;
+		flex-direction: column;
+		z-index: 1001;
+		transform: translateY(16px) scale(0.98);
+		opacity: 0;
+		pointer-events: none;
+		transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease;
+		overflow: hidden;
+	}
+	.chatbot-window.open {
+		transform: translateY(0) scale(1);
+		opacity: 1;
+		pointer-events: all;
+	}
+
+	/* ── Header ── */
+	.chatbot-header {
+		padding: 0.9rem 1rem;
+		background: #111215;
+		border-bottom: 1px solid rgba(255,255,255,0.06);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-shrink: 0;
+	}
+	.chatbot-avatar {
+		width: 38px;
+		height: 38px;
+		border-radius: 50%;
+		overflow: hidden;
+		border: 2px solid var(--accent-color, #e2ff00);
+		flex-shrink: 0;
+	}
+	.chatbot-avatar img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.close-chatbot-btn {
+		background: transparent;
+		border: none;
+		color: #888;
+		font-size: 1.4rem;
+		cursor: pointer;
+		line-height: 1;
+		padding: 0;
+		transition: color 0.2s;
+	}
+	.close-chatbot-btn:hover { color: #fff; }
+
+	/* ── Messages ── */
+	.chatbot-messages {
+		flex-grow: 1;
+		padding: 1rem;
+		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		background: #111215;
+		scroll-behavior: smooth;
+	}
+	.chatbot-messages::-webkit-scrollbar { width: 4px; }
+	.chatbot-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+	/* ── Bubbles ── */
+	.chatbot-window .chat-msg {
+		max-width: 82%;
+		padding: 0.7rem 0.95rem;
+		border-radius: 16px;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		animation: msgFadeIn 0.25s ease forwards;
+		word-break: break-word;
+	}
+	.chatbot-window .chat-msg.bot {
+		align-self: flex-start;
+		background: #2a2b31;
+		color: #e8e8e8;
+		border-bottom-left-radius: 4px;
+	}
+	.chatbot-window .chat-msg.user {
+		align-self: flex-end;
+		background: #3b3d47;
+		color: #fff;
+		border-bottom-right-radius: 4px;
+		font-weight: 500;
+	}
+
+	/* ── Navigation Buttons inside bot messages ── */
+	.chat-nav-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-top: 0.6rem;
+	}
+	.chat-nav-btn {
+		display: inline-block;
+		padding: 0.35rem 0.75rem;
+		background: transparent;
+		border: 1px solid var(--accent-color, #e2ff00);
+		color: var(--accent-color, #e2ff00);
+		border-radius: 20px;
+		font-size: 0.82rem;
+		font-weight: 600;
+		cursor: pointer;
+		text-decoration: none;
+		transition: background 0.2s, color 0.2s;
+		white-space: nowrap;
+	}
+	.chat-nav-btn:hover {
+		background: var(--accent-color, #e2ff00);
+		color: #000;
+	}
+
+	/* ── Pinned Quick Chips ── */
+	.chat-chips-container {
+		display: flex;
+		overflow-x: auto;
+		gap: 0.4rem;
+		padding: 0.6rem 0.8rem;
+		background: #111215;
+		border-top: 1px solid rgba(255,255,255,0.06);
+		flex-shrink: 0;
+		scrollbar-width: none;
+	}
+	.chat-chips-container::-webkit-scrollbar {
+		display: none;
+	}
+	.chip {
+		padding: 0.4rem 0.8rem;
+		background: rgba(226,255,0,0.08);
+		border: 1px solid rgba(226,255,0,0.2);
+		color: #ccc;
+		border-radius: 20px;
+		font-size: 0.82rem;
+		cursor: pointer;
+		transition: all 0.2s;
+		white-space: nowrap;
+	}
+	.chip:hover {
+		background: rgba(226,255,0,0.18);
+		color: #fff;
+	}
+
+	/* ── Typing ── */
+	.chatbot-window .typing-indicator {
+		padding: 0.75rem 1rem !important;
+		display: flex;
+		align-items: center;
+		gap: 3px;
+	}
+	.chatbot-window .typing-indicator span {
+		display: inline-block;
+		width: 7px;
+		height: 7px;
+		background: #666;
+		border-radius: 50%;
+		animation: typing 1.4s infinite ease-in-out both;
+	}
+	.chatbot-window .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+	.chatbot-window .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+	@keyframes typing {
+		0%, 80%, 100% { transform: scale(0.5); opacity: 0.5; }
+		40% { transform: scale(1); opacity: 1; }
+	}
+
+	/* ── Online dot ── */
+	.online-dot {
+		width: 7px;
+		height: 7px;
+		background: #25D366;
+		border-radius: 50%;
+		display: inline-block;
+		box-shadow: 0 0 6px rgba(37,211,102,0.8);
+		flex-shrink: 0;
+	}
+
+	/* ── Input area ── */
+	.chatbot-input-area {
+		display: flex;
+		align-items: center;
+		padding: 0.65rem 0.8rem;
+		background: #111215;
+		gap: 0.5rem;
+		flex-shrink: 0;
+		border-radius: 0 0 16px 16px;
+	}
+	#chatbot-input {
+		flex-grow: 1;
+		background: #1e1f24;
+		border: 1px solid rgba(255,255,255,0.1);
+		border-radius: 22px;
+		padding: 0.55rem 1rem;
+		color: #fff;
+		outline: none;
+		font-size: 0.92rem;
+		transition: border-color 0.2s;
+	}
+	#chatbot-input::placeholder { color: #666; }
+	#chatbot-input:focus { border-color: rgba(226,255,0,0.35); }
+	.chatbot-send-btn {
+		background: var(--accent-color, #e2ff00);
+		color: #000;
+		border: none;
+		border-radius: 50%;
+		width: 38px;
+		height: 38px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		flex-shrink: 0;
+		transition: transform 0.2s, opacity 0.2s;
+	}
+	.chatbot-send-btn:hover { transform: scale(1.08); }
+	.chatbot-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+	@keyframes msgFadeIn {
+		from { opacity: 0; transform: translateY(6px); }
+		to   { opacity: 1; transform: translateY(0); }
+	}
+
+	/* ── Mobile ── */
+	@media (max-width: 480px) {
+		.chatbot-fab { bottom: 20px; left: 16px; width: 52px; height: 52px; }
+		.chatbot-window { left: 12px; bottom: 80px; width: calc(100vw - 24px); height: 480px; }
+	}
+</style>
+
+<script>
+	document.addEventListener('astro:page-load', () => {
+		const fab        = document.getElementById('chatbot-fab');
+		const windowEl   = document.getElementById('chatbot-window');
+		const closeBtn   = document.getElementById('close-chatbot');
+		const form       = document.getElementById('chatbot-form');
+		const input      = document.getElementById('chatbot-input') as HTMLInputElement;
+		const messages   = document.getElementById('chatbot-messages');
+		const typing     = document.getElementById('chatbot-typing');
+		const chips      = document.getElementById('chat-chips');
+		const sendBtn    = form?.querySelector('.chatbot-send-btn') as HTMLButtonElement;
+
+		if (!fab || !windowEl || !closeBtn || !form || !input || !messages || !typing) return;
+
+		// Session memory — kept in localStorage to persist across pages for the specific user
+		let history: Array<{role: string; text: string; buttons?: Array<{label:string;url:string}>}> = [];
+
+		try {
+			const saved = localStorage.getItem('salakawy_chat_history');
+			if (saved) {
+				const parsed = JSON.parse(saved);
+				if (Array.isArray(parsed) && parsed.length > 0) {
+					history = parsed;
+					// Render saved history
+					history.forEach(msg => {
+						if (msg.role === 'user') {
+							addBubble(msg.text, 'user', true);
+						} else {
+							addBotMessage(msg.text, msg.buttons || [], true);
+						}
+					});
+				}
+			}
+		} catch (e) {
+			console.error("Failed to load chat history", e);
+		}
+
+		function saveHistory() {
+			if (history.length > 10) history = history.slice(-10);
+			localStorage.setItem('salakawy_chat_history', JSON.stringify(history));
+		}
+
+		/* ── Toggle open/close ── */
+		fab.addEventListener('click', () => {
+			const isOpen = windowEl.classList.toggle('open');
+			windowEl.setAttribute('aria-hidden', String(!isOpen));
+			if (isOpen) input.focus();
+		});
+		closeBtn.addEventListener('click', () => {
+			windowEl.classList.remove('open');
+			windowEl.setAttribute('aria-hidden', 'true');
+		});
+
+		/* ── Quick chips — answered OFFLINE, no API call ── */
+		const CHIP_RESPONSES: Record<string, { text: string; buttons: Array<{label:string;url:string}> }> = {
+			"What plans are available?": {
+				text: "Coach Salakawy offers three plans: a 1-Month Diet Plan (personalized nutrition only), a 3-Month Coaching Plan (diet + workout + daily WhatsApp check-ins), and a 6-Month Coaching Plan (the most complete transformation experience). Check out all the details and pricing below!",
+				buttons: [{ label: "📋 View Packages", url: "/#packages" }]
+			},
+			"How do I pay?": {
+				text: "Payment is simple! You can pay via Vodafone Cash or InstaPay. Head to the Contact page to find the exact numbers, transfer the amount, then send a screenshot to the coach on WhatsApp to confirm.",
+				buttons: [{ label: "💳 Contact & Pay", url: "/contact-us" }]
+			},
+			"Show me real transformations": {
+				text: "The results speak for themselves! Mahmoud lost 41kg, Sara overcame insulin resistance and lost 30kg, and dozens more have completely changed their lives. See the full before & after wall below!",
+				buttons: [{ label: "💪 See Transformations", url: "/#transformations" }]
+			},
+			"I need motivation to start": {
+				text: "Coach Salakawy was once in your shoes — he was unhappy with how he looked, started the journey, fell in love with it, and never looked back. Your only competition is who you were yesterday. Check out the common obstacles page — you might find exactly what's been holding you back.",
+				buttons: [{ label: "🔥 Identify My Obstacles", url: "/common-challenges" }]
+			},
+		};
+
+		chips?.addEventListener('click', (e) => {
+			const target = e.target as HTMLElement;
+			if (target.classList.contains('chip')) {
+				const msg = target.dataset.msg || '';
+				if (!msg) return;
+				// Show user bubble
+				addBubble(msg, 'user');
+				
+				history.push({ role: 'user', text: msg });
+				saveHistory();
+
+				// Answer offline
+				const offline = CHIP_RESPONSES[msg];
+				if (offline) {
+					setTimeout(() => {
+						addBotMessage(offline.text, offline.buttons);
+						history.push({ role: 'bot', text: offline.text, buttons: offline.buttons });
+						saveHistory();
+					}, 500);
+				} else {
+					sendMessage(msg, true); // already added bubble
+				}
+			}
+		});
+
+		/* ── Form submit ── */
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			const text = input.value.trim();
+			if (!text) return;
+			input.value = '';
+			sendMessage(text, false);
+		});
+
+		async function sendMessage(text: string, bubbleAlreadyAdded = false) {
+			if (!bubbleAlreadyAdded) {
+				addBubble(text, 'user');
+				history.push({ role: 'user', text });
+				saveHistory();
+			}
+
+			// Show typing
+			typing!.style.display = 'flex';
+			messages!.scrollTop = messages!.scrollHeight;
+			if (sendBtn) sendBtn.disabled = true;
+
+			try {
+				const res = await fetch('/api/chat', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ message: text, history }),
+				});
+
+				const data = await res.json();
+				const { text: replyText, buttons = [] } = data;
+
+				// Small human-feel delay
+				await new Promise(r => setTimeout(r, 400));
+
+				typing!.style.display = 'none';
+				addBotMessage(replyText, buttons);
+
+				history.push({ role: 'bot', text: replyText, buttons });
+				saveHistory();
+			} catch (err) {
+				typing!.style.display = 'none';
+				addBotMessage("Sorry, I had trouble connecting. Please try again or reach out via WhatsApp!", [{ label: 'Contact Us', url: '/contact-us' }]);
+			} finally {
+				if (sendBtn) sendBtn.disabled = false;
+				input.focus();
+			}
+		}
+
+		function addBubble(text: string, sender: 'user' | 'bot', isRestore = false) {
+			const div = document.createElement('div');
+			div.className = `chat-msg ${sender}`;
+			div.innerHTML = `<p style="margin:0">${escHtml(text)}</p>`;
+			if (isRestore) div.style.animation = 'none'; // prevent crazy animation on load
+			messages!.insertBefore(div, typing);
+			if (!isRestore) scrollToBottom();
+		}
+
+		function addBotMessage(text: string, buttons: Array<{label: string; url: string}>, isRestore = false) {
+			const div = document.createElement('div');
+			div.className = 'chat-msg bot';
+			if (isRestore) div.style.animation = 'none';
+
+			let inner = `<p style="margin:0 0 ${buttons.length ? '0.5rem' : '0'} 0">${escHtml(text)}</p>`;
+
+			if (buttons.length) {
+				inner += `<div class="chat-nav-buttons">`;
+				for (const btn of buttons) {
+					inner += `<a href="${escHtml(btn.url)}" class="chat-nav-btn">${escHtml(btn.label)}</a>`;
+				}
+				inner += `</div>`;
+			}
+
+			div.innerHTML = inner;
+			messages!.insertBefore(div, typing);
+			if (!isRestore) scrollToBottom();
+		}
+
+		function scrollToBottom() {
+			messages!.scrollTop = messages!.scrollHeight;
+		}
+
+		function escHtml(str: string): string {
+			return str
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;');
+		}
+	});
+</script>

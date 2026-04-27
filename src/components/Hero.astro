@@ -4,21 +4,40 @@
 	<div class="hero-overlay"></div>
 	<div class="container hero-content">
 		<div class="hero-text fade-in-up">
-			<span class="badge">Premium Coaching</span>
+			<span class="badge">Changing Mindsets</span>
 			<h1 class="hero-title">
 				Real <span class="highlight">Transformation</span>. <br />
 				Not Just a Diet Plan.
 			</h1>
 			<p class="hero-subtitle delay-100">
-				I don’t sell a simple diet plan or workout routine. I sell a mindset and lifestyle you can follow for life. A diet plan you can get anywhere, but what I offer is the real transformation.
+				I don’t just sell a simple diet plan. I sell a mindset. <strong>Stop saying you'll start tomorrow</strong> and <strong>start acting today</strong>. A generic routine you can get anywhere, but if you are ready to hit the gym and <strong>build the body you deserve</strong>, this is your only stop.
 			</p>
 			<div class="hero-actions delay-200">
-				<a href="https://wa.me/201217720267" class="btn btn-primary" target="_blank" rel="noopener">Start Your Journey Now</a>
+				<a href="/contact-us" class="btn btn-primary">Start Your Journey Now</a>
 				<a href="#packages" class="btn btn-outline">Explore Packages</a>
 			</div>
 		</div>
 	</div>
 </section>
+
+<!-- Aggressive Scrolling Marquee -->
+<div class="marquee-container">
+    <div class="marquee-content" aria-hidden="true">
+        <span class="marquee-text">🔥 NO EXCUSES</span>
+        <span class="marquee-text">💪 GUARANTEED RESULTS</span>
+        <span class="marquee-text">🔥 STOP PROCRASTINATING</span>
+        <span class="marquee-text">🏆 OVER 11000+ TRANSFORMED</span>
+        <span class="marquee-text">🚀 YOU ARE NEXT</span>
+        <span class="marquee-text">⚡ CLAIM YOUR BODY TODAY</span>
+        <!-- duplicate for seamless loop -->
+        <span class="marquee-text">🔥 NO EXCUSES</span>
+        <span class="marquee-text">💪 GUARANTEED RESULTS</span>
+        <span class="marquee-text">🔥 STOP PROCRASTINATING</span>
+        <span class="marquee-text">🏆 OVER 11000+ TRANSFORMED</span>
+        <span class="marquee-text">🚀 YOU ARE NEXT</span>
+        <span class="marquee-text">⚡ CLAIM YOUR BODY TODAY</span>
+    </div>
+</div>
 
 <style>
 	.hero {
@@ -109,5 +128,36 @@
 		.hero-overlay {
 			background: linear-gradient(180deg, rgba(13, 14, 18, 0.8) 0%, rgba(13, 14, 18, 0.95) 100%);
 		}
+	}
+
+	/* Marquee Styles */
+	.marquee-container {
+		background: var(--accent-color);
+		overflow: hidden;
+		white-space: nowrap;
+		padding: 12px 0;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		border-top: 1px solid rgba(0,0,0,0.2);
+		z-index: 10;
+		display: flex;
+		align-items: center;
+	}
+	.marquee-content {
+		display: inline-block;
+		animation: marquee-scroll 18s linear infinite;
+	}
+	.marquee-text {
+		font-size: 1.15rem;
+		font-weight: 800;
+		color: #000;
+		margin: 0 20px;
+		letter-spacing: 0.5px;
+	}
+	@keyframes marquee-scroll {
+		0% { transform: translateX(0); }
+		100% { transform: translateX(-50%); }
 	}
 </style>

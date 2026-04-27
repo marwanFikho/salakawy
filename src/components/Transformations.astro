@@ -12,13 +12,13 @@ const transformations = [
 	},
 	{
 		image: "/transformations/4.jpg",
-		text: "Mahmoud lost 41kg in just 9 months, and we're not planning to stop!",
-		fullText: "Mahmoud lost 41kg in just 9 months - and never got bored. Why? Because I was checking in with him every single day, and he was always eating food he actually loves and staying full. That's what kept him going. And we're not done yet - we're on our way to losing 60kg together!"
+		text: "Dina trained with me for only a month — and it happened to be during Ramadan! In one month, we burned 6kg of fat.",
+		fullText: "Dina trained with me for only a month — and it happened to be during Ramadan! In just 30 days, she lost 4 kg. But the real transformation wasn’t just the scale — it was body recomposition."
 	},
 	{
 		image: "/transformations/5.jpg",
-		text: "Dina trained with me for only a month — and it happened to be during Ramadan! In one month, we burned 6kg of fat.",
-		fullText: "Dina trained with me for only a month — and it happened to be during Ramadan! In just 30 days, she lost 4 kg. But the real transformation wasn’t just the scale — it was body recomposition."
+		text: "Mahmoud lost 41kg in just 9 months, and we're not planning to stop!",
+		fullText: "Mahmoud lost 41kg in just 9 months - and never got bored. Why? Because I was checking in with him every single day, and he was always eating food he actually loves and staying full. That's what kept him going. And we're not done yet - we're on our way to losing 60kg together!"
 	},
 	{
 		image: "/transformations/6.jpg",
@@ -52,6 +52,11 @@ const transformations = [
 		</div>
 
 		<div class="scroller-container fade-in-up delay-200">
+			<!-- Scroll hint — floats over the first card -->
+			<div class="scroll-hint" id="scroll-hint">
+				<span class="hint-text">View other transformations</span>
+				<span class="hint-arrow">→</span>
+			</div>
 			<div class="transformations-slider">
 				{transformations.map((item, index) => (
 					<div class="transform-card glass-panel glass-panel-hover" data-fulltext={item.fullText} data-imgsrc={item.image}>
@@ -316,7 +321,64 @@ const transformations = [
 		from { opacity: 0; }
 		to { opacity: 1; }
 	}
+
+	/* ── Scroll Hint ───────────────────────────────── */
+	.scroller-container {
+		position: relative;
+	}
+
+	.scroll-hint {
+		position: absolute;
+		bottom: 115px;
+		left: 12%;
+		z-index: 10;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: rgba(0, 0, 0, 0.6);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		border: 1px solid rgba(255, 255, 0, 0.3);
+		padding: 8px 18px 8px 16px;
+		border-radius: 40px;
+		pointer-events: none;
+		transition: opacity 0.5s ease;
+	}
+
+	.scroll-hint.hidden {
+		opacity: 0;
+	}
+
+	.hint-text {
+		font-family: 'Caveat', cursive;
+		color: #fff;
+		font-size: 1.3rem;
+		line-height: 1;
+		white-space: nowrap;
+	}
+
+	.hint-arrow {
+		font-size: 1.5rem;
+		color: var(--accent-color);
+		display: inline-block;
+		animation: hint-bounce 1.1s ease-in-out infinite;
+	}
+
+	@keyframes hint-bounce {
+		0%, 100% { transform: translateX(0); }
+		50%       { transform: translateX(7px); }
+	}
+
+	@media (max-width: 768px) {
+		.scroll-hint {
+			left: 4%;
+			bottom: 100px;
+		}
+		.hint-text { font-size: 1.1rem; }
+	}
 </style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap">
 
 <script>
 	document.addEventListener('astro:page-load', () => {
@@ -325,6 +387,15 @@ const transformations = [
 		const modalImg = document.getElementById('modal-img');
 		const modalText = document.getElementById('modal-text');
 		const closeBtn = document.querySelector('.close-modal');
+		const scrollHint = document.getElementById('scroll-hint');
+
+		// Dismiss hint on first interaction
+		function dismissHint() {
+			if (scrollHint) {
+				scrollHint.classList.add('hidden');
+				setTimeout(() => scrollHint.remove(), 500);
+			}
+		}
 		
 		let isDown = false;
 		let startX;
@@ -332,6 +403,10 @@ const transformations = [
 		let isDragging = false;
 
 		if (slider) {
+			slider.addEventListener('scroll',     dismissHint, { once: true, passive: true });
+			slider.addEventListener('mousedown',  dismissHint, { once: true });
+			slider.addEventListener('touchstart', dismissHint, { once: true, passive: true });
+
 			slider.addEventListener('mousedown', (e) => {
 				isDown = true;
 				isDragging = false;

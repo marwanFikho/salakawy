@@ -2,7 +2,7 @@
 const faqs = [
 	{
 		q: "What happens after I subscribe to your program?",
-		a: "1. Personalized Plan Creation: You’ll receive a detailed questionnaire to gather all the necessary information about your lifestyle, including your daily routine and favorite foods.\n2. Tailored to Your Life: Your plan will be customized to fit seamlessly into your schedule, without requiring drastic changes.\n3. Quick Turnaround: Once you submit the questionnaire and complete the payment, your fully customized plan will be ready within 4-5 days."
+		a: "1. Personalized Plan Creation: You’ll receive a detailed questionnaire so we can craft the exact roadmap to **force your success**, without sacrificing your favorite foods.\n2. Tailored to Your Life: Your plan will be customized to fit your schedule, so you can **start acting today**.\n3. Quick Turnaround: Once you complete the payment, your customized plan will be ready within 4-5 days so you can **take control now**."
 	},
 	{
 		q: "What does the program include?",
@@ -10,11 +10,11 @@ const faqs = [
 	},
 	{
 		q: "What are the available package options?",
-		a: "🌟 Golden Package: Get daily responses on WhatsApp! You can message us anytime, and we’ll be there to support you every day (Custom Price).\n\n🌟 Silver Package: Get weekly responses on WhatsApp! We’ll check in once a week to keep you on track (Affordable Price).\n\nBoth packages offer the same great program!"
+		a: "We offer 4 levels of support to fit every need and budget:\n\n💎 **Platinum Package**: The ultimate VIP experience. I reach out to YOU proactively every day for weight & mindset checks. Maximum support.\n\n👑 **Gold Package**: Daily check-ins and direct phone access. You can call or message me anytime for instant support.\n\n🌟 **Silver Package**: Weekly check-ins directly with me via WhatsApp to keep you on track.\n\n👤 **Support Team**: Weekly follow-ups handled by my assistant team (plans are still designed by me).\n\nAll tiers include the same high-quality personalized diet and workout programs!"
 	},
 	{
 		q: "Refund Policy?",
-		a: "• 1-Month Package: No refunds are available once your plan has started, even if only 1 day has passed.\n• 3-Month Package:\n- First 30 days: charged for 1 month, remaining balance refunded.\n- Between 30 - 60 days: charged for 2 months, remaining balance refunded.\n- After 60 days: no refunds available."
+		a: "• **1-Month Package**:\n- If the plan has been sent: **No refunds available**.\n- If the plan has NOT been sent yet: You receive a **75% refund**.\n\n• **3-Month Package**:\n- Cancel within the first 30 days: The equivalent price of 1 month of the same package is deducted, and the rest is refunded.\n- Cancel within 30-60 days: The equivalent price of 2 months of the same package is deducted, and the rest is refunded.\n- After 60 days: **No refunds are sent** for any 3-month package."
 	}
 ];
 ---
@@ -37,7 +37,7 @@ const faqs = [
 						<div class="faq-answer-inner">
 							<div class="faq-answer-content">
 								{faq.a.split('\n').map((line) => (
-									<p>{line}</p>
+									<p set:html={line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')} />
 								))}
 							</div>
 						</div>

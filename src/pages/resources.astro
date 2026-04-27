@@ -1,119 +1,157 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
-
-const recipes = [
-    {
-        title: "High-Protein Chicken & Rice Bowl",
-        image: "/recipes/healthy_chicken_bowl_1776345885990.png",
-        macros: "Protein: 45g | Carbs: 55g | Fats: 12g",
-        calories: "520 kcal",
-        category: "Lunch / Dinner"
-    },
-    {
-        title: "Macro-Friendly Grilled Steak",
-        image: "/recipes/macro_beef_steak_1776345929014.png",
-        macros: "Protein: 50g | Carbs: 10g | Fats: 25g",
-        calories: "480 kcal",
-        category: "Dinner"
-    },
-    {
-        title: "Anabolic Berry Pancakes",
-        image: "/recipes/protein_pancakes_1776345904880.png",
-        macros: "Protein: 35g | Carbs: 45g | Fats: 8g",
-        calories: "390 kcal",
-        category: "Breakfast / Dessert"
-    }
-];
-
-const tips = [
-    {
-        title: "Understanding Progressive Overload",
-        content: "If you want to build muscle or tone up, you have to challenge your body more than you did last week. Add 1kg to your lifts, or do 1 extra rep.",
-        icon: "🏋️‍♂️"
-    },
-    {
-        title: "Why You're Not Losing Fat on 'Healthy Foods'",
-        content: "Nuts, olive oil, and avocados are healthy—but they are extremely calorie-dense. You still need to be in a caloric deficit to lose weight.",
-        icon: "🥑"
-    },
-    {
-        title: "The Role of Sleep in Fat Loss",
-        content: "Lack of sleep spikes cortisol and ghrelin (the hunger hormone). Getting 7-8 hours makes sticking to your diet 10x easier.",
-        icon: "💤"
-    }
-];
 ---
 
-<Layout title="Free Resources & Cookbook | Salakawy">
+<Layout title="Premium Resources, Roadmap & Tracker | Salakawy">
     <main class="resources-page">
         <!-- Hero Section -->
         <section class="resources-hero section">
             <div class="container text-center">
-                <span class="badge fade-in-up">Free Value</span>
-                <h1 class="hero-title fade-in-up delay-100">Nutrition & Training Vault</h1>
-                <p class="hero-desc fade-in-up delay-200">The most delicious diet recipes and the most effective training secrets. Everything you need to supercharge your transformation, absolutely free.</p>
+                <span class="badge fade-in-up">Unlock Your Potential</span>
+                <h1 class="hero-title fade-in-up delay-100">Transformation Toolbox</h1>
+                <p class="hero-desc fade-in-up delay-200">Tools, tracking, and elite knowledge to <strong>guarantee your results</strong>. No fluff, just <strong>take action today</strong>.</p>
             </div>
             <div class="glow-bg"></div>
         </section>
 
-        <!-- Cookbook Grid -->
-        <section class="section" id="cookbook">
+        <!-- 1. Transformation Roadmap Generator -->
+        <section class="section roadmap-section" id="roadmap">
             <div class="container">
-                <div class="section-header fade-in-up">
-                    <h2 class="section-title">The Anabolic Cookbook</h2>
-                    <p class="header-desc">Eating a diet shouldn't feel like a punishment. These are the exact meals I program for my clients' insane transformations.</p>
+                <div class="section-header text-center">
+                    <h2 class="section-title">Your 4-Week Roadmap</h2>
+                    <p class="header-desc">Select your primary goal to generate a customized strategy.</p>
                 </div>
 
-                <div class="recipe-grid">
-                    {recipes.map((recipe, index) => (
-                        <div class="recipe-card glass-panel glass-panel-hover fade-in-up" style={`animation-delay: ${index * 100}ms`}>
-                            <div class="recipe-img-wrap">
-                                <img src={recipe.image} alt={recipe.title} loading="lazy" />
-                                <span class="category-tag">{recipe.category}</span>
-                            </div>
-                            <div class="recipe-info">
-                                <h3>{recipe.title}</h3>
-                                <div class="macro-chips">
-                                    <span class="chip cal">{recipe.calories}</span>
-                                    <span class="chip">{recipe.macros}</span>
+                <div class="goal-selector">
+                    <button class="goal-btn active" data-goal="fat-loss">🔥 Fat Loss</button>
+                    <button class="goal-btn" data-goal="muscle-gain">💪 Muscle Gain</button>
+                    <button class="goal-btn" data-goal="recomp">⚡ Body Recomp</button>
+                </div>
+
+                <div class="roadmap-grid" id="roadmap-display">
+                    <!-- Roadmap steps will be injected here by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Instagram Elite Vault (Reels) -->
+        <section class="section ig-vault" id="library">
+            <div class="container">
+                <div class="section-header text-center" style="margin-bottom: 1rem; margin-top: -2rem;">
+                    <h2 class="section-title">Technique & Mindset Vault</h2>
+                    <p class="header-desc">Elite tips directly from my Instagram. No scrolling, just the best value.</p>
+                </div>
+
+                <div class="reels-grid">
+                    <!-- Mockup of Reels -->
+                    <a href="https://www.instagram.com/salakawy7" target="_blank" class="reel-card glass-panel fade-in-up">
+                        <div class="reel-thumb">
+                            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400" alt="Training Reel" />
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <div class="reel-info">
+                            <h4>Destroying Plateaus</h4>
+                            <span>Mindset</span>
+                        </div>
+                    </a>
+                   <a href="https://www.instagram.com/salakawy7" target="_blank" class="reel-card glass-panel fade-in-up delay-100">
+                        <div class="reel-thumb">
+                            <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=400" alt="Form Reel" />
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <div class="reel-info">
+                            <h4>Perfect Squat Form</h4>
+                            <span>Technique</span>
+                        </div>
+                    </a>
+                   <a href="https://www.instagram.com/salakawy7" target="_blank" class="reel-card glass-panel fade-in-up delay-200">
+                        <div class="reel-thumb">
+                            <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=400" alt="Diet Reel" />
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <div class="reel-info">
+                            <h4>High Protein Snacks</h4>
+                            <span>Nutrition</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="https://www.instagram.com/salakawy7" target="_blank" class="btn btn-outline">Follow for Daily Tips →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Pulse Progress Tracker -->
+        <section class="section tracker-section" id="tracker">
+            <div class="container">
+                <div class="grid-2 align-items-center">
+                    <div class="tracker-info fade-in-up">
+                        <h2 class="section-title">Pulse Tracker</h2>
+                        <p class="section-text" style="margin-bottom: 1rem;">What isn't measured isn't managed. Track your weight or waist measurement and watch your progress unfold. Data stays private on your device.</p>
+                        
+                        <form id="tracker-form" class="tracker-form glass-panel" style="padding: 1rem;">
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label>Value (kg or cm)</label>
+                                    <input type="number" step="0.1" id="track-val" required placeholder="e.g. 85.5" />
                                 </div>
-                                <button class="btn btn-primary w-100 unlock-btn">Unlock Recipe</button>
+                                <button type="submit" class="btn btn-primary">Log Data</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="chart-container glass-panel fade-in-up delay-200">
+                        <div class="chart-header">
+                            <h3>Your Journey</h3>
+                            <button id="clear-data" class="text-btn">Reset</button>
+                        </div>
+                        <div id="chart-mount" class="chart-mount">
+                            <!-- SVG Chart will be injected here -->
+                            <div id="empty-state">No data yet. Log your first point!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Myth Buster Quiz -->
+        <section class="section quiz-section" id="quiz" style="margin-top: -6rem;">
+            <div class="container text-center">
+                <div class="section-header">
+                    <h2 class="section-title">Myth Buster Quiz</h2>
+                    <p class="header-desc" style="margin-top: -1rem; margin-bottom: 1rem;">Test your fitness knowledge against common lies in the industry.</p>
+                </div>
+
+                <div class="quiz-container" id="quiz-mount" style="margin-top: 1rem;">
+                    <!-- Quiz Step -->
+                    <div class="quiz-card glass-panel" id="quiz-card">
+                        <div class="quiz-content">
+                            <span class="quiz-count" id="q-count">Question 1/5</span>
+                            <h3 id="q-text">Are carbs the main reason for fat gain?</h3>
+                            <div class="quiz-options">
+                                <button class="quiz-option true" data-answer="false">True</button>
+                                <button class="quiz-option false" data-answer="false">False</button>
                             </div>
                         </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-
-        <!-- Training Tips Grid -->
-        <section class="section" id="tips">
-            <div class="container">
-                <div class="section-header fade-in-up">
-                    <h2 class="section-title">Ultimate Training Secrets</h2>
-                    <p class="header-desc">Stop listening to TikTok noise. Here is the actual science behind changing your body composition.</p>
-                </div>
-
-                <div class="tips-grid">
-                    {tips.map((tip, index) => (
-                        <div class="tip-card glass-panel fade-in-up" style={`animation-delay: ${index * 100}ms`}>
-                            <div class="tip-icon">{tip.icon}</div>
-                            <h3>{tip.title}</h3>
-                            <p>{tip.content}</p>
+                        <div class="quiz-feedback hidden" id="q-feedback">
+                            <div class="feedback-icon" id="f-icon">❌</div>
+                            <h4 id="f-title">Wrong!</h4>
+                            <p id="f-desc">Carbs are energy. Total calories are the main driver of fat gain, not any specific macro.</p>
+                            <button class="btn btn-primary" id="next-q">Next Question</button>
                         </div>
-                    ))}
+                    </div>
                 </div>
             </div>
         </section>
-        
-        <!-- CTA Section -->
-        <section class="section cta-section">
+
+        <!-- Final CTA -->
+        <section class="section cta-section" style="margin-top: -6rem;">
             <div class="container text-center">
-                <h2>Ready for Your Custom Plan?</h2>
-                <p>Stop guessing. Get the meals, the workouts, and the accountability directly injected into your daily routine.</p>
-                <div class="btn-group">
-                    <a href="/#packages" class="btn btn-primary">View Packages</a>
-                    <a href="https://wa.me/201217720267" class="btn btn-outline" target="_blank" rel="noopener">Chat With Me</a>
+                <h2>Want a Plan Built for YOU?</h2>
+                <p>Stop experimenting and <strong>claim the body you deserve</strong> with a custom roadmap that will <strong>force your success</strong>.</p>
+                <div class="btn-group" style="margin-top: 1rem;">
+                    <a href="/#packages" class="btn btn-primary glare-effect">View Packages</a>
                 </div>
             </div>
         </section>
@@ -122,10 +160,9 @@ const tips = [
 </Layout>
 
 <style>
-    .resources-page {
-        padding-top: 80px; 
-    }
+    .resources-page { padding-top: 80px; overflow-x: hidden; }
 
+    /* Hero */
     .resources-hero {
         position: relative;
         overflow: hidden;
@@ -133,276 +170,339 @@ const tips = [
         align-items: center;
         justify-content: center;
         padding: 8rem 0 4rem;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        background: radial-gradient(circle at 50% 0%, rgba(255, 255, 0, 0.05), transparent);
     }
-
-    .glow-bg {
-        position: absolute;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(255, 255, 0, 0.1) 0%, rgba(0,0,0,0) 70%);
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: -1;
+    .hero-title {
+        font-size: clamp(2.5rem, 8vw, 4.5rem);
+        background: linear-gradient(135deg, #fff, var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.1;
+        font-weight: 800;
     }
-
-    .text-center {
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
     .badge {
-        display: inline-block;
         padding: 6px 16px;
         background: rgba(255, 255, 0, 0.1);
         color: var(--accent-color);
         border: 1px solid rgba(255, 255, 0, 0.3);
         border-radius: 30px;
         font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
         text-transform: uppercase;
-    }
-
-    .hero-title {
-        font-size: 4rem;
         margin-bottom: 1.5rem;
-        line-height: 1.1;
-        background: linear-gradient(90deg, #fff, #ffd700);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        display: inline-block;
     }
 
-    .hero-desc {
-        color: var(--text-muted);
-        font-size: 1.2rem;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    .section-header {
-        text-align: center;
-        margin-bottom: 4rem;
-    }
-
-    .section-title {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .header-desc {
-        color: var(--text-muted);
-        font-size: 1.1rem;
-        max-width: 700px;
-        margin: 0 auto;
-    }
-
-    /* Cookbook Grid */
-    .recipe-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
-    }
-
-    .recipe-card {
-        border-radius: var(--radius);
-        overflow: hidden;
+    /* Roadmap */
+    .goal-selector {
         display: flex;
-        flex-direction: column;
-        transition: transform var(--transition);
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 3rem;
     }
-
-    .recipe-img-wrap {
-        position: relative;
-        height: 250px;
-        overflow: hidden;
-    }
-
-    .recipe-img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform var(--transition);
-    }
-
-    .recipe-card:hover .recipe-img-wrap img {
-        transform: scale(1.05);
-    }
-
-    .category-tag {
-        position: absolute;
-        top: 15px;
-        left: 15px;
-        background: rgba(0,0,0,0.7);
-        backdrop-filter: blur(5px);
-        color: #fff;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .recipe-info {
-        padding: 1.5rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .recipe-info h3 {
-        font-size: 1.3rem;
-        margin-bottom: 1rem;
-        color: var(--text-main);
-    }
-
-    .macro-chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .chip {
+    .goal-btn {
+        padding: 12px 24px;
         background: rgba(255,255,255,0.05);
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-    }
-
-    .chip.cal {
-        background: rgba(255,255,0,0.1);
-        color: var(--accent-color);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #fff;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s;
         font-weight: 600;
     }
-
-    .w-100 {
-        width: 100%;
-        margin-top: auto;
-    }
-
-    .unlock-btn {
-        background: transparent;
-        border: 1px solid var(--accent-color);
-        color: var(--accent-color);
-    }
-
-    .unlock-btn:hover {
+    .goal-btn.active {
         background: var(--accent-color);
         color: #000;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 20px rgba(255, 255, 0, 0.2);
     }
 
-    /* Tips Grid */
-    .tips-grid {
+    .roadmap-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+    .roadmap-card {
+        padding: 2rem;
+        border-radius: var(--radius);
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        position: relative;
+    }
+    .step-num {
+        position: absolute;
+        top: -15px;
+        left: 20px;
+        width: 35px;
+        height: 35px;
+        background: var(--accent-color);
+        color: #000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+    }
+    .roadmap-card h4 { margin: 1rem 0 0.5rem; color: #fff; font-size: 1.2rem; }
+    .roadmap-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+    /* IG Vault */
+    .reels-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 2rem;
     }
+    .reel-card {
+        overflow: hidden;
+        padding: 0;
+        transition: transform 0.3s;
+    }
+    .reel-thumb {
+        height: 480px;
+        position: relative;
+    }
+    .reel-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .play-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3rem;
+        opacity: 0.8;
+    }
+    .reel-info { padding: 1.5rem; }
+    .reel-info h4 { margin: 0; color: #fff; }
+    .reel-info span { font-size: 0.85rem; color: var(--accent-color); }
 
-    .tip-card {
-        padding: 2rem;
-        border-radius: var(--radius);
-        transition: transform var(--transition);
-        border-top: 3px solid var(--text-muted);
+    /* Tracker */
+    .chart-container { height: 350px; display: flex; flex-direction: column; padding: 2rem; }
+    .chart-mount { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+    .input-row { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    .input-row input { flex: 1; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; }
+    .text-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 0.85rem; }
+
+    /* Quiz */
+    .quiz-container { max-width: 600px; margin: 0 auto; line-height: 1; }
+    .quiz-card { padding: 3rem; min-height: 300px; display: flex; align-items: center; justify-content: center; position: relative; }
+    .quiz-count { color: var(--accent-color); font-weight: 700; margin-bottom: 1rem; display: inline-block; }
+    .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+    .quiz-option { padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; border-radius: 12px; cursor: pointer; transition: 0.3s; font-size: 1.1rem; font-weight: 700; }
+    .quiz-option:hover { background: rgba(255,255,255,0.1); }
+    .feedback-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .quiz-feedback p { line-height: 1.6; margin: 1rem 0; color: var(--text-muted); }
+
+    .mt-3 { margin-top: 3rem; }
+    .hidden { display: none; }
+
+    /* Glare Effect */
+    .glare-effect {
+        position: relative;
+        overflow: hidden;
     }
 
-    .tip-card:hover {
-        transform: translateY(-5px);
-        border-top-color: var(--accent-color);
+    .glare-effect::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -100%;
+        width: 60%;
+        height: 200%;
+        background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.9) 50%,
+            rgba(255, 255, 255, 0) 100%
+        );
+        transform: rotate(25deg);
+        animation: glare-wave 5s infinite;
+        pointer-events: none;
+        filter: blur(5px);
     }
 
-    .tip-icon {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .tip-card h3 {
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-        color: #fff;
-    }
-
-    .tip-card p {
-        color: var(--text-muted);
-        line-height: 1.6;
-        font-size: 0.95rem;
-    }
-
-    /* CTA Section */
-    .cta-section {
-        background: linear-gradient(to top, rgba(255,255,0,0.05), transparent);
-        padding: 6rem 0;
-    }
-
-    .cta-section h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .cta-section p {
-        color: var(--text-muted);
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-        max-width: 600px;
-    }
-
-    .btn-group {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-    }
-
-    .btn-outline {
-        border: 1px solid rgba(255,255,255,0.2);
-        color: #fff;
-    }
-
-    .btn-outline:hover {
-        background: rgba(255,255,255,0.1);
+    @keyframes glare-wave {
+        0% { left: -100%; }
+        50% { left: 150%; }
+        100% { left: 150%; }
     }
 
     @media (max-width: 1024px) {
-        .recipe-grid, .tips-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+        .roadmap-grid { grid-template-columns: repeat(2, 1fr); }
+        .reels-grid { grid-template-columns: repeat(2, 1fr); }
     }
-
     @media (max-width: 768px) {
-        .hero-title {
-            font-size: 3rem;
-        }
-        .recipe-grid, .tips-grid {
-            grid-template-columns: 1fr;
-        }
-        .btn-group {
-            flex-direction: column;
-            width: 100%;
-        }
-        .btn-group .btn {
-            width: 100%;
-        }
+        .roadmap-grid, .reels-grid, .grid-2 { grid-template-columns: 1fr; }
+        .hero-title { font-size: 3rem; }
+        .reel-thumb { height: 400px; }
     }
 </style>
 
 <script>
-    // Add simple interaction to unlock buttons
-    document.addEventListener('DOMContentLoaded', () => {
-        const buttons = document.querySelectorAll('.unlock-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                this.innerHTML = "Subscribers Only 🔒";
-                this.style.background = 'transparent';
-                this.style.color = '#aa0000';
-                this.style.borderColor = '#aa0000';
-                setTimeout(() => {
-                    alert("This full recipe vault is managed directly via Salakawy's premium WhatsApp coaching packages.");
-                }, 300);
-            });
+import { gsap } from 'gsap';
+
+document.addEventListener('astro:page-load', () => {
+    /* ── Roadmap Generator ── */
+    const roadmaps = {
+        'fat-loss': [
+            { title: "Deficit Focus", desc: "Setting your caloric deficit (300-500 kcal). Prioritizing high-protein intake to preserve muscle." },
+            { title: "NEAT Optimization", desc: "Aiming for 10k steps daily and mastering meal prep for busy days." },
+            { title: "Hard Training", desc: "Heavy weightlifting to keep metabolism firing and signal muscle retention." },
+            { title: "Refining Progress", desc: "Adjusting calories and adding targeted cardio as fat loss plateaus occur." }
+        ],
+        'muscle-gain': [
+            { title: "Caloric Surplus", desc: "Slight surplus (200-300 kcal). Focus on complex carbs for training fuel." },
+            { title: "Volume Increase", desc: "Mastering form and gradually adding weight or reps (Progressive Overload)." },
+            { title: "Recovery Protocol", desc: "Mastering sleep (7-8h) and ensuring adequate post-workout nutrition." },
+            { title: "Peak Intensity", desc: "Pushing sets to technical failure and utilizing advanced training methods." }
+        ],
+        'recomp': [
+            { title: "Maintenance", desc: "Eating at maintenance or slight cycling between rest and training days." },
+            { title: "Macro Precision", desc: "Extremely high protein (2.2g/kg+) to build while losing fat slowly." },
+            { title: "Steady State", desc: "Combining heavy lifting with low-intensity steady-state cardio (LISS)." },
+            { title: "The Mirror Test", desc: "Ignoring the scale and focusing on measurements and body composition." }
+        ]
+    };
+
+    const roadmapMount = document.getElementById('roadmap-display');
+    const goalBtns = document.querySelectorAll('.goal-btn');
+
+    function renderRoadmap(goal) {
+        gsap.to(roadmapMount, { opacity: 0, y: 20, duration: 0.3, onComplete: () => {
+            roadmapMount.innerHTML = roadmaps[goal].map((step, i) => `
+                <div class="roadmap-card">
+                    <div class="step-num">${i + 1}</div>
+                    <h4>${step.title}</h4>
+                    <p>${step.desc}</p>
+                </div>
+            `).join('');
+            gsap.fromTo('.roadmap-card', { opacity: 0, y: 30 }, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out' });
+            gsap.to(roadmapMount, { opacity: 1, y: 0 });
+        }});
+    }
+
+    goalBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            goalBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderRoadmap(btn.dataset.goal);
         });
     });
+
+    renderRoadmap('fat-loss');
+
+    /* ── Progress Tracker ── */
+    const trackerForm = document.getElementById('tracker-form');
+    const chartMount = document.getElementById('chart-mount');
+    const clearBtn = document.getElementById('clear-data');
+
+    function getTrackerData() {
+        return JSON.parse(localStorage.getItem('salakawy_progress') || '[]');
+    }
+
+    function renderChart() {
+        const data = getTrackerData();
+        if (data.length < 1) {
+            chartMount.innerHTML = '<div id="empty-state">No data yet. Log your first point!</div>';
+            return;
+        }
+
+        const max = Math.max(...data.map(d => d.val)) * 1.1;
+        const width = chartMount.clientWidth;
+        const height = chartMount.clientHeight - 40;
+        const stepX = width / (data.length > 1 ? data.length - 1 : 1);
+        
+        let pathD = data.map((d, i) => {
+            const x = i * stepX;
+            const y = height - (d.val / max) * height;
+            return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+        }).join(' ');
+
+        chartMount.innerHTML = `
+            <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+                <path d="${pathD}" fill="none" stroke="#ffff00" stroke-width="4" stroke-linecap="round" class="chart-path" />
+                ${data.map((d, i) => {
+                    const x = i * stepX;
+                    const y = height - (d.val / max) * height;
+                    return `<circle cx="${x}" cy="${y}" r="6" fill="#ffff00" class="chart-dot" />`;
+                }).join('')}
+            </svg>
+        `;
+        
+        gsap.from('.chart-path', { strokeDasharray: 1000, strokeDashoffset: 1000, duration: 2, ease: 'power2.out' });
+        gsap.from('.chart-dot', { scale: 0, opacity: 0, stagger: 0.1, duration: 0.5 });
+    }
+
+    trackerForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = parseFloat(document.getElementById('track-val').value);
+        const data = getTrackerData();
+        data.push({ val, date: new Date().toISOString() });
+        localStorage.setItem('salakawy_progress', JSON.stringify(data));
+        renderChart();
+        trackerForm.reset();
+    });
+
+    clearBtn?.addEventListener('click', () => {
+        localStorage.removeItem('salakawy_progress');
+        renderChart();
+    });
+
+    renderChart();
+
+    /* ── Myth Buster Quiz ── */
+    const quizData = [
+        { q: "Do you need to sweat to have a good workout?", a: false, f: "Sweating is just your body cooling itself down. You can have an elite workout in a cold gym without a drop of sweat." },
+        { q: "Is targeting belly fat specifically (spot reduction) possible?", a: false, f: "Fat is lost system-wide based on your genetics. Doing 1000 crunches builds muscle under the fat, but doesn't burn the fat over it." },
+        { q: "Are eggs bad for your cholesterol?", a: false, f: "Dietary cholesterol doesn't impact most people's blood cholesterol significantly. Eggs are a superfood." },
+        { q: "Does muscle turn into fat if you stop training?", a: false, f: "Muscle and fat are two completely different tissues. You might lose muscle and gain fat simultaneously, but one never converts into the other." },
+        { q: "Is lifting heavy weights the only way to build muscle?", a: false, f: "Intensity and volume matter. You can build muscle with higher rep ranges (15-30) as long as you push close to failure." }
+    ];
+
+    let currentQ = 0;
+    const qCount = document.getElementById('q-count');
+    const qText = document.getElementById('q-text');
+    const qContent = document.querySelector('.quiz-content');
+    const qFeedback = document.getElementById('q-feedback');
+    const fIcon = document.getElementById('f-icon');
+    const fTitle = document.getElementById('f-title');
+    const fDesc = document.getElementById('f-desc');
+
+    function showFeedback(userAnswer) {
+        const correct = userAnswer === quizData[currentQ].a;
+        fIcon.innerHTML = correct ? '✅' : '❌';
+        fTitle.innerHTML = correct ? 'Correct!' : 'Wrong!';
+        fDesc.innerHTML = quizData[currentQ].f;
+
+        gsap.to(qContent, { opacity: 0, scale: 0.9, duration: 0.3, onComplete: () => {
+            qContent.classList.add('hidden');
+            qFeedback.classList.remove('hidden');
+            gsap.fromTo(qFeedback, { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 0.4 });
+        }});
+    }
+
+    document.querySelectorAll('.quiz-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const val = btn.classList.contains('true');
+            showFeedback(val);
+        });
+    });
+
+    document.getElementById('next-q').addEventListener('click', () => {
+        currentQ++;
+        if (currentQ >= quizData.length) {
+            fIcon.innerHTML = '🏆';
+            fTitle.innerHTML = 'Quiz Complete!';
+            fDesc.innerHTML = "You've mastered the basics. Now let's master your body.";
+            document.getElementById('next-q').innerHTML = "View Plans";
+            document.getElementById('next-q').onclick = () => window.location.href = "/#packages";
+            return;
+        }
+
+        gsap.to(qFeedback, { opacity: 0, scale: 0.9, duration: 0.3, onComplete: () => {
+            qFeedback.classList.add('hidden');
+            qContent.classList.remove('hidden');
+            qCount.innerHTML = `Question ${currentQ + 1}/${quizData.length}`;
+            qText.innerHTML = quizData[currentQ].q;
+            gsap.fromTo(qContent, { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 0.4 });
+        }});
+    });
+});
 </script>

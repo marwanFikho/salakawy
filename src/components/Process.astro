@@ -6,41 +6,44 @@
 		<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; margin-bottom: 4rem;">
 			<h2 class="section-title fade-in-up" style="margin-bottom: 0;">How It Works</h2>
 			<span class="badge fade-in-up" style="margin-bottom: 0;">The Process</span>
-			<p class="process-desc fade-in-up delay-100" style="margin-top: 0;">We take the guesswork out of your transformation. No random diets, no confused workouts—just a structured, proven path to your goals.</p>
+			<p class="process-desc fade-in-up delay-100" style="margin-top: 0;">We take the guesswork out of your transformation. No random diets, no confused workouts—just a structured, proven path to <strong>guarantee your results</strong>.</p>
 		</div>
 
-		<div class="timeline-container fade-in-up delay-200">
+		<div class="timeline-container" id="timeline-container">
+			<!-- Base line (always visible, grey) -->
 			<div class="timeline-line"></div>
+			<!-- Fill line (yellow, grows as you scroll) -->
+			<div class="timeline-line-fill" id="timeline-fill"></div>
 			
-			<div class="timeline-item">
-				<div class="timeline-dot">1</div>
-				<div class="timeline-content glass-panel glass-panel-hover">
+			<div class="timeline-item" data-index="0">
+				<div class="timeline-dot" id="dot-0">1</div>
+				<div class="timeline-content glass-panel">
 					<h3>In-Depth Assessment</h3>
-					<p>We start by analyzing your current body metrics, medical history, lifestyle, and food preferences. Everything revolves around you and your schedule.</p>
+					<p>We start by analyzing your current body metrics, medical history, lifestyle, and food preferences. Everything revolves around you. <strong>You deserve this level of attention</strong>.</p>
 				</div>
 			</div>
 			
-			<div class="timeline-item right">
-				<div class="timeline-dot">2</div>
-				<div class="timeline-content glass-panel glass-panel-hover">
+			<div class="timeline-item right" data-index="1">
+				<div class="timeline-dot" id="dot-1">2</div>
+				<div class="timeline-content glass-panel">
 					<h3>Custom Plan Generation</h3>
 					<p>Within 4-5 days, I design your flexible diet tailored to your BMR—featuring foods you actually love—alongside home or gym workouts with full video guides.</p>
 				</div>
 			</div>
 			
-			<div class="timeline-item">
-				<div class="timeline-dot">3</div>
-				<div class="timeline-content glass-panel glass-panel-hover">
+			<div class="timeline-item" data-index="2">
+				<div class="timeline-dot" id="dot-2">3</div>
+				<div class="timeline-content glass-panel">
 					<h3>Weekly or Daily Tracking</h3>
 					<p>We check in via WhatsApp (weekly or daily, depending on your package). We update your weight, review progress, and I adjust your plan to ensure you never plateau.</p>
 				</div>
 			</div>
 			
-			<div class="timeline-item right">
-				<div class="timeline-dot">4</div>
-				<div class="timeline-content glass-panel glass-panel-hover">
+			<div class="timeline-item right" data-index="3">
+				<div class="timeline-dot" id="dot-3">4</div>
+				<div class="timeline-content glass-panel">
 					<h3>Crushing Your Goals</h3>
-					<p>With zero cravings and consistent action, you achieve an incredible transformation and learn the sustainable habits required to keep it for life.</p>
+					<p>With zero cravings and consistent action, you <strong>claim the body you deserve</strong> and learn the sustainable habits required to keep it for life.</p>
 				</div>
 			</div>
 		</div>
@@ -69,24 +72,42 @@
 		text-align: center;
 	}
 
+	/* Timeline Layout */
 	.timeline-container {
 		position: relative;
 		max-width: 1000px;
 		margin: 0 auto;
-		padding: 2rem 0;
+		padding: 2rem 0 3rem;
 	}
 
+	/* Base grey line */
 	.timeline-line {
 		position: absolute;
 		left: 50%;
 		top: 0;
 		bottom: 0;
 		width: 4px;
-		background: linear-gradient(to bottom, var(--accent-color), rgba(255, 255, 0, 0.1));
+		background: rgba(255, 255, 255, 0.07);
 		transform: translateX(-50%);
 		border-radius: 4px;
 	}
 
+	/* Yellow fill line — grows step by step with card reveals */
+	.timeline-line-fill {
+		position: absolute;
+		left: 50%;
+		top: 0;
+		width: 4px;
+		height: 0; /* Controlled via JS */
+		background: linear-gradient(to bottom, var(--accent-color), rgba(255, 215, 0, 0.5));
+		transform: translateX(-50%);
+		transform-origin: top center;
+		border-radius: 4px;
+		transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+		box-shadow: 0 0 12px rgba(255, 255, 0, 0.3);
+	}
+
+	/* Timeline Items — start hidden */
 	.timeline-item {
 		display: flex;
 		justify-content: flex-end;
@@ -94,52 +115,87 @@
 		position: relative;
 		margin-bottom: 3rem;
 		width: 100%;
+		/* Initial hidden state */
+		opacity: 0;
+		transform: translateX(-60px);
+		transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+		            transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
 	.timeline-item.right {
 		justify-content: flex-start;
 		padding-right: 0;
 		padding-left: 50%;
+		/* Start offset to the right */
+		transform: translateX(60px);
 	}
 
+	/* Active: slide into place */
+	.timeline-item.active {
+		opacity: 1;
+		transform: translateX(0);
+	}
+
+	/* Stagger delays for nicer feel */
+	.timeline-item[data-index="0"] { transition-delay: 0s; }
+	.timeline-item[data-index="1"] { transition-delay: 0.1s; }
+	.timeline-item[data-index="2"] { transition-delay: 0.05s; }
+	.timeline-item[data-index="3"] { transition-delay: 0.05s; }
+
+	/* Dots */
 	.timeline-dot {
 		position: absolute;
 		left: 50%;
 		top: 20px;
 		transform: translate(-50%, -50%);
-		width: 40px;
-		height: 40px;
+		width: 44px;
+		height: 44px;
 		background: var(--bg-color);
-		border: 3px solid var(--accent-color);
+		border: 3px solid rgba(255, 255, 0, 0.3);
 		border-radius: 50%;
 		z-index: 2;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		font-weight: 800;
-		color: var(--accent-color);
+		color: rgba(255, 255, 0, 0.4);
 		font-size: 1.2rem;
-        box-shadow: 0 0 15px rgba(255, 255, 0, 0.2);
+		transition: background 0.4s ease, border-color 0.4s ease,
+		            color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
 	}
 
+	/* Active dot: fills yellow and pulses */
+	.timeline-dot.active {
+		background: var(--accent-color);
+		border-color: var(--accent-color);
+		color: #000;
+		box-shadow: 0 0 0 6px rgba(255, 255, 0, 0.15), 0 0 20px rgba(255, 255, 0, 0.4);
+		transform: translate(-50%, -50%) scale(1.1);
+		animation: dot-pulse 2s ease-in-out infinite;
+	}
+
+	@keyframes dot-pulse {
+		0%, 100% { box-shadow: 0 0 0 6px rgba(255, 255, 0, 0.15), 0 0 20px rgba(255, 255, 0, 0.4); }
+		50%       { box-shadow: 0 0 0 12px rgba(255, 255, 0, 0.05), 0 0 35px rgba(255, 255, 0, 0.6); }
+	}
+
+	/* Cards */
 	.timeline-content {
-		width: calc(100% - 50px);
+		width: calc(100% - 60px);
 		padding: 2rem;
 		border-radius: var(--radius);
-		transition: transform var(--transition);
+		transition: border-color 0.4s ease, box-shadow 0.4s ease;
+		border: 1px solid rgba(255, 255, 255, 0.05);
 	}
 
-	.timeline-item:not(.right) .timeline-content {
-		margin-right: 50px;
+	/* Active card gets a subtle accent glow */
+	.timeline-item.active .timeline-content {
+		border-color: rgba(255, 255, 0, 0.15);
+		box-shadow: 0 6px 30px rgba(255, 255, 0, 0.06);
 	}
 
-	.timeline-item.right .timeline-content {
-		margin-left: 50px;
-	}
-
-	.timeline-content:hover {
-		transform: translateY(-5px);
-	}
+	.timeline-item:not(.right) .timeline-content { margin-right: 50px; }
+	.timeline-item.right .timeline-content        { margin-left: 50px;  }
 
 	.timeline-content h3 {
 		font-size: 1.5rem;
@@ -149,33 +205,208 @@
 
 	.timeline-content p {
 		color: var(--text-muted);
-		line-height: 1.6;
+		line-height: 1.7;
 		margin: 0;
 	}
 
+	/* ── Mobile ──────────────────────────────── */
 	@media (max-width: 768px) {
-		.timeline-line {
-			left: 20px;
+		.timeline-line,
+		.timeline-line-fill {
+			left: 22px;
 		}
 
-		.timeline-item {
-			padding-right: 0;
-			justify-content: flex-start;
-		}
-
+		.timeline-item,
 		.timeline-item.right {
+			justify-content: flex-start;
+			padding-right: 0;
 			padding-left: 0;
+			/* All mobile cards slide in from the left */
+			transform: translateX(-40px);
+		}
+
+		.timeline-item.active,
+		.timeline-item.right.active {
+			transform: translateX(0);
 		}
 
 		.timeline-dot {
-			left: 20px;
+			left: 22px;
 		}
 
 		.timeline-item:not(.right) .timeline-content,
 		.timeline-item.right .timeline-content {
-			width: calc(100% - 60px);
-			margin-left: 60px;
+			width: calc(100% - 65px);
+			margin-left: 65px;
 			margin-right: 0;
 		}
+	}
+</style>
+
+<script>
+	function initProcessAnimation() {
+		const section = document.getElementById('timeline-container');
+		const fillBar = document.getElementById('timeline-fill');
+		const items   = document.querySelectorAll('.timeline-item');
+
+		if (!section || !fillBar) return;
+
+		// Helper: grow fill bar to the center of a dot
+		function growFillToDot(dot) {
+			const containerRect = section.getBoundingClientRect();
+			const dotRect       = dot.getBoundingClientRect();
+			// Both rects are viewport-relative, so the diff = position within the container
+			const dotCenter     = (dotRect.top - containerRect.top) + (dot.offsetHeight / 2);
+			fillBar.style.height = Math.max(0, dotCenter) + 'px';
+		}
+
+		// ── 2. Canvas particle blast ───────────────────────────────
+		function launchBlast() {
+			const canvas = document.createElement('canvas');
+			canvas.style.cssText = `
+				position: fixed; inset: 0; width: 100%; height: 100%;
+				pointer-events: none; z-index: 9998;
+			`;
+			document.body.appendChild(canvas);
+			const ctx = canvas.getContext('2d');
+			canvas.width  = window.innerWidth;
+			canvas.height = window.innerHeight;
+
+			const cx = canvas.width  / 2;
+			const cy = canvas.height / 2;
+
+			// Particle colours: yellows, whites, warm gold
+			const COLORS = [
+				'#ffd700','#fff176','#ffffff','#ffe57f',
+				'#ffec6e','#ffc107','#ffab00','#fffde7'
+			];
+
+			const COUNT = 200;
+			const particles = Array.from({ length: COUNT }, () => {
+				const angle  = Math.random() * Math.PI * 2;
+				const speed  = 3 + Math.random() * 12;
+				const size   = 3 + Math.random() * 7;
+				const shape  = Math.random() > 0.4 ? 'circle' : 'rect';
+				return {
+					x: cx, y: cy,
+					vx: Math.cos(angle) * speed,
+					vy: Math.sin(angle) * speed - (Math.random() * 4),  // slight upward bias
+					size,
+					color: COLORS[Math.floor(Math.random() * COLORS.length)],
+					alpha: 1,
+					decay: 0.012 + Math.random() * 0.018,
+					gravity: 0.15 + Math.random() * 0.1,
+					spin: (Math.random() - 0.5) * 0.3,
+					angle: Math.random() * Math.PI * 2,
+					shape,
+				};
+			});
+
+			let rafId;
+			function render() {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				let alive = false;
+				particles.forEach(p => {
+					if (p.alpha <= 0) return;
+					alive = true;
+					p.x     += p.vx;
+					p.y     += p.vy;
+					p.vy    += p.gravity;
+					p.vx    *= 0.99;
+					p.alpha -= p.decay;
+					p.angle += p.spin;
+
+					ctx.save();
+					ctx.globalAlpha = Math.max(0, p.alpha);
+					ctx.fillStyle   = p.color;
+					ctx.translate(p.x, p.y);
+					ctx.rotate(p.angle);
+
+					if (p.shape === 'circle') {
+						ctx.beginPath();
+						ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+						ctx.fill();
+					} else {
+						ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.55);
+					}
+					ctx.restore();
+				});
+
+				if (alive) {
+					rafId = requestAnimationFrame(render);
+				} else {
+					cancelAnimationFrame(rafId);
+					canvas.remove();
+				}
+			}
+
+			// Also do a flash overlay for extra impact
+			const flash = document.createElement('div');
+			flash.style.cssText = `
+				position: fixed; inset: 0; background: rgba(255,215,0,0.18);
+				pointer-events: none; z-index: 9997;
+				animation: blast-flash 0.6s ease-out forwards;
+			`;
+			document.body.appendChild(flash);
+			flash.addEventListener('animationend', () => flash.remove());
+
+			render();
+		}
+
+		// ── 3. Card & dot reveal ───────────────────────────────────
+		let blastFired = false;
+
+		// Observer for steps 1–3 (indices 0-2)
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (!entry.isIntersecting) return;
+				const item  = entry.target;
+				const index = parseInt(item.dataset.index);
+				item.classList.add('active');
+				const dot = document.getElementById(`dot-${index}`);
+				if (dot) {
+					dot.classList.add('active');
+					growFillToDot(dot); // fill bar grows to this dot simultaneously
+				}
+				observer.unobserve(item);
+			});
+		}, { threshold: 0.3, rootMargin: '0px 0px -40px 0px' });
+
+		// Dedicated observer for Step 4 (index 3) — needs 60% in view to fire
+		const finalObserver = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (!entry.isIntersecting) return;
+				const item = entry.target;
+				item.classList.add('active');
+				const dot = document.getElementById('dot-3');
+				if (dot) {
+					dot.classList.add('active');
+					growFillToDot(dot); // fill bar reaches final dot simultaneously
+				}
+				finalObserver.unobserve(item);
+
+				if (!blastFired) {
+					blastFired = true;
+					setTimeout(launchBlast, 400);
+				}
+			});
+		}, { threshold: 0.6 });
+
+		items.forEach(item => {
+			if (parseInt(item.dataset.index) === 3) {
+				finalObserver.observe(item);
+			} else {
+				observer.observe(item);
+			}
+		});
+	}
+
+	document.addEventListener('astro:page-load', initProcessAnimation);
+</script>
+
+<style>
+	@keyframes blast-flash {
+		0%   { opacity: 1; }
+		100% { opacity: 0; }
 	}
 </style>

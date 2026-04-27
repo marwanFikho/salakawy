@@ -2,33 +2,77 @@
 import Layout from '../layouts/Layout.astro';
 import fs from 'fs';
 import path from 'path';
+import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
 
-const imagesDir = path.join(process.cwd(), 'public', 'all-transformations');
-let images = [];
-try {
-	const allFiles = fs.readdirSync(imagesDir)
-		.filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file));
-	
-	const filtered = new Map();
-	
-	allFiles.forEach(file => {
-		// Strip common suffixes to find the base identity
-		// Handles: -373x400, -scaled, -1, -v2, etc.
-		const baseIdentity = file.replace(/(-(\d+x\d+|scaled|1|2|3|v\d+))(\.(jpg|jpeg|png|webp))$/i, '$3');
-		
-		// If we haven't seen this base identity, or if the current file is "better" (e.g. not a thumbnail)
-		// We prioritize files without 'x' dimensions in the name
-		if (!filtered.has(baseIdentity) || (!file.includes('x') && filtered.get(baseIdentity).includes('x'))) {
-			filtered.set(baseIdentity, file);
-		}
-	});
-	
-	images = Array.from(filtered.values());
-} catch (e) {
-	console.error('Could not read transformations directory', e);
+function getImagesFromDir(dirName) {
+    const dirPath = path.join(process.cwd(), 'public', 'all-transformations', dirName);
+    if (!fs.existsSync(dirPath)) return [];
+    
+    const allFiles = fs.readdirSync(dirPath)
+        .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file));
+        
+    const filtered = new Map();
+    allFiles.forEach(file => {
+        const baseIdentity = file.replace(/(-(\d+x\d+|scaled|1|2|3|v\d+))(\.(jpg|jpeg|png|webp))$/i, '$3');
+        if (!filtered.has(baseIdentity) || (!file.includes('x') && filtered.get(baseIdentity).includes('x'))) {
+            filtered.set(baseIdentity, file);
+        }
+    });
+
+    return Array.from(filtered.values()).map(img => `/all-transformations/${dirName}/${img}`);
 }
 
-const imagePaths = images.map(img => `/all-transformations/${img}`);
+const ageGroups = [
+	{
+		range: '8 – 20',
+		slug: '8-20',
+		label: 'Ages 8 – 20',
+		images: getImagesFromDir('8-20')
+	},
+	{
+		range: '20 – 30',
+		slug: '20-30',
+		label: 'Ages 20 – 30',
+		images: getImagesFromDir('20-30')
+	},
+	{
+		range: '30 – 40',
+		slug: '30-40',
+		label: 'Ages 30 – 40',
+		images: getImagesFromDir('30-40')
+	},
+	{
+		range: '40 – 50',
+		slug: '40-50',
+		label: 'Ages 40 – 50',
+		images: getImagesFromDir('40-50')
+	},
+	{
+		range: '50 – 70',
+		slug: '50-70',
+		label: 'Ages 50 – 70',
+		images: getImagesFromDir('50-70')
+	}
+];
+
+const miscImages = getImagesFromDir('MISC');
+const imagePaths = [...ageGroups.flatMap(group => group.images), ...miscImages];
+
+// A simple deterministic shuffle so the wall looks mixed nicely
+const seedRandom = (seed) => {
+    let m = 0x80000000, a = 1103515245, c = 12345;
+    let state = seed ? seed : Math.floor(Math.random() * (m - 1));
+    return function() {
+        state = (a * state + c) % m;
+        return state / (m - 1);
+    };
+};
+const rnd = seedRandom(12345);
+let shuffledImagePaths = [...imagePaths];
+for (let i = shuffledImagePaths.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [shuffledImagePaths[i], shuffledImagePaths[j]] = [shuffledImagePaths[j], shuffledImagePaths[i]];
+}
 ---
 
 <Layout title="All Transformations - Salakawy | Diet & Gym Coach">
@@ -42,15 +86,76 @@ const imagePaths = images.map(img => `/all-transformations/${img}`);
 				<p class="page-desc fade-in-up delay-100" style="margin-top: 0;">Witness the massive vault of real success stories and body transformations. Every journey matters!</p>
 			</div>
 
-			<div class="masonry-grid fade-in-up delay-200">
-				{imagePaths.map((image, i) => (
-					<div class="masonry-item glass-panel glass-panel-hover" style="padding: 10px; border-radius: 12px;">
-						<img src={image} alt={`Transformation ${i + 1}`} loading="lazy" style="border-radius: 8px;" />
-					</div>
-				))}
+		<!-- Age Group Filter Section -->
+		<div class="age-groups-section fade-in-up delay-150">
+			<h2 class="age-groups-title">Who We've Transformed</h2>
+			<p class="age-groups-sub">Every age. Every body. Real results.</p>
+			<div class="age-groups-row">
+				{ageGroups.map((group) => {
+					const hasImages = group.images.length > 0;
+					const displayImages = group.images.slice(0, 4); // show up to 4 in the pile
+
+					return (
+						<button 
+							class={`age-group-card ${!hasImages ? 'age-group-empty' : ''}`}
+							data-group={group.slug}
+							data-label={group.label}
+							data-images={group.images.join(',')}
+							aria-label={`Age group ${group.range}`}
+						>
+							<div class="pile-wrap">
+								{hasImages ? (
+									displayImages.reverse().map((src, idx) => (
+										<img 
+											class={`pile-img p${displayImages.length - idx}`} 
+											src={src} 
+											alt={`${group.label} transformation`} 
+										/>
+									))
+								) : (
+									<div class="pile-placeholder">
+										<span>+</span>
+									</div>
+								)}
+							</div>
+							<div class="age-label">
+								<span class="age-range">{group.range}</span>
+							</div>
+						</button>
+					);
+				})}
 			</div>
 		</div>
+
+		<div class="masonry-grid fade-in-up delay-200" id="masonry-grid">
+			{shuffledImagePaths.map((image, i) => (
+				<div class="masonry-item glass-panel glass-panel-hover" style="padding: 10px; border-radius: 12px;">
+					<img src={image} alt={`Transformation ${i + 1}`} loading="lazy" style="border-radius: 8px;" />
+				</div>
+			))}
+		</div>
+		</div>
 	</main>
+
+	<!-- Explosion Overlay -->
+	<div id="age-explode-overlay" aria-hidden="true">
+		<!-- Fullscreen Lightbox -->
+		<div id="explode-lightbox">
+			<img id="explode-lightbox-img" src="" alt="" />
+			<span class="lightbox-close-hint">Click anywhere to close</span>
+		</div>
+
+		<div class="explode-header" id="explode-header">
+			<span class="explode-title" id="explode-title"></span>
+			<span class="explode-hint">Drag photos · Click to enlarge</span>
+			<button class="explode-compact-btn" id="explode-compact-btn">
+				<span class="compact-icon">↙</span> Compact
+			</button>
+		</div>
+
+		<!-- Canvas: absolutely-positioned draggable cards land here -->
+		<div id="explode-canvas"></div>
+	</div>
 
     <!-- Gallery Modal -->
     <div id="gallery-modal" class="modal">
@@ -59,6 +164,8 @@ const imagePaths = images.map(img => `/all-transformations/${img}`);
         <img id="gallery-modal-img" class="modal-content-img" src="" alt="Full view" />
         <span class="nav-btn next-btn" aria-label="Next">&#10095;</span>
     </div>
+
+	<WhatsappFloatingButton />
 </Layout>
 
 <style>
@@ -115,9 +222,13 @@ const imagePaths = images.map(img => `/all-transformations/${img}`);
 		overflow: hidden;
 		background: var(--bg-color);
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-		transition: transform var(--transition);
+		transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease;
 		border: 1px solid rgba(255, 255, 255, 0.05);
         cursor: pointer;
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transform: translateZ(0);
 	}
 
 	.masonry-item:hover {
@@ -129,7 +240,9 @@ const imagePaths = images.map(img => `/all-transformations/${img}`);
 		width: 100%;
 		display: block;
 		height: auto;
-		transition: transform var(--transition);
+		transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+		will-change: transform;
+		transform: translateZ(0);
 	}
 
 	.masonry-item:hover img {
@@ -215,10 +328,553 @@ const imagePaths = images.map(img => `/all-transformations/${img}`);
 			column-count: 2;
 		}
 	}
+
+	/* ── Age Groups Section ─────────────────────────────── */
+	.age-groups-section {
+		margin-bottom: 4rem;
+		margin-top: 1rem;
+	}
+
+	.age-groups-title {
+		text-align: center;
+		font-size: 1.9rem;
+		font-weight: 800;
+		color: #fff;
+		margin-bottom: 0.4rem;
+		letter-spacing: -0.02em;
+	}
+
+	.age-groups-sub {
+		text-align: center;
+		color: var(--text-muted);
+		font-size: 1rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.age-groups-row {
+		display: flex;
+		gap: 1.5rem;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+
+	.age-group-card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		background: rgba(255, 255, 255, 0.03);
+		border: 1px solid rgba(255, 255, 255, 0.07);
+		border-radius: 20px;
+		padding: 1.5rem 1.25rem 1.25rem;
+		cursor: pointer;
+		transition: background 0.3s ease, border-color 0.3s ease,
+		            transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+		min-width: 140px;
+	}
+
+	.age-group-card:hover {
+		background: rgba(255, 255, 0, 0.05);
+		border-color: rgba(255, 255, 0, 0.25);
+		transform: translateY(-6px);
+		box-shadow: 0 12px 35px rgba(255, 255, 0, 0.1);
+	}
+
+	.age-group-card.active {
+		background: rgba(255, 255, 0, 0.08);
+		border-color: rgba(255, 255, 0, 0.5);
+		box-shadow: 0 0 0 3px rgba(255, 255, 0, 0.15), 0 12px 35px rgba(255, 255, 0, 0.15);
+		transform: translateY(-6px);
+	}
+
+	.age-group-card.age-group-empty {
+		opacity: 0.45;
+		cursor: default;
+		pointer-events: none;
+	}
+
+	/* Pile of photos */
+	.pile-wrap {
+		position: relative;
+		width: 100px;
+		height: 110px;
+	}
+
+	.pile-img {
+		position: absolute;
+		width: 85px;
+		height: 100px;
+		object-fit: cover;
+		border-radius: 8px;
+		border: 3px solid rgba(255,255,255,0.15);
+		box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+		transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease;
+		top: 5px;
+		left: 50%;
+	}
+
+	.pile-img.p1 { transform: translateX(-50%) rotate(-6deg); z-index: 1; }
+	.pile-img.p2 { transform: translateX(-50%) rotate(3deg);  z-index: 2; }
+	.pile-img.p3 { transform: translateX(-50%) rotate(9deg);  z-index: 3; }
+	.pile-img.p4 { transform: translateX(-50%) rotate(-2deg); z-index: 4; top: 0; }
+
+	/* Fan out on hover */
+	.age-group-card:hover .pile-img.p1 { transform: translateX(-50%) rotate(-16deg) translateY(5px); box-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+	.age-group-card:hover .pile-img.p2 { transform: translateX(-50%) rotate(0deg)   translateY(-3px); }
+	.age-group-card:hover .pile-img.p3 { transform: translateX(-50%) rotate(16deg)  translateY(5px); box-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+	.age-group-card:hover .pile-img.p4 { transform: translateX(-50%) rotate(6deg)   translateY(-8px); box-shadow: 0 8px 25px rgba(255,255,0,0.15); }
+
+	/* Placeholder for 30-40 */
+	.pile-placeholder {
+		width: 85px;
+		height: 100px;
+		border: 2px dashed rgba(255,255,255,0.2);
+		border-radius: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.pile-placeholder span {
+		font-size: 2rem;
+		color: rgba(255,255,255,0.3);
+		line-height: 1;
+	}
+
+	.age-label {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 3px;
+	}
+
+	.age-range {
+		font-size: 1.1rem;
+		font-weight: 800;
+		color: var(--accent-color);
+		letter-spacing: 0.02em;
+	}
+
+	.age-count {
+		font-size: 0.78rem;
+		color: var(--text-muted);
+		font-weight: 500;
+	}
+
+	@media (max-width: 600px) {
+		.age-groups-row  { gap: 0.75rem; }
+		.age-group-card  { min-width: 110px; padding: 1rem 0.75rem; }
+		.pile-wrap       { width: 80px; height: 90px; }
+		.pile-img        { width: 68px; height: 82px; }
+	}
+
+	/* ── Explosion Overlay ──────────────────────────────── */
+	#age-explode-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 8500;
+		background: rgba(5, 5, 8, 0.96);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.4s ease;
+	}
+
+	#age-explode-overlay.open {
+		opacity: 1;
+		pointer-events: all;
+	}
+
+	/* Sticky frosted header */
+	.explode-header {
+		position: sticky;
+		top: 0;
+		z-index: 10000;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1rem 2rem;
+		background: rgba(0, 0, 0, 0.7);
+		backdrop-filter: blur(16px);
+		border-bottom: 1px solid rgba(255, 255, 0, 0.12);
+		flex-shrink: 0;
+	}
+
+	.explode-title {
+		font-size: 1.3rem;
+		font-weight: 800;
+		color: var(--accent-color);
+		letter-spacing: -0.01em;
+	}
+
+	.explode-hint {
+		font-size: 0.8rem;
+		color: rgba(255,255,255,0.35);
+		letter-spacing: 0.04em;
+		flex: 1;
+		text-align: center;
+	}
+
+	.explode-compact-btn {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: rgba(255, 255, 0, 0.1);
+		border: 1px solid rgba(255, 255, 0, 0.3);
+		color: var(--accent-color);
+		font-size: 0.95rem;
+		font-weight: 700;
+		padding: 0.5rem 1.2rem;
+		border-radius: 30px;
+		cursor: pointer;
+		transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.explode-compact-btn:hover {
+		background: rgba(255, 255, 0, 0.2);
+		transform: scale(1.04);
+		box-shadow: 0 4px 15px rgba(255, 255, 0, 0.2);
+	}
+
+	.compact-icon {
+		font-size: 1.1rem;
+		display: inline-block;
+		transition: transform 0.3s ease;
+	}
+
+	.explode-compact-btn:hover .compact-icon {
+		transform: translate(-2px, 2px);
+	}
+
+
+	/* Canvas where draggable cards live */
+	#explode-canvas {
+		position: fixed;
+		top: 62px;    /* below the header bar */
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 8501;
+		overflow: hidden;
+		pointer-events: none; /* individual cards re-enable pointer events */
+	}
+
+	#age-explode-overlay.open #explode-canvas {
+		pointer-events: all;
+	}
+
+	/* explode-item — base hover glow only; all sizing via inline JS */
+	.explode-item-card:hover {
+		border-color: rgba(255, 255, 0, 0.5) !important;
+		box-shadow: 0 8px 28px rgba(255, 255, 0, 0.25) !important;
+	}
+
+	/* ── Fullscreen Lightbox (inside explosion overlay) ─── */
+	#explode-lightbox {
+		position: fixed;
+		inset: 0;
+		z-index: 9500;
+		background: rgba(0, 0, 0, 0.92);
+		backdrop-filter: blur(6px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.3s ease;
+	}
+
+	#explode-lightbox.open {
+		opacity: 1;
+		pointer-events: all;
+	}
+
+	#explode-lightbox img {
+		max-width: 90vw;
+		max-height: 88vh;
+		object-fit: contain;
+		border-radius: 10px;
+		box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+		transition: transform 0.35s cubic-bezier(0.34, 1.3, 0.64, 1), opacity 0.3s ease;
+		transform: scale(0.85);
+		opacity: 0;
+		pointer-events: none; /* clicks pass to backdrop = close */
+	}
+
+	#explode-lightbox.open img {
+		transform: scale(1);
+		opacity: 1;
+	}
+
+	.lightbox-close-hint {
+		position: absolute;
+		bottom: 1.5rem;
+		left: 50%;
+		transform: translateX(-50%);
+		color: rgba(255,255,255,0.45);
+		font-size: 0.85rem;
+		letter-spacing: 0.04em;
+		pointer-events: none;
+	}
+
+	@media (max-width: 640px) {
+		.explode-grid { grid-template-columns: repeat(auto-fill, 120px); gap: 0.6rem; }
+		.explode-item { width: 120px; }
+		.explode-scroll-area { padding: 1.5rem 1rem; }
+		.explode-header { padding: 0.75rem 1rem; }
+		.explode-item img { width: 120px; height: 90px; }
+	}
 </style>
 
 <script>
     document.addEventListener('astro:page-load', () => {
+
+		// ── Age Group Explosion — powered by GSAP ──────────────────
+		import('gsap').then(({ gsap }) => {
+
+		const overlay      = document.getElementById('age-explode-overlay');
+		const explodeCanvas= document.getElementById('explode-canvas');
+		const explodeTitle = document.getElementById('explode-title');
+		const compactBtn   = document.getElementById('explode-compact-btn');
+		const groupCards   = document.querySelectorAll('.age-group-card:not(.age-group-empty)');
+
+		const HEADER_H = 62;
+		let sourceCard = null;
+		let sourceRect = null;
+		let activeCards = [];
+
+		// Inject hover/drag styles (bypass Astro CSS scoping on JS-created elements)
+		if (!document.getElementById('explode-dynamic-styles')) {
+			const st = document.createElement('style');
+			st.id = 'explode-dynamic-styles';
+			st.textContent = [
+				'.explode-item-card:hover { border-color: rgba(255,255,0,.5) !important; box-shadow: 0 8px 28px rgba(255,255,0,.25) !important; }',
+				'.explode-item-card.is-dragging { cursor: grabbing !important; box-shadow: 0 20px 50px rgba(0,0,0,.9) !important; z-index: 200 !important; }'
+			].join('');
+			document.head.appendChild(st);
+		}
+
+		// ── Drag (synced with GSAP's transform state) ──────────────
+		function makeDraggable(el) {
+			let dragging = false, startX, startY, startGX, startGY, moved = false;
+
+			function start(cx, cy) {
+				dragging = true; moved = false;
+				startX = cx; startY = cy;
+				startGX = gsap.getProperty(el, 'x');
+				startGY = gsap.getProperty(el, 'y');
+				el.classList.add('is-dragging');
+				gsap.set(el, { zIndex: 100 });
+			}
+			function move(cx, cy) {
+				if (!dragging) return;
+				const dx = cx - startX, dy = cy - startY;
+				if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+				gsap.set(el, { x: startGX + dx, y: startGY + dy });
+			}
+			function finish() {
+				if (!dragging) return;
+				dragging = false;
+				el._wasMoved = moved;
+				el.classList.remove('is-dragging');
+				gsap.set(el, { zIndex: '' });
+			}
+
+			el.addEventListener('mousedown',  e => { e.preventDefault(); start(e.clientX, e.clientY); });
+			window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
+			window.addEventListener('mouseup', finish);
+			el.addEventListener('touchstart', e => start(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+			el.addEventListener('touchmove',  e => move(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+			el.addEventListener('touchend', finish);
+		}
+
+		// ── Open group (EXPLOSION) ─────────────────────────────────
+		function openGroup(card) {
+			sourceCard = card;
+			sourceRect = card.getBoundingClientRect();
+			const images = card.dataset.images.split(',');
+			const count  = images.length;
+			const label  = card.dataset.label || card.dataset.group;
+
+			const isMobile = window.innerWidth < 768;
+			const cardW = count === 1 ? (isMobile ? 280 : 500)
+			            : count <= 3  ? (isMobile ? 200 : 350)
+			            : count <= 6  ? (isMobile ? 160 : 260)
+			            :               (isMobile ? 130 : 200);
+			const cardH = Math.round(cardW * 0.75);
+
+			explodeCanvas.innerHTML = '';
+			activeCards = [];
+
+			// Jittered grid layout — guaranteed no overlaps
+			const canvasW = window.innerWidth;
+			const canvasH = window.innerHeight - HEADER_H;
+			const gap   = isMobile ? 14 : 36;
+			const cellW = cardW + gap;
+			const cellH = cardH + gap;
+			const cols  = Math.max(1, Math.floor(canvasW / cellW));
+			const rows  = Math.max(1, Math.floor(canvasH / cellH));
+			// Center the whole grid block on screen
+			const offsetX = (canvasW - (cols * cellW - gap)) / 2;
+			const offsetY = (canvasH - (rows * cellH - gap)) / 2;
+
+			// Shuffle slots so assignment order looks random
+			let slots = [];
+			for (let r = 0; r < rows; r++)
+				for (let c = 0; c < cols; c++)
+					slots.push({ r, c });
+			slots.sort(() => Math.random() - 0.5);
+
+			// Source pile center in canvas coords
+			const srcCX = sourceRect.left + sourceRect.width  / 2;
+			const srcCY = sourceRect.top  + sourceRect.height / 2 - HEADER_H;
+
+			// Show overlay (cards invisible at this point)
+			overlay.classList.add('open');
+			document.body.style.overflow = 'hidden';
+
+			images.forEach((src, i) => {
+				const slot = slots[i % slots.length];
+				const jx   = (Math.random() - 0.5) * gap * 0.6;
+				const jy   = (Math.random() - 0.5) * gap * 0.6;
+				// Final resting position (top-left of card)
+				const finalL = offsetX + slot.c * cellW + jx;
+				const finalT = offsetY + slot.r * cellH + jy;
+				// Final center
+				const finalCX = finalL + cardW / 2;
+				const finalCY = finalT + cardH / 2;
+				// Slight tilt — max ±8°
+				const rot = (Math.random() - 0.5) * 16;
+
+				const cardEl = document.createElement('div');
+				cardEl.className = 'explode-item-card';
+				Object.assign(cardEl.style, {
+					position: 'absolute',
+					left: finalL + 'px',   // GSAP will offset via transform
+					top:  finalT + 'px',
+					width:  cardW + 'px',
+					height: cardH + 'px',
+					borderRadius: Math.round(cardW * 0.05) + 'px',
+					overflow: 'hidden',
+					border:   '2px solid rgba(255,255,255,0.15)',
+					boxShadow:'0 4px 18px rgba(0,0,0,0.65)',
+					cursor:   'grab',
+					userSelect:'none',
+					zIndex:   String(10 + i),
+				});
+
+				const img = document.createElement('img');
+				Object.assign(img.style, {
+					width:'100%', height:'100%', objectFit:'cover',
+					display:'block', pointerEvents:'none',
+				});
+				img.src = src;
+				cardEl.appendChild(img);
+				explodeCanvas.appendChild(cardEl);
+				activeCards.push({ el: cardEl, cardW, cardH });
+
+				// GSAP: start collapsed at the source-card center, explode to slot
+				gsap.set(cardEl, {
+					opacity:  0,
+					scale:    0.05,
+					rotation: 0,
+					x: srcCX - finalCX,  // offset so transform-origin = final center
+					y: srcCY - finalCY,
+				});
+
+				gsap.to(cardEl, {
+					opacity:  1,
+					scale:    1,
+					rotation: rot,
+					x: 0,
+					y: 0,
+					duration: 0.75,
+					delay:    i * 0.07,
+					ease:     'back.out(1.6)',
+					onComplete: () => makeDraggable(cardEl),
+				});
+
+				cardEl.addEventListener('click', () => {
+					if (!cardEl._wasMoved) openLightbox(src);
+					cardEl._wasMoved = false;
+				});
+			});
+
+			explodeTitle.textContent = label;
+			groupCards.forEach(c => c.classList.remove('active'));
+			sourceCard.classList.add('active');
+		}
+
+		// ── Compact (implosion back to pile) ───────────────────────
+		function closeGroup() {
+			if (!activeCards.length || !sourceRect) return;
+
+			const destCX = sourceRect.left + sourceRect.width  / 2;
+			const destCY = sourceRect.top  + sourceRect.height / 2 - HEADER_H;
+
+			activeCards.forEach(({ el, cardW, cardH }, i) => {
+				// Current card center on screen
+				const r    = el.getBoundingClientRect();
+				const curCX = r.left + cardW / 2;
+				const curCY = r.top  + cardH / 2 - HEADER_H;
+
+				gsap.to(el, {
+					x: gsap.getProperty(el, 'x') + (destCX - curCX),
+					y: gsap.getProperty(el, 'y') + (destCY - curCY),
+					scale:    0.05,
+					opacity:  0,
+					rotation: 0,
+					duration: 0.5,
+					delay:    i * 0.03,
+					ease:     'power3.in',
+				});
+			});
+
+			const totalMs = activeCards.length * 30 + 600;
+			setTimeout(() => {
+				overlay.classList.remove('open');
+				document.body.style.overflow = '';
+				setTimeout(() => {
+					explodeCanvas.innerHTML = '';
+					activeCards = [];
+					if (sourceCard) sourceCard.classList.remove('active');
+					sourceCard = null;
+					sourceRect = null;
+				}, 400);
+			}, totalMs);
+		}
+
+		// ── Lightbox ───────────────────────────────────────────────
+		const lightbox    = document.getElementById('explode-lightbox');
+		const lightboxImg = document.getElementById('explode-lightbox-img');
+		function openLightbox(src) { lightboxImg.src = src; lightbox.classList.add('open'); }
+		function closeLightbox() {
+			lightbox.classList.remove('open');
+			setTimeout(() => { lightboxImg.src = ''; }, 300);
+		}
+		lightbox.addEventListener('click', closeLightbox);
+
+		// ── Attach all handlers ─────────────────────────────────────
+		groupCards.forEach(card => card.addEventListener('click', () => openGroup(card)));
+		if (compactBtn) compactBtn.addEventListener('click', closeGroup);
+		document.addEventListener('keydown', e => {
+			if (e.key === 'Escape') {
+				if (lightbox.classList.contains('open')) closeLightbox();
+				else if (overlay.classList.contains('open')) closeGroup();
+			}
+		});
+
+		}); // end import('gsap')
+
+
+
+
+
+
         const modal = document.getElementById('gallery-modal');
         const modalImg = document.getElementById('gallery-modal-img');
         const closeBtn = document.querySelector('.close-modal');

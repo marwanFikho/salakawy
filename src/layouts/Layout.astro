@@ -1,6 +1,12 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import { Image } from 'astro:assets';
+import logo from '../assets/salakawy-logo.png';
 import '../styles/global.css';
+import Chatbot from '../components/Chatbot.astro';
+import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
+import SocialProof from '../components/SocialProof.astro';
+import AggressiveConversion from '../components/AggressiveConversion.astro';
 
 export interface Props {
 	title: string;
@@ -14,10 +20,21 @@ const { title } = Astro.props;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
+		<link rel="icon" type="image/png" href="/salakawy-logo.png" />
 		<meta name="generator" content={Astro.generator} />
+		<!-- Open Graph & SEO -->
 		<meta name="description" content="I don't sell a simple diet plan or workout routine. I sell a mindset and lifestyle you can follow for life. Salakawy." />
 		<title>{title}</title>
+		
+		<!-- Progressive Web App (PWA) / Mobile Optimizations -->
+		<link rel="manifest" href="/manifest.json" />
+		<meta name="theme-color" content="#0d0e12" />
+		<meta name="color-scheme" content="dark" />
+		<link rel="apple-touch-icon" href="/favicon.png" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-title" content="Salakawy" />
+		<meta name="mobile-web-app-capable" content="yes" />
 		
 		<ClientRouter />
 
@@ -27,16 +44,28 @@ const { title } = Astro.props;
 		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 	</head>
 	<body>
+		<!-- Preloader -->
+		<div id="preloader" class="preloader">
+			<div class="preloader-content">
+				<div class="preloader-spinner"></div>
+				<div class="preloader-logo-container">
+					<img src="/salakawy-logo.png" alt="Salakawy" class="preloader-logo" />
+				</div>
+			</div>
+		</div>
+
 		<!-- Header / Nav -->
 		<header class="navbar">
 			<div class="container nav-content">
-				<a href="/" class="logo"><img src="https://salakawy7.com/wp-content/uploads/2024/09/S7-Logo-04.png" alt="Salakawy Gym Coach Logo"></a>
+				<a href="/" class="logo">
+					<img src="/salakawy-logo.png" alt="Salakawy Gym Coach Logo" height="40" width="auto" />
+				</a>
 				
                 <!-- Desktop Nav -->
                 <nav class="nav-links">
 					<a href="/#hero">Home</a>
 					<a href="/#transformations">Transformations</a>
-					<a href="/resources">Free Resources</a>
+					<a href="/resources">Resources</a>
 					<a href="/#packages">Packages</a>
 				</nav>
 
@@ -54,7 +83,7 @@ const { title } = Astro.props;
             <div class="mobile-menu-content">
                 <a href="/#hero" class="mobile-link">Home</a>
                 <a href="/#transformations" class="mobile-link">Transformations</a>
-                <a href="/resources" class="mobile-link">Free Resources</a>
+                <a href="/resources" class="mobile-link">Resources</a>
                 <a href="/#packages" class="mobile-link">Packages</a>
             </div>
         </nav>
@@ -64,8 +93,10 @@ const { title } = Astro.props;
 		<footer class="footer">
 			<div class="container footer-grid">
                 <div class="footer-col brand-col">
-                    <img src="https://salakawy7.com/wp-content/uploads/2024/09/S7-Logo-04.png" alt="Salakawy" class="footer-logo">
-                    <p class="brand-desc">I don't sell a simple diet plan or workout routine. I sell a mindset and lifestyle you can follow for life. No excuses, just smart flexible dieting.</p>
+                    <a href="/" class="footer-logo-link">
+                        <img src="/salakawy-logo.png" alt="Salakawy" class="footer-logo" height="80" width="auto" />
+                    </a>
+                    <p class="brand-desc">Not Just a Transformation. <br/> <strong>A Mindset for Life.</strong></p>
                 </div>
 
                 <div class="footer-col links-col">
@@ -100,7 +131,7 @@ const { title } = Astro.props;
 
         <!-- Scroll To Top Button -->
         <button id="scrollToTopBtn" class="scroll-top-btn" aria-label="Scroll to top">
-            ↑
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
         </button>
 
 		<style>
@@ -119,18 +150,23 @@ const { title } = Astro.props;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				height: 80px;
+				height: 60px;
 			}
 
 			.logo img {
-				height: 60px;
+				height: 40px;
 				width: auto;
 				display: block;
+				transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			}
+
+			.logo:hover img {
+				transform: scale(1.05);
 			}
 
 			.nav-links {
 				display: flex;
-				gap: 2rem;
+				gap: 1.5rem;
 			}
 
 			.nav-links a {
@@ -220,14 +256,14 @@ const { title } = Astro.props;
 
             /* Footer Styles */
 			.footer {
-				background-color: #080808;
-				padding: 5rem 0 0;
-				border-top: 1px solid rgba(255, 255, 255, 0.05);
+				background-color: #050505;
+				padding: 6rem 0 0;
+				border-top: 1px solid rgba(255, 255, 0, 0.05);
 			}
 			
             .footer-grid {
                 display: grid;
-                grid-template-columns: 2fr 1fr 1fr;
+                grid-template-columns: 1.5fr 1fr 1fr;
                 gap: 4rem;
                 padding-bottom: 4rem;
             }
@@ -239,8 +275,15 @@ const { title } = Astro.props;
             }
 
             .footer-logo {
-                height: 50px;
+                height: 100px;
+                width: auto;
                 margin-bottom: 1.5rem;
+                filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.1));
+                transition: transform 0.3s ease;
+            }
+
+            .footer-logo-link:hover .footer-logo {
+                transform: scale(1.05);
             }
 
             .brand-desc {
@@ -295,25 +338,26 @@ const { title } = Astro.props;
 
             .footer-bottom {
                 text-align: center;
-                padding: 1.5rem 0;
+                padding: 2rem 0;
                 border-top: 1px solid rgba(255,255,255,0.05);
                 font-size: 0.9rem;
                 color: var(--text-muted);
+                letter-spacing: 0.5px;
             }
 
             /* Scroll to Top */
             .scroll-top-btn {
                 position: fixed;
-                bottom: 30px;
+                bottom: 105px; /* Moved up to avoid overlap with WhatsApp button (30px + 60px + 15px gap) */
                 right: 30px;
-                width: 50px;
-                height: 50px;
+                width: 54px;
+                height: 54px;
                 border-radius: 50%;
-                background: var(--accent-color);
-                color: #000;
-                border: none;
-                font-size: 1.5rem;
-                font-weight: bold;
+                background: rgba(255, 255, 0, 0.1);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                color: var(--accent-color);
+                border: 2px solid var(--accent-color);
                 cursor: pointer;
                 display: flex;
                 align-items: center;
@@ -321,9 +365,13 @@ const { title } = Astro.props;
                 opacity: 0;
                 pointer-events: none;
                 transform: translateY(20px);
-                transition: all 0.3s ease;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 99;
-                box-shadow: 0 5px 15px rgba(255,255,0,0.2);
+                box-shadow: 0 0 20px rgba(255, 255, 0, 0.15);
+            }
+
+            .scroll-top-btn svg {
+                transition: transform 0.3s ease;
             }
 
             .scroll-top-btn.visible {
@@ -333,7 +381,14 @@ const { title } = Astro.props;
             }
 
             .scroll-top-btn:hover {
+                background: var(--accent-color);
+                color: #000;
                 transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(255, 255, 0, 0.4);
+            }
+
+            .scroll-top-btn:hover svg {
+                transform: translateY(-2px);
             }
 
             /* Responsive */
@@ -352,23 +407,166 @@ const { title } = Astro.props;
                     display: flex;
                 }
                 .scroll-top-btn {
-                    bottom: 20px;
+                    bottom: 85px; /* Adjusted for mobile (20px + 50px + 15px gap) */
                     right: 20px;
                     width: 45px;
                     height: 45px;
                 }
 			}
+
+            /* Preloader Styles */
+            .preloader {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #0d0e12;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+            }
+
+            .preloader-content {
+                position: relative;
+                width: 220px; /* Ample space for spinner + logo */
+                height: 220px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .preloader-spinner {
+                position: absolute;
+                width: 220px;
+                height: 220px;
+                border: 2px solid rgba(255, 255, 255, 0.03);
+                border-top: 2px solid var(--accent-color);
+                border-right: 2px solid var(--accent-color);
+                border-radius: 50%;
+                animation: preloader-spin 1s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+            }
+
+            @keyframes preloader-spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+
+            .preloader-logo-container {
+                width: 120px; /* Exact same logo size as before */
+                height: 120px;
+                position: relative;
+                -webkit-mask-image: url('/salakawy-logo.png');
+                mask-image: url('/salakawy-logo.png');
+                -webkit-mask-size: contain;
+                mask-image: url('/salakawy-logo.png');
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                -webkit-mask-position: center;
+                mask-position: center;
+                animation: preloader-pulse 2s infinite ease-in-out;
+            }
+
+            .preloader-logo {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                filter: brightness(1.2);
+            }
+
+            .preloader-logo-container::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -150%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    to right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.4) 45%,
+                    rgba(255, 255, 255, 0.9) 50%,
+                    rgba(255, 255, 255, 0.4) 55%,
+                    rgba(255, 255, 255, 0) 100%
+                );
+                transform: skewX(-20deg);
+                animation: preloader-shine 1.5s infinite ease-in-out;
+            }
+
+            @keyframes preloader-pulse {
+                0%, 100% { transform: scale(1); opacity: 0.8; }
+                50% { transform: scale(1.1); opacity: 1; }
+            }
+
+            @keyframes preloader-shine {
+                0% { left: -150%; }
+                100% { left: 150%; }
+            }
+
+            /* Reveal Animation */
+            .preloader.loaded {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+
+            .preloader.loaded .preloader-content {
+                animation: logo-zoom-reveal 1s forwards cubic-bezier(0.7, 0, 0.3, 1);
+            }
+
+            @keyframes logo-zoom-reveal {
+                0% { transform: scale(1); opacity: 1; filter: blur(0); }
+                100% { transform: scale(15); opacity: 0; filter: blur(10px); }
+            }
 		</style>
 
         <script>
-            // Native View Transitions ensures this script runs once and hooks properly across navigation
+            // Handle Preloader Logic
+            function initPreloader() {
+                const preloader = document.getElementById('preloader');
+                if (!preloader) return;
+
+                if (!preloader.classList.contains('loaded')) {
+                    document.body.style.overflow = 'hidden';
+                }
+
+                // Hide preloader once resources are ready
+                // Using a slight delay for a smoother effect
+                const triggerHide = () => {
+                    setTimeout(() => {
+                        preloader.classList.add('loaded');
+                        document.body.style.overflow = '';
+                    }, 500);
+                };
+
+                // Check if page session is brand new (window load) or navigation (astro:page-load)
+                if (document.readyState === 'complete') {
+                    triggerHide();
+                } else {
+                    window.addEventListener('load', triggerHide);
+                }
+            }
+
+            // Run on Every Load (Initial and Navigation)
             document.addEventListener('astro:page-load', () => {
+                // Initialize Preloader
+                initPreloader();
+
                 // Mobile Menu Logic
                 const hamburger = document.getElementById('hamburger-btn');
                 const mobileMenu = document.getElementById('mobile-menu');
                 const mobileLinks = document.querySelectorAll('.mobile-link');
                 
                 if (hamburger && mobileMenu) {
+                    // Reset menu state on new page load
+                    hamburger.classList.remove('active');
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+
                     hamburger.addEventListener('click', () => {
                         hamburger.classList.toggle('active');
                         mobileMenu.classList.toggle('active');
@@ -404,5 +602,9 @@ const { title } = Astro.props;
                 }
             });
         </script>
+		<WhatsappFloatingButton />
+		<Chatbot />
+        <SocialProof />
+        <AggressiveConversion />
 	</body>
 </html>

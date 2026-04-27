@@ -1,0 +1,180 @@
+---
+---
+<!-- Sticky CTA Banner -->
+<div class="sticky-cta" id="sticky-cta">
+    <div class="cta-inner">
+        <span>Ready to <strong>force your success</strong>?</span>
+        <a href="/contact-us" class="btn btn-primary compact-btn">Claim Your Body Now</a>
+    </div>
+</div>
+
+<!-- Exit Intent Modal -->
+<div class="exit-modal" id="exit-modal" aria-hidden="true">
+    <div class="exit-modal-content">
+        <button class="exit-close-btn" id="exit-close-btn">&times;</button>
+        <span class="exit-icon">⚠️</span>
+        <h2 class="exit-title">Leaving before you even begin?</h2>
+        <p class="exit-desc">Tomorrow is a myth. The time will pass anyway. <strong>Stop making excuses</strong> and claim your transformation today.</p>
+        <div class="exit-actions">
+            <a href="/contact-us" class="btn btn-primary btn-large">Force Your Success</a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Sticky CTA */
+.sticky-cta {
+    position: fixed;
+    top: 60px; /* Under navbar */
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(226, 255, 0, 0.4);
+    z-index: 900;
+    display: flex;
+    justify-content: center;
+    padding: 10px 20px;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.sticky-cta.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+.cta-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #fff;
+    font-size: 1rem;
+}
+.compact-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    box-shadow: 0 0 15px rgba(226,255,0,0.3);
+}
+
+/* Exit Modal */
+.exit-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 5, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.exit-modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+.exit-modal-content {
+    background: #111;
+    border: 2px solid var(--accent-color, #e2ff00);
+    border-radius: 12px;
+    padding: 2.5rem;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(226,255,0,0.15);
+}
+.exit-modal.active .exit-modal-content {
+    transform: scale(1);
+}
+.exit-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: #666;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.exit-close-btn:hover { color: #fff; }
+.exit-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 5px;
+}
+.exit-title {
+    color: #fff;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+.exit-desc {
+    color: #aaa;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+.exit-actions { display: flex; justify-content: center; }
+.btn-large {
+    font-size: 1.1rem;
+    padding: 14px 30px;
+    width: 100%;
+}
+@media (max-width: 600px) {
+    .cta-inner { flex-direction: column; gap: 10px; text-align: center;}
+    .exit-modal-content { max-width: 90%; padding: 2rem 1.5rem; }
+    .exit-title { font-size: 1.5rem; }
+}
+</style>
+
+<script>
+document.addEventListener('astro:page-load', () => {
+    // 1. Sticky CTA Logic
+    const stickyCta = document.getElementById('sticky-cta');
+    if (stickyCta) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 600 && !window.location.pathname.includes('contact')) {
+                stickyCta.classList.add('visible');
+            } else {
+                stickyCta.classList.remove('visible');
+            }
+        });
+    }
+
+    // 2. Exit Intent Logic
+    const exitModal = document.getElementById('exit-modal');
+    const exitCloseBtn = document.getElementById('exit-close-btn');
+    if (!exitModal || !exitCloseBtn) return;
+    
+    let hasTriggered = sessionStorage.getItem('salakawy_exit_intent') === 'true';
+
+    function triggerExitModal() {
+        if (hasTriggered || window.location.pathname.includes('contact')) return;
+        exitModal.classList.add('active');
+        hasTriggered = true;
+        sessionStorage.setItem('salakawy_exit_intent', 'true');
+    }
+
+    exitCloseBtn.addEventListener('click', () => {
+        exitModal.classList.remove('active');
+    });
+
+    document.addEventListener('mouseleave', (e) => {
+        if (e.clientY < 10) triggerExitModal();
+    });
+
+    let idleTimer;
+    function resetIdleTimer() {
+        if (hasTriggered) return;
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(triggerExitModal, 45000); 
+    }
+    ['mousemove', 'keydown', 'scroll', 'touchstart'].forEach(evt => 
+        window.addEventListener(evt, resetIdleTimer, {passive: true})
+    );
+    resetIdleTimer();
+});
+</script>

@@ -1,0 +1,271 @@
+---
+---
+<section class="section wizard-bg" id="plan-wizard">
+	<div class="container">
+		<div class="wizard-panel glass-panel">
+			<div class="wizard-header">
+				<h2><span class="highlight">Find Your Perfect Plan</span></h2>
+				<p>Takes 10 seconds. Powered by Salakawy's AI.</p>
+			</div>
+
+			<div class="wizard-frame" id="wizard-frame">
+				<!-- Step 1 -->
+				<div class="wizard-step active" id="step-1">
+					<h3>1. What is your primary goal right now?</h3>
+					<div class="options-grid">
+						<button class="w-btn" data-val="Lose fat aggressively">Lose fat aggressively</button>
+						<button class="w-btn" data-val="Build muscle & bulk">Build Muscle & Bulk</button>
+						<button class="w-btn" data-val="Recomp (Tone & tighten)">Recomp (Tone & Tighten)</button>
+						<button class="w-btn" data-val="Improve health & stamina">Health & Stamina</button>
+					</div>
+				</div>
+
+				<!-- Step 2 -->
+				<div class="wizard-step" id="step-2">
+					<h3>2. What is your biggest struggle?</h3>
+					<div class="options-grid">
+						<button class="w-btn" data-val="Sugar & Sweets Craving">Sugar & Sweets Craving</button>
+						<button class="w-btn" data-val="Emotional / Stress Eating">Emotional / Stress Eating</button>
+						<button class="w-btn" data-val="Low Motivation / Laziness">Low Motivation</button>
+						<button class="w-btn" data-val="Busy Schedule / No Time">Busy Schedule / No Time</button>
+						<button class="w-btn" data-val="Plateau (Stuck weight)">Hit a Plateau</button>
+					</div>
+				</div>
+
+				<!-- Step 3 -->
+				<div class="wizard-step" id="step-3">
+					<h3>3. How much support do you need?</h3>
+					<div class="options-grid">
+						<button class="w-btn" data-val="I need you on my neck every day">Push me EVERY DAY (VIP)</button>
+						<button class="w-btn" data-val="A weekly check-in is enough">Weekly Check-in is enough</button>
+						<button class="w-btn" data-val="Just give me the plan, I am disciplined">Just give me the plan</button>
+					</div>
+				</div>
+
+				<!-- Loading Step -->
+				<div class="wizard-step" id="step-load">
+					<h3>Analyzing Your Profile...</h3>
+					<div class="loader-container">
+						<div class="circuit-spinner"></div>
+					</div>
+					<p style="color:var(--text-muted); margin-top:1rem;">Feeding data into Salakawy AI...</p>
+				</div>
+
+				<!-- Result Step -->
+				<div class="wizard-step" id="step-result">
+					<span class="badge">Perfect Match</span>
+					<h3 id="result-package" style="font-size: 2rem; color: var(--accent-color); margin:0.5rem 0;">Silver Package</h3>
+					<p id="result-reason" style="font-size: 1.1rem; line-height:1.5; margin-bottom:1.5rem; color:#eee;">Reason</p>
+					
+					<div style="display:flex; gap:10px; justify-content:center;">
+						<a href="#packages" class="btn btn-outline">See Price</a>
+						<a href="/contact-us" class="btn btn-primary">Book Now</a>
+					</div>
+                    <button class="reset-wizard" id="reset-wiz">↻ Retake Quiz</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.wizard-bg {
+		background: linear-gradient(to bottom, var(--bg-color), #111216);
+		padding: 4rem 0;
+	}
+
+	.wizard-panel {
+		max-width: 800px;
+		margin: 0 auto;
+		background: rgba(20, 21, 26, 0.6);
+		border-radius: var(--radius);
+		padding: 3rem 2rem;
+		border: 1px solid rgba(226, 255, 0, 0.1);
+		box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+		text-align: center;
+        position: relative;
+        overflow: hidden;
+	}
+
+    .wizard-panel::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 4px;
+        background: var(--accent-color);
+        box-shadow: 0 0 15px var(--accent-color);
+    }
+
+	.wizard-header h2 {
+		font-size: 2.2rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.wizard-header p {
+		color: var(--text-muted);
+		margin-bottom: 2.5rem;
+	}
+
+	.wizard-frame {
+		position: relative;
+		min-height: 220px;
+	}
+
+	.wizard-step {
+		position: absolute;
+		top: 0; left: 0; width: 100%;
+		opacity: 0;
+		visibility: hidden;
+		transform: translateX(30px);
+		transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.wizard-step.active {
+		position: static;
+		opacity: 1;
+		visibility: visible;
+		transform: translateX(0);
+	}
+    
+    .wizard-step.exit {
+        position: absolute;
+        transform: translateX(-30px);
+    }
+
+	.wizard-step h3 {
+		font-size: 1.4rem;
+		margin-bottom: 1.5rem;
+		color: #fff;
+	}
+
+	.options-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: 1rem;
+	}
+
+	.w-btn {
+		background: rgba(255,255,255,0.03);
+		border: 1px solid rgba(255,255,255,0.1);
+		padding: 1rem;
+		border-radius: 12px;
+		color: #fff;
+		font-size: 1rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.25s ease;
+	}
+
+	.w-btn:hover {
+		background: rgba(226, 255, 0, 0.1);
+		border-color: rgba(226, 255, 0, 0.4);
+		transform: translateY(-2px);
+	}
+
+	.loader-container {
+		display: flex;
+		justify-content: center;
+		padding: 2rem 0;
+	}
+
+	.circuit-spinner {
+		width: 50px;
+		height: 50px;
+		border: 4px solid rgba(226, 255, 0, 0.2);
+		border-top-color: var(--accent-color);
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+	}
+
+    .reset-wizard {
+        background: none; border: none;
+        color: var(--text-muted);
+        margin-top: 1.5rem;
+        cursor: pointer; font-size: 0.9rem;
+    }
+    .reset-wizard:hover { color: #fff; }
+
+	@keyframes spin { 100% { transform: rotate(360deg); } }
+
+	@media (max-width: 600px) {
+		.options-grid { grid-template-columns: 1fr; }
+		.wizard-panel { padding: 2rem 1.5rem; }
+	}
+</style>
+
+<script>
+	document.addEventListener('astro:page-load', () => {
+		const steps = document.querySelectorAll('.wizard-step');
+		if (steps.length === 0) return;
+
+		let currentStep = 0;
+		let answers = { goal: '', struggle: '', support: '' };
+
+		const stepIds = ['step-1', 'step-2', 'step-3'];
+
+		function goToStep(index: number) {
+			steps.forEach(s => {
+                s.classList.remove('active');
+                s.classList.add('exit');
+            });
+            setTimeout(() => {
+                steps.forEach(s => s.classList.remove('exit'));
+			    steps[index].classList.add('active');
+            }, 50); // slight delay to allow exit animation class apply
+		}
+
+		// Attach click listeners to all option buttons
+		stepIds.forEach((id, idx) => {
+			const stepDiv = document.getElementById(id);
+			if (!stepDiv) return;
+			const btns = stepDiv.querySelectorAll('.w-btn');
+			btns.forEach(btn => {
+				btn.addEventListener('click', () => {
+					const val = (btn as HTMLElement).dataset.val || '';
+					if (idx === 0) answers.goal = val;
+					if (idx === 1) answers.struggle = val;
+					if (idx === 2) answers.support = val;
+
+					if (idx < 2) {
+						goToStep(idx + 1);
+					} else {
+						// Final step
+						submitWizard();
+					}
+				});
+			});
+		});
+
+		async function submitWizard() {
+			goToStep(3); // Load step
+
+			try {
+				const res = await fetch('/api/wizard', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(answers),
+				});
+				const data = await res.json();
+				
+				const resPkg = document.getElementById('result-package');
+				const resReason = document.getElementById('result-reason');
+				if (resPkg && resReason) {
+					resPkg.innerText = data.package;
+					resReason.innerText = data.reason;
+				}
+				goToStep(4); // Result step
+			} catch (e) {
+				const resPkg = document.getElementById('result-package');
+				if (resPkg) resPkg.innerText = "Silver Package";
+				goToStep(4);
+			}
+		}
+
+        const resetBtn = document.getElementById('reset-wiz');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                answers = { goal: '', struggle: '', support: '' };
+                goToStep(0);
+            });
+        }
+	});
+</script>

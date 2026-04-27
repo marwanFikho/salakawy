@@ -1,0 +1,669 @@
+---
+import Layout from '../layouts/Layout.astro';
+import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
+---
+
+<Layout title="Contact Us - Salakawy | Diet & Gym Coach">
+  <main class="contact-page">
+
+    <!-- Hero -->
+    <div class="contact-hero" id="contact-hero">
+      <div class="hero-bg-blur"></div>
+      <div class="container">
+        <div class="contact-hero-content">
+          <a href="/" class="back-link anim-item">← Back to Home</a>
+          <h1 class="contact-title anim-item">Get In Touch</h1>
+          <p class="contact-subtitle anim-item">Ready to <strong>take control now</strong>? Reach out directly and we will <strong>force your success</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Methods -->
+    <section class="section payment-section">
+      <div class="container">
+        <div class="section-label anim-item">💳 Payment Methods</div>
+        <h2 class="section-heading anim-item">How to Pay</h2>
+        <p class="section-sub anim-item">Contact either of the numbers below to discuss your plan and payment. We support the following methods:</p>
+
+        <div class="payment-cards">
+          <!-- Instapay -->
+          <div class="payment-card anim-item">
+            <div class="payment-icon instapay-white-bg">
+              <img src="/instapay-logo.png" alt="Instapay" class="method-logo" />
+            </div>
+            <h3 class="payment-name">Instapay</h3>
+            <p class="payment-desc">Fast bank-to-bank transfers via the Instapay app</p>
+            <div class="payment-badge">Instant Transfer</div>
+          </div>
+
+          <!-- Vodafone Cash -->
+          <div class="payment-card anim-item">
+            <div class="payment-icon no-bg">
+              <img src="/vodafone-cash-logo.png" alt="Vodafone Cash" class="method-logo" />
+            </div>
+            <h3 class="payment-name">Vodafone Cash</h3>
+            <p class="payment-desc">Send money easily using your Vodafone Cash wallet</p>
+            <div class="payment-badge">Mobile Wallet</div>
+          </div>
+
+          <!-- Card Payment -->
+          <div class="payment-card anim-item">
+            <div class="payment-icon card-icon">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+                <rect width="48" height="48" rx="12" fill="#1A1A2E"/>
+                <rect x="8" y="14" width="32" height="20" rx="4" stroke="white" stroke-width="2.5"/>
+                <line x1="8" y1="21" x2="40" y2="21" stroke="white" stroke-width="2.5"/>
+                <rect x="12" y="27" width="8" height="3" rx="1.5" fill="white"/>
+              </svg>
+            </div>
+            <h3 class="payment-name">Card Payment</h3>
+            <p class="payment-desc">Pay securely with your Visa or Mastercard debit/credit card</p>
+            <div class="payment-badge">Visa / Mastercard</div>
+          </div>
+        </div>
+
+        <p class="payment-note anim-item">
+          📞 Contact either number below for full pricing details, to choose your plan, and to complete your payment. We're here to walk you through every step.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contact Cards -->
+    <section class="section contacts-section">
+      <div class="container">
+        <div class="section-label anim-item">👋 Direct Contact</div>
+        <h2 class="section-heading anim-item">Talk To Us</h2>
+
+        <div class="contact-cards">
+
+          <!-- Coach Card -->
+          <div class="contact-card anim-item" id="coach-card">
+            <div class="contact-card-inner">
+              <div class="coach-photo-wrap">
+                <img src="/coach.jpg" alt="Coach Salakawy" class="coach-photo" />
+                <div class="coach-photo-ring"></div>
+              </div>
+              <div class="contact-info">
+                <div class="contact-role">Head Coach</div>
+                <h3 class="contact-name">Salakawy</h3>
+                <div class="phone-row">
+                  <span class="phone-number" id="coach-number">+20 121 772 0267</span>
+                  <button class="copy-btn" id="copy-coach" data-number="+20 121 772 0267" aria-label="Copy coach number">
+                    <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </button>
+                </div>
+                <div class="copy-toast hidden" id="toast-coach">✓ Number copied!</div>
+                <a href="/contact-us?open=coach" class="btn btn-primary wa-btn" id="wa-coach-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+                  </svg>
+                  Contact via WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nour Card -->
+          <div class="contact-card anim-item" id="nour-card">
+            <div class="contact-card-inner">
+              <div class="coach-photo-wrap no-photo">
+                <div class="initials-avatar">N</div>
+                <div class="coach-photo-ring nour-ring"></div>
+              </div>
+              <div class="contact-info">
+                <div class="contact-role">Assistant Coach</div>
+                <h3 class="contact-name">Nour</h3>
+                <div class="phone-row">
+                  <span class="phone-number" id="nour-number">+20 109 215 1540</span>
+                  <button class="copy-btn" id="copy-nour" data-number="+20 109 215 1540" aria-label="Copy Nour's number">
+                    <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </button>
+                </div>
+                <div class="copy-toast hidden" id="toast-nour">✓ Number copied!</div>
+                <a href="/contact-us?open=nour" class="btn btn-outline wa-btn" id="wa-nour-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+                  </svg>
+                  Contact via WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <WhatsappFloatingButton />
+  </main>
+</Layout>
+
+<style>
+  .contact-page {
+    min-height: 100vh;
+    background: var(--bg-color);
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  /* ── Hero ── */
+  .contact-hero {
+    position: relative;
+    padding: 120px 0 60px;
+    overflow: hidden;
+  }
+
+  .hero-bg-blur {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(255,255,0,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .contact-hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    width: fit-content;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--accent-color); }
+
+  .contact-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 30%, rgba(255,255,0,0.85) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  .contact-subtitle {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    max-width: 500px;
+  }
+
+  /* ── Shared Section Styles ── */
+  .section-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-heading {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    color: var(--text-muted);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    font-size: 1rem;
+  }
+
+  @media (max-width: 600px) {
+    .section-label, .section-heading, .section-sub {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  /* ── Payment Section ── */
+  .payment-section {
+    background: var(--surface-color);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    width: 100%;
+    position: relative;
+  }
+
+  .payment-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .payment-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .payment-card:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-8px);
+    box-shadow: 0 10px 40px -10px rgba(255, 255, 0, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .payment-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+  }
+
+  .payment-icon.no-bg {
+    background: transparent;
+  }
+
+  .payment-icon.instapay-white-bg {
+    background: #ffffff;
+  }
+
+  .method-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .payment-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .payment-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .payment-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(255,255,0,0.1);
+    border: 1px solid rgba(255,255,0,0.2);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    width: fit-content;
+  }
+
+  .payment-note {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* ── Contacts Section ── */
+  .contacts-section {
+    background: var(--bg-color);
+  }
+
+  .contact-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .contact-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 2.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .contact-card:hover {
+    border-color: rgba(255,255,0,0.2);
+    transform: translateY(-4px);
+  }
+
+  .contact-card:hover::before { opacity: 1; }
+
+  .contact-card-inner {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  /* Coach Photo */
+  .coach-photo-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .coach-photo {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+    border: 3px solid rgba(255,255,0,0.3);
+  }
+
+  .coach-photo-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--accent-color);
+    border-right-color: var(--accent-color);
+    animation: ring-spin 3s linear infinite;
+  }
+
+  .nour-ring {
+    border-top-color: rgba(255,255,255,0.4);
+    border-right-color: rgba(255,255,255,0.4);
+  }
+
+  @keyframes ring-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* Initials Avatar */
+  .initials-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #111, #222);
+    border: 2px dashed rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--accent-color);
+    text-shadow: 0 0 20px rgba(255, 255, 0, 0.3);
+  }
+
+  /* Contact Info */
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+  }
+
+  .contact-role {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent-color);
+  }
+
+  .contact-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1;
+  }
+
+  /* Phone Row */
+  .phone-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.4rem 0;
+  }
+
+  .phone-number {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+  }
+
+  .copy-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 7px 9px;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .copy-btn:hover {
+    background: rgba(255,255,0,0.1);
+    border-color: rgba(255,255,0,0.3);
+    color: var(--accent-color);
+  }
+
+  .copy-btn.copied {
+    background: rgba(34,197,94,0.15);
+    border-color: rgba(34,197,94,0.4);
+  }
+
+  .check-icon { display: none; }
+  .check-icon.showing { display: block; }
+  .copy-icon.hiding { display: none; }
+
+  .copy-toast {
+    font-size: 0.82rem;
+    color: #22c55e;
+    font-weight: 600;
+    height: 0;
+    overflow: hidden;
+    transition: height 0.2s;
+  }
+
+  .copy-toast.visible {
+    height: 1.2em;
+  }
+
+  /* WhatsApp Button */
+  .wa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    width: fit-content;
+    margin-top: 0.4rem;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text-main);
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .btn-outline:hover {
+    border-color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-main);
+  }
+
+  /* Hidden utility */
+  .hidden { display: none !important; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .contact-cards { grid-template-columns: 1fr; }
+    .payment-cards { grid-template-columns: 1fr; }
+    .contact-card-inner { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+  }
+
+  @media (max-width: 600px) {
+    .contact-hero { padding: 100px 0 40px; }
+    .payment-cards { gap: 1rem; width: 100%; }
+    .contact-card { padding: 2.5rem 1.5rem; }
+    .payment-note { text-align: center; }
+    .contact-card-inner { align-items: center; text-align: center; }
+    .phone-row { justify-content: center; }
+    .wa-btn { align-self: center; }
+    .contact-info { align-items: center; }
+  }
+</style>
+
+<script>
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+document.addEventListener('astro:page-load', () => {
+  if (!document.querySelector('.contact-page')) return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // ── Staggered hero entrance
+  gsap.fromTo('.contact-hero .anim-item',
+    { opacity: 0, y: 40 },
+    { opacity: 1, y: 0, stagger: 0.15, duration: 0.8, ease: 'power3.out', delay: 0.1 }
+  );
+
+  // ── Section elements animate in on scroll
+  gsap.utils.toArray('.payment-card').forEach((card, i) => {
+    gsap.fromTo(card,
+      { opacity: 0, y: 50, scale: 0.95 },
+      {
+        opacity: 1, y: 0, scale: 1,
+        duration: 0.7, ease: 'back.out(1.4)',
+        delay: i * 0.1,
+        scrollTrigger: { trigger: card, start: 'top 85%', once: true }
+      }
+    );
+  });
+
+  gsap.utils.toArray('.contact-card').forEach((card, i) => {
+    gsap.fromTo(card,
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.8, ease: 'power3.out',
+        delay: i * 0.15,
+        scrollTrigger: { trigger: card, start: 'top 85%', once: true }
+      }
+    );
+  });
+
+  const scrollLabels = document.querySelectorAll('.section-label, .section-heading, .section-sub, .payment-note');
+  scrollLabels.forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 25 },
+      {
+        opacity: 1, y: 0, duration: 0.65, ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+      }
+    );
+  });
+
+  // ── Copy buttons
+  function setupCopyBtn(btnId, toastId) {
+    const btn = document.getElementById(btnId);
+    const toast = document.getElementById(toastId);
+    if (!btn || !toast) return;
+
+    btn.addEventListener('click', async () => {
+      const number = btn.dataset.number;
+      try {
+        await navigator.clipboard.writeText(number);
+      } catch {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = number;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+
+      // Swap icons
+      btn.querySelector('.copy-icon').classList.add('hiding');
+      btn.querySelector('.check-icon').classList.add('showing');
+      btn.classList.add('copied');
+      toast.classList.remove('hidden');
+
+      // Animate toast in
+      gsap.fromTo(toast, { opacity: 0, y: -6 }, { opacity: 1, y: 0, duration: 0.3 });
+      toast.classList.add('visible');
+
+      setTimeout(() => {
+        gsap.to(toast, {
+          opacity: 0, y: -6, duration: 0.3,
+          onComplete: () => {
+            toast.classList.remove('visible');
+            toast.classList.add('hidden');
+            btn.querySelector('.copy-icon').classList.remove('hiding');
+            btn.querySelector('.check-icon').classList.remove('showing');
+            btn.classList.remove('copied');
+          }
+        });
+      }, 2500);
+    });
+  }
+
+  setupCopyBtn('copy-coach', 'toast-coach');
+  setupCopyBtn('copy-nour',  'toast-nour');
+
+  // ── WhatsApp buttons — open wa.me in new tab
+  document.getElementById('wa-coach-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.open('https://wa.me/201217720267', '_blank', 'noopener');
+  });
+
+  document.getElementById('wa-nour-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.open('https://wa.me/201092151540', '_blank', 'noopener');
+  });
+});
+</script>

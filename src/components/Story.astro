@@ -4,7 +4,7 @@
 <section id="story" class="section story-bg">
 	<div class="container">
 		<div style="text-align: center; width: 100%; margin-bottom: 3rem;">
-			<h2 class="section-title fade-in-up">The Coach Behind the Results</h2>
+			<h2 class="section-title fade-in-up">The Coach Behind it all...</h2>
 		</div>
 		<div class="grid-2 story-content fade-in-up delay-100">
 			
@@ -15,16 +15,16 @@
 			<div class="story-text">
 				<h3>Turning Fitness into a Lifestyle</h3>
 				<p>
-					Since 2021, I've helped <strong>over 7,000 people</strong> transform their bodies and health. 
-					My mission is to show everyone that proper nutrition does not mean starving yourself or eating boring food.
+					Since 2021, I've helped <strong>over 11,000 people</strong> transform their bodies. 
+					My mission is to show you that <strong>you can achieve greatness</strong> without starving yourself. But you have to <strong>take control now</strong>.
 				</p>
 				<p>
-					I've worked with clients as young as 8 years old and up to 71. 
-					I've guided people through some of the toughest cases, including <strong>PCOS, insulin resistance, type 1 & 2 diabetes, and even cancer.</strong>
+					I don't just provide a set of recipes or exercises; I help you rewrite the way you think about food, training, and yourself. 
+					<strong>True progress doesn't start in the gym... It starts when you make a decision</strong>.
 				</p>
 				<p>
-					No matter your age, condition, or schedule, I tailor the perfect flexible diet plan that ensures you actually enjoy the process. 
-					A diet plan you can get anywhere, but what I offer is a real transformation mindset.
+					Anyone can follow a plan for a week, but my goal is to help you build the <strong>mental resilience</strong> to stop making excuses. It's time to put down the junk food, hit the weights, and <strong>claim your transformation</strong>. 
+					A diet plan you can get anywhere, but what I offer is a permanent <span class="sparkle-text">lifestyle shift</span>.
 				</p>
 			</div>
 
@@ -86,6 +86,39 @@
 	.story-text p strong {
 		color: var(--text-main);
 	}
+
+    /* Sparkle Text Effect */
+    .sparkle-text {
+        color: var(--accent-color);
+        font-weight: 700;
+        position: relative;
+        display: inline-block;
+    }
+
+    .sparkle-text::before, .sparkle-text::after {
+        content: "✨";
+        position: absolute;
+        font-size: 0.8rem;
+        opacity: 0;
+        animation: text-sparkle 2s infinite;
+    }
+
+    .sparkle-text::before {
+        top: -10px;
+        left: -10px;
+        animation-delay: 0.5s;
+    }
+
+    .sparkle-text::after {
+        bottom: -5px;
+        right: -15px;
+        animation-delay: 1.2s;
+    }
+
+    @keyframes text-sparkle {
+        0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+        50% { opacity: 1; transform: scale(1.2) rotate(20deg); }
+    }
 
 	@media (max-width: 768px) {
 		.story-content {
