@@ -44,14 +44,46 @@ const { title } = Astro.props;
 		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 	</head>
 	<body>
+        <!-- Wavy Fire Filter SVG -->
+        <svg aria-hidden="true" focusable="false" style="width:0;height:0;position:absolute;">
+            <defs>
+                <filter id="wavy-fire" x="-30%" y="-50%" width="160%" height="200%" color-interpolation-filters="sRGB">
+                    <feMorphology operator="dilate" radius="3" in="SourceAlpha" result="expanded" />
+                    
+                    <!-- We generate a larger noise map so we can pan it upwards smoothly without recalculating -->
+                    <feTurbulence type="fractalNoise" baseFrequency="0.04 0.08" numOctaves="2" result="noise" />
+                    
+                    <!-- Pan the noise to create a smooth, continuous rising flame effect instead of choppy re-renders -->
+                    <feOffset dx="0" dy="0" in="noise" result="movingNoise">
+                        <animate attributeName="dy" values="40; -40" dur="1s" repeatCount="indefinite" />
+                    </feOffset>
+                    
+                    <feDisplacementMap in="expanded" in2="movingNoise" scale="25" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+                    
+                    <!-- We animate the displacement scale slightly to give the flames a breathing/pulsing feel alongside the movement -->
+                    <feColorMatrix in="displaced" type="matrix" values="
+                        1 0 0 0 1
+                        0 1 0 0 0.5
+                        0 0 0 0 0
+                        0 0 0 1 -0.1" result="colored_flames" />
+                        
+                    <feGaussianBlur in="colored_flames" stdDeviation="1.5" result="smooth_flames" />
+                    <feMerge>
+                        <feMergeNode in="smooth_flames" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            </defs>
+        </svg>
+
 		<!-- Preloader -->
 		<div id="preloader" class="preloader">
-			<div class="preloader-content">
-				<div class="preloader-spinner"></div>
-				<div class="preloader-logo-container">
-					<img src="/salakawy-logo.png" alt="Salakawy" class="preloader-logo" />
-				</div>
-			</div>
+            <!-- The dark screen that becomes a logo-shaped hole -->
+            <div class="preloader-overlay"></div>
+            <!-- The wavy, fiery logo -->
+            <div class="preloader-fire-logo">
+                <img src="/salakawy-logo.png" alt="Salakawy" class="preloader-logo" />
+            </div>
 		</div>
 
 		<!-- Header / Nav -->
@@ -420,110 +452,107 @@ const { title } = Astro.props;
             /* Preloader Styles */
             .preloader {
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: #0d0e12;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                inset: 0;
                 z-index: 9999;
-                transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
-            }
-
-            .preloader-content {
-                position: relative;
-                width: 220px; /* Ample space for spinner + logo */
-                height: 220px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                pointer-events: all;
             }
 
-            .preloader-spinner {
-                position: absolute;
-                width: 220px;
-                height: 220px;
-                border: 2px solid rgba(255, 255, 255, 0.03);
-                border-top: 2px solid var(--accent-color);
-                border-right: 2px solid var(--accent-color);
-                border-radius: 50%;
-                animation: preloader-spin 1s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
-            }
-
-            @keyframes preloader-spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-            }
-
-            .preloader-logo-container {
-                width: 120px; /* Exact same logo size as before */
-                height: 120px;
-                position: relative;
-                -webkit-mask-image: url('/salakawy-logo.png');
-                mask-image: url('/salakawy-logo.png');
-                -webkit-mask-size: contain;
-                mask-image: url('/salakawy-logo.png');
-                -webkit-mask-size: contain;
-                mask-size: contain;
-                -webkit-mask-repeat: no-repeat;
-                mask-repeat: no-repeat;
-                -webkit-mask-position: center;
-                mask-position: center;
-                animation: preloader-pulse 2s infinite ease-in-out;
-            }
-
-            .preloader-logo {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-                filter: brightness(1.2);
-            }
-
-            .preloader-logo-container::after {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: -150%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(
-                    to right,
-                    rgba(255, 255, 255, 0) 0%,
-                    rgba(255, 255, 255, 0.4) 45%,
-                    rgba(255, 255, 255, 0.9) 50%,
-                    rgba(255, 255, 255, 0.4) 55%,
-                    rgba(255, 255, 255, 0) 100%
-                );
-                transform: skewX(-20deg);
-                animation: preloader-shine 1.5s infinite ease-in-out;
-            }
-
-            @keyframes preloader-pulse {
-                0%, 100% { transform: scale(1); opacity: 0.8; }
-                50% { transform: scale(1.1); opacity: 1; }
-            }
-
-            @keyframes preloader-shine {
-                0% { left: -150%; }
-                100% { left: 150%; }
-            }
-
-            /* Reveal Animation */
             .preloader.loaded {
-                opacity: 0;
-                visibility: hidden;
                 pointer-events: none;
             }
 
-            .preloader.loaded .preloader-content {
-                animation: logo-zoom-reveal 1s forwards cubic-bezier(0.7, 0, 0.3, 1);
+            .preloader-overlay {
+                position: absolute;
+                inset: 0;
+                background: #0d0e12;
+                -webkit-mask-image: url('/salakawy-logo.png'), linear-gradient(#fff, #fff);
+                mask-image: url('/salakawy-logo.png'), linear-gradient(#fff, #fff);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                -webkit-mask-position: center, center;
+                mask-position: center, center;
+                -webkit-mask-repeat: no-repeat, no-repeat;
+                mask-repeat: no-repeat, no-repeat;
+                /* Hide the hole until loaded to keep background solid */
+                -webkit-mask-size: 0px 0px, 100% 100%;
+                mask-size: 0px 0px, 100% 100%;
+                will-change: mask-size, -webkit-mask-size, opacity; /* performance optimization */
+                transform: translateZ(0);
             }
 
-            @keyframes logo-zoom-reveal {
-                0% { transform: scale(1); opacity: 1; filter: blur(0); }
-                100% { transform: scale(15); opacity: 0; filter: blur(10px); }
+            .preloader-fire-logo {
+                position: absolute;
+                height: 150px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                /* Static filter, let the SVG handle its own internal flame animation */
+                filter: url(#wavy-fire);
+                animation: fire-pulse-transform 2.5s infinite ease-in-out;
+                will-change: transform, opacity;
+                transform: translateZ(0); /* Hardware acceleration */
+            }
+
+            /* Separate the glow so we don't recalculate SVG filters every frame */
+            .preloader-fire-logo::before {
+                content: "";
+                position: absolute;
+                inset: -20px;
+                background: radial-gradient(circle, rgba(255, 140, 0, 0.4) 0%, transparent 60%);
+                z-index: -1;
+                filter: blur(10px);
+                animation: fire-pulse-glow 2.5s infinite ease-in-out;
+                will-change: transform, opacity;
+                transform: translateZ(0);
+            }
+
+            .preloader-logo {
+                height: 100%;
+                width: auto;
+                object-fit: contain;
+                /* Force GPU render to avoid layout thrashing */
+                transform: translateZ(0); 
+            }
+
+            @keyframes fire-pulse-transform {
+                0%, 100% { transform: scale(1) translateZ(0); }
+                50% { transform: scale(1.05) translateZ(0); }
+            }
+
+            @keyframes fire-pulse-glow {
+                0%, 100% { transform: scale(1) translateZ(0); opacity: 0.6; }
+                50% { transform: scale(1.3) translateZ(0); opacity: 1; }
+            }
+
+            /* Reveal Animation */
+            .preloader.loaded .preloader-fire-logo {
+                opacity: 0;
+                transition: opacity 0.2s ease-out;
+            }
+
+            .preloader.loaded .preloader-overlay {
+                animation: portal-zoom-out 1.2s forwards cubic-bezier(0.7, 0, 0.2, 1);
+            }
+
+            @keyframes portal-zoom-out {
+                0% {
+                    -webkit-mask-size: 150px auto, 100% 100%;
+                    mask-size: 150px auto, 100% 100%;
+                    opacity: 1;
+                }
+                15% {
+                    -webkit-mask-size: 140px auto, 100% 100%;
+                    mask-size: 140px auto, 100% 100%;
+                    opacity: 1;
+                }
+                100% {
+                    -webkit-mask-size: 5000px auto, 100% 100%;
+                    mask-size: 5000px auto, 100% 100%;
+                    opacity: 0;
+                }
             }
 		</style>
 
