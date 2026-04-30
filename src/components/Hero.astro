@@ -1,6 +1,44 @@
 ---
+import fs from 'fs';
+import path from 'path';
+
+const picsDir = path.join(process.cwd(), 'public', 'Salakawy Pics');
+let heroImages = [];
+try {
+	if (fs.existsSync(picsDir)) {
+		heroImages = fs.readdirSync(picsDir)
+			.filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file))
+			.map(file => `/Salakawy Pics/${encodeURIComponent(file)}`);
+	}
+} catch (e) {
+	console.error('Error reading Salakawy Pics', e);
+}
+
+// Shuffle original images
+let shuffledImages = [...heroImages];
+for (let i = shuffledImages.length - 1; i > 0; i--) {
+	const j = Math.floor(Math.random() * (i + 1));
+	[shuffledImages[i], shuffledImages[j]] = [shuffledImages[j], shuffledImages[i]];
+}
+
+// Ensure we have enough to fill a massive desktop grid (e.g., 60-100 cells)
+let extendedImages = [];
+while (extendedImages.length < 80 && shuffledImages.length > 0) {
+	extendedImages = extendedImages.concat(shuffledImages);
+}
+
+// Add a slight randomization to the extended array
+extendedImages.sort(() => Math.random() - 0.5);
 ---
 <section id="hero" class="hero">
+	<div class="hero-bg-collage">
+		{extendedImages.map((src, i) => (
+			<div 
+				class="collage-item" 
+				style={`background-image: url('${src.replace(/'/g, "%27")}'); animation-delay: ${(Math.random() * 5).toFixed(2)}s;`}
+			></div>
+		))}
+	</div>
 	<div class="hero-overlay"></div>
 	<div class="container hero-content">
 		<div class="hero-text fade-in-up">
@@ -46,8 +84,33 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		background: url('/hero_bg.png') center/cover no-repeat;
+		background-color: #000;
 		overflow: hidden;
+	}
+
+	.hero-bg-collage {
+		position: absolute;
+		top: -10%; left: -10%; width: 120%; height: 120%; /* Bleed to allow seamless cover */
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+		grid-auto-rows: 180px;
+		opacity: 0.45; /* Soften the background to not overpower the text */
+		z-index: 0;
+		transform: rotate(-3deg) scale(1.05); /* Dynamic diagonal angle */
+	}
+
+	.collage-item {
+		background-size: cover;
+		background-position: center;
+		filter: grayscale(60%) sepia(20%) hue-rotate(-20deg) contrast(1.1);
+		animation: pulseOpacity 6s infinite alternate ease-in-out;
+		opacity: 0.6;
+		box-shadow: inset 0 0 20px rgba(0,0,0,0.8); /* Darken edges to blend them together */
+	}
+
+	@keyframes pulseOpacity {
+		0% { opacity: 0.3; filter: grayscale(80%) brightness(0.8); }
+		100% { opacity: 0.9; filter: grayscale(20%) brightness(1.2); }
 	}
 
 	.hero-overlay {

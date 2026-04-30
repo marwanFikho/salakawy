@@ -1,4 +1,19 @@
 ---
+import fs from 'fs';
+import path from 'path';
+
+let randomAvatar = '/coach.jpg'; // fallback
+try {
+	const picsDir = path.join(process.cwd(), 'public', 'Salakawy Pics');
+	if (fs.existsSync(picsDir)) {
+		const files = fs.readdirSync(picsDir).filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f));
+		if (files.length > 0) {
+			randomAvatar = `/Salakawy Pics/${encodeURIComponent(files[Math.floor(Math.random() * files.length)])}`;
+		}
+	}
+} catch(e) {
+	console.error('Error loading chatbot avatar', e);
+}
 ---
 
 <button id="chatbot-fab" class="chatbot-fab" aria-label="Open virtual coach chatbot">
@@ -12,7 +27,7 @@
 	<div class="chatbot-header">
 		<div style="display:flex; align-items:center; gap: 0.6rem;">
 			<div class="chatbot-avatar">
-				<img src="/coach.jpg" alt="Coach Salakawy" />
+				<img src={randomAvatar} alt="Coach Salakawy" />
 			</div>
 			<div>
 				<h4 style="margin:0; font-size: 1rem; color: #fff; font-weight:600;">Salakawy Assistant</h4>
