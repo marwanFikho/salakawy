@@ -44,44 +44,14 @@ const { title } = Astro.props;
 		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 	</head>
 	<body>
-        <!-- Wavy Fire Filter SVG -->
-        <svg aria-hidden="true" focusable="false" style="width:0;height:0;position:absolute;">
-            <defs>
-                <filter id="wavy-fire" x="-30%" y="-50%" width="160%" height="200%" color-interpolation-filters="sRGB">
-                    <feMorphology operator="dilate" radius="3" in="SourceAlpha" result="expanded" />
-                    
-                    <!-- We generate a larger noise map so we can pan it upwards smoothly without recalculating -->
-                    <feTurbulence type="fractalNoise" baseFrequency="0.04 0.08" numOctaves="2" result="noise" />
-                    
-                    <!-- Pan the noise to create a smooth, continuous rising flame effect instead of choppy re-renders -->
-                    <feOffset dx="0" dy="0" in="noise" result="movingNoise">
-                        <animate attributeName="dy" values="40; -40" dur="1s" repeatCount="indefinite" />
-                    </feOffset>
-                    
-                    <feDisplacementMap in="expanded" in2="movingNoise" scale="25" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-                    
-                    <!-- We animate the displacement scale slightly to give the flames a breathing/pulsing feel alongside the movement -->
-                    <feColorMatrix in="displaced" type="matrix" values="
-                        1 0 0 0 1
-                        0 1 0 0 0.5
-                        0 0 0 0 0
-                        0 0 0 1 -0.1" result="colored_flames" />
-                        
-                    <feGaussianBlur in="colored_flames" stdDeviation="1.5" result="smooth_flames" />
-                    <feMerge>
-                        <feMergeNode in="smooth_flames" />
-                        <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                </filter>
-            </defs>
-        </svg>
 
 		<!-- Preloader -->
 		<div id="preloader" class="preloader">
             <!-- The dark screen that becomes a logo-shaped hole -->
             <div class="preloader-overlay"></div>
-            <!-- The wavy, fiery logo -->
-            <div class="preloader-fire-logo">
+            
+            <div class="preloader-logo-wrapper">
+                <div class="perimeter-light"></div>
                 <img src="/salakawy-logo.png" alt="Salakawy" class="preloader-logo" />
             </div>
 		</div>
@@ -534,52 +504,57 @@ const { title } = Astro.props;
                 transform: translateZ(0);
             }
 
-            .preloader-fire-logo {
+            .preloader-logo-wrapper {
                 position: absolute;
                 height: 150px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                /* Static filter, let the SVG handle its own internal flame animation */
-                filter: url(#wavy-fire);
-                animation: fire-pulse-transform 2.5s infinite ease-in-out;
-                will-change: transform, opacity;
-                transform: translateZ(0); /* Hardware acceleration */
-            }
-
-            /* Separate the glow so we don't recalculate SVG filters every frame */
-            .preloader-fire-logo::before {
-                content: "";
-                position: absolute;
-                inset: -20px;
-                background: radial-gradient(circle, rgba(255, 140, 0, 0.4) 0%, transparent 60%);
-                z-index: -1;
-                filter: blur(10px);
-                animation: fire-pulse-glow 2.5s infinite ease-in-out;
                 will-change: transform, opacity;
                 transform: translateZ(0);
             }
 
+            .perimeter-light {
+                position: absolute;
+                /* Stretch slightly beyond the logo to create the border thickness */
+                inset: -12px; 
+                -webkit-mask-image: url('/salakawy-logo.png');
+                mask-image: url('/salakawy-logo.png');
+                -webkit-mask-size: 100% 100%;
+                mask-size: 100% 100%;
+                -webkit-mask-position: center;
+                mask-position: center;
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                z-index: 1;
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); /* Glow effect for high visibility */
+            }
+
+            .perimeter-light::before {
+                content: '';
+                position: absolute;
+                inset: -50%; /* Large enough to cover corners while rotating */
+                /* Solid white strip with hard edges */
+                background: conic-gradient(from 0deg, transparent 0%, transparent 10%, #ffffff 10%, #ffffff 30%, transparent 30%, transparent 100%);
+                animation: light-spin 3s linear infinite;
+            }
+
             .preloader-logo {
+                position: relative;
                 height: 100%;
                 width: auto;
                 object-fit: contain;
-                /* Force GPU render to avoid layout thrashing */
+                z-index: 2; /* Sit on top to hide the inner light */
                 transform: translateZ(0); 
             }
 
-            @keyframes fire-pulse-transform {
-                0%, 100% { transform: scale(1) translateZ(0); }
-                50% { transform: scale(1.05) translateZ(0); }
-            }
-
-            @keyframes fire-pulse-glow {
-                0%, 100% { transform: scale(1) translateZ(0); opacity: 0.6; }
-                50% { transform: scale(1.3) translateZ(0); opacity: 1; }
+            @keyframes light-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
             }
 
             /* Reveal Animation */
-            .preloader.loaded .preloader-fire-logo {
+            .preloader.loaded .preloader-logo-wrapper {
                 opacity: 0;
                 transition: opacity 0.2s ease-out;
             }
