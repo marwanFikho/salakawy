@@ -112,8 +112,8 @@ import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
           <!-- Nour Card -->
           <div class="contact-card anim-item" id="nour-card">
             <div class="contact-card-inner">
-              <div class="coach-photo-wrap no-photo">
-                <div class="initials-avatar">N</div>
+              <div class="coach-photo-wrap">
+                <img src="/Nour%20Assistant.jpeg" alt="Assistant Coach Nour" class="coach-photo nour-photo" />
                 <div class="coach-photo-ring nour-ring"></div>
               </div>
               <div class="contact-info">
@@ -391,6 +391,13 @@ import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
     border-radius: 50%;
     display: block;
     border: 3px solid rgba(255,255,0,0.3);
+  }
+
+  .nour-photo {
+    /* To center her face, change this percentage. 
+       First number is Left/Right (50% is middle).
+       Second number is Top/Bottom (0% is top, 100% is bottom). */
+    object-position: 50% 20%; 
   }
 
   .coach-photo-ring {

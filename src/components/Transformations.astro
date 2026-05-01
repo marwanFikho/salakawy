@@ -414,10 +414,22 @@ const transformations = [
 							if (!userInteracted && !isAutoScrolling) {
 								isAutoScrolling = true;
 								autoScrollInterval = setInterval(() => {
-									if (!userInteracted) {
-										slider.scrollBy({ left: 1.5, behavior: 'auto' });
+									if (userInteracted) return;
+									
+									// Check if reached the end (with a small 5px buffer for rounding errors)
+									if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 5) {
+										// Reached the end, rewind to start
+										slider.scrollTo({ left: 0, behavior: 'smooth' });
+									} else {
+										// Scroll by one card width
+										const firstCard = slider.querySelector('.transform-card');
+										if (firstCard) {
+											const gap = parseInt(window.getComputedStyle(slider).gap) || 0;
+											const scrollAmount = firstCard.clientWidth + gap;
+											slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+										}
 									}
-								}, 25);
+								}, 1500);
 							}
 						}, 3000);
 						observer.disconnect();
