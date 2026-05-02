@@ -1,0 +1,300 @@
+---
+import { checkAdminAuth } from '../lib/admin-auth';
+
+interface Props {
+	title: string;
+    activePanel: string;
+}
+
+const { title, activePanel } = Astro.props;
+
+// This will be checked in the page using the layout, 
+// but we keep it here for double safety.
+const auth = checkAdminAuth(Astro);
+if (!auth.authenticated) return auth.redirect;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} — Salakawy Admin</title>
+    <link rel="icon" type="image/png" href="/salakawy-logo.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style is:global>
+        :root {
+            --brand-lime: #E2FF00;
+            --bg-dark: #0d0e12;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-light: rgba(255, 255, 255, 0.08);
+            --text-dim: rgba(255, 255, 255, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.02);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-brand {
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-brand img { height: 32px; }
+        .sidebar-brand span { font-weight: 800; font-size: 1.1rem; color: var(--brand-lime); letter-spacing: -0.02em; }
+
+        .nav-list { padding: 1.5rem 1rem; flex: 1; list-style: none; }
+        .nav-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.15em; margin: 1.5rem 0 0.75rem 1rem; font-weight: 700; }
+        .nav-label:first-child { margin-top: 0; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.85rem 1.25rem;
+            border-radius: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        .nav-item.active { background: rgba(226, 255, 0, 0.1); color: var(--brand-lime); }
+        .nav-item svg { width: 20px; height: 20px; opacity: 0.7; }
+        .nav-item.active svg { opacity: 1; }
+
+        .sidebar-bottom { padding: 1.5rem; border-top: 1px solid var(--border-light); }
+        .logout-btn {
+            width: 100%;
+            padding: 0.85rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            color: #f87171;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.2); transform: translateY(-2px); }
+
+        /* Main Content */
+        .admin-main {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            padding: 1.5rem 3rem;
+            background: rgba(13, 14, 18, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .header-title h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+        .header-title p { font-size: 0.85rem; color: var(--text-dim); margin-top: 0.1rem; }
+
+        .header-actions { display: flex; align-items: center; gap: 1.25rem; }
+        .view-site-link { color: var(--text-dim); font-size: 0.9rem; text-decoration: none; transition: color 0.2s; font-weight: 600; }
+        .view-site-link:hover { color: #fff; }
+        .user-badge { background: var(--brand-lime); color: #000; padding: 0.4rem 0.9rem; border-radius: 100px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; }
+
+        .admin-content { padding: 3rem; flex: 1; }
+
+        /* Common Components */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .section-header { margin-bottom: 2rem; }
+        .section-header h2 { font-size: 1.25rem; font-weight: 700; color: var(--brand-lime); }
+
+        /* Premium Forms & Standards */
+        .form-label { 
+            display: block !important; 
+            font-size: 0.8rem !important; 
+            font-weight: 600 !important; 
+            color: rgba(255, 255, 255, 0.5) !important; 
+            margin-bottom: 0.4rem !important; /* Proximity standard: 4-6px */
+            letter-spacing: 0.02em !important;
+        }
+        
+        /* THE CRITICAL FIX FOR INPUTS - MAXIMUM SPECIFICITY */
+        body.admin-body input[type="text"], 
+        body.admin-body input[type="number"], 
+        body.admin-body input[type="password"], 
+        body.admin-body textarea {
+            display: block !important;
+            width: 100% !important;
+            background-color: #16181d !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 10px !important;
+            padding: 0.75rem 1rem !important; /* Standard padding */
+            color: #ffffff !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 0.95rem !important;
+            outline: none !important;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+            appearance: none !important;
+        }
+
+        body.admin-body input:focus, 
+        body.admin-body textarea:focus {
+            border-color: var(--brand-lime) !important;
+            background-color: #1c1f26 !important;
+            box-shadow: 0 0 0 4px rgba(226, 255, 0, 0.1) !important;
+        }
+
+        body.admin-body input::placeholder,
+        body.admin-body textarea::placeholder {
+            color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        /* Fix for Chrome autofill */
+        body.admin-body input:-webkit-autofill,
+        body.admin-body input:-webkit-autofill:hover, 
+        body.admin-body input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #fff !important;
+            -webkit-box-shadow: 0 0 0px 1000px #16181d inset !important;
+            transition: background-color 5000s ease-in-out 0s !important;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            background: #fff;
+            color: #000;
+            font-weight: 800;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: var(--brand-lime); }
+        .toast.error { background: #f87171; color: #fff; }
+
+        @media (max-width: 1024px) {
+            .admin-sidebar { transform: translateX(-100%); }
+            .admin-main { margin-left: 0; }
+        }
+    </style>
+</head>
+<body class="admin-body">
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <img src="/salakawy-logo.png" alt="Salakawy" />
+            <span>SALAKAWY</span>
+        </div>
+        <nav class="nav-list">
+            <div class="nav-label">General</div>
+            <a href="/admin/dashboard" class={`nav-item ${activePanel === 'analytics' ? 'active' : ''}`}>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                Analytics
+            </a>
+
+            <div class="nav-label">Management</div>
+            <a href="/admin/packages" class={`nav-item ${activePanel === 'packages' ? 'active' : ''}`}>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Packages
+            </a>
+            <a href="/admin/photos" class={`nav-item ${activePanel === 'photos' ? 'active' : ''}`}>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Media Library
+            </a>
+            <a href="/admin/contacts" class={`nav-item ${activePanel === 'contacts' ? 'active' : ''}`}>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Contact Info
+            </a>
+
+            <div class="nav-label">System</div>
+            <a href="/admin/settings" class={`nav-item ${activePanel === 'settings' ? 'active' : ''}`}>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Settings
+            </a>
+        </nav>
+        <div class="sidebar-bottom">
+            <button class="logout-btn" onclick="adminLogout()">Sign Out</button>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="header-title">
+                <h1>{title}</h1>
+                <p>Salakawy Transformation Admin Dashboard</p>
+            </div>
+            <div class="header-actions">
+                <a href="/" target="_blank" class="view-site-link">View Public Site →</a>
+                <div class="user-badge">Admin</div>
+            </div>
+        </header>
+
+        <section class="admin-content">
+            <slot />
+        </section>
+    </main>
+
+    <div class="toast" id="admin-toast"></div>
+
+    <script is:inline>
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('admin-toast');
+            if (!t) return;
+            t.textContent = msg;
+            t.className = 'toast ' + type + ' show';
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        async function adminLogout() {
+            await fetch('/api/admin/logout', { method: 'POST' });
+            window.location.href = '/admin/login';
+        }
+    </script>
+</body>
+</html>

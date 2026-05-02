@@ -1,0 +1,305 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { checkAdminAuth } from '../../lib/admin-auth';
+
+const auth = checkAdminAuth(Astro);
+if (!auth.authenticated) return auth.redirect;
+---
+
+<AdminLayout title="Packages Management" activePanel="packages">
+    <div class="packages-page">
+        <div class="page-intro">
+            <p>Update your coaching tiers, pricing, and descriptions. Changes are reflected live on the website instantly.</p>
+        </div>
+
+        <div class="packages-grid" id="pkg-grid">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Fetching package data...</p>
+            </div>
+        </div>
+
+        <div class="action-footer">
+            <button class="primary-save-btn" onclick="saveAllPackages()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save All Changes
+            </button>
+        </div>
+    </div>
+
+    <style>
+        .packages-page {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-intro {
+            margin-bottom: 2.5rem;
+        }
+
+        .page-intro p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+            gap: 2rem;
+            margin-bottom: 6rem;
+        }
+
+        .pkg-card {
+            background: #111216;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .pkg-card:hover {
+            border-color: rgba(226, 255, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .pkg-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.5rem;
+        }
+
+        .pkg-title h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .pkg-id {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.2rem;
+        }
+
+        .live-badge {
+            padding: 0.4rem 0.8rem;
+            background: rgba(74, 222, 128, 0.1);
+            border-radius: 6px;
+            color: #4ade80;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 2.25rem; /* Increased separation from text below */
+        }
+
+        .field-group:last-child { margin-bottom: 0; }
+
+        .pricing-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 2rem; /* Increased internal padding */
+            margin-bottom: 2.25rem; /* Increased separation */
+        }
+
+        .pricing-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .pricing-header {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--brand-lime);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .pricing-header::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(226, 255, 0, 0.1);
+        }
+
+        .admin-textarea {
+            min-height: 80px !important;
+            padding: 0.75rem 1rem !important;
+            font-size: 0.9rem !important;
+        }
+
+        .pkg-card input {
+            padding: 0.65rem 1rem !important;
+            font-size: 0.9rem !important;
+        }
+
+        .action-footer {
+            position: fixed;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .primary-save-btn {
+            pointer-events: auto;
+            background: var(--brand-lime);
+            color: #000;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 100px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all 0.2s;
+        }
+
+        .primary-save-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+        }
+
+        .loading-state {
+            grid-column: 1 / -1;
+            padding: 5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(226, 255, 0, 0.1);
+            border-top-color: #E2FF00;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script is:inline>
+        let packagesData = {};
+
+        async function fetchPackages() {
+            try {
+                const res = await fetch('/api/admin/content?id=packages');
+                const data = await res.json();
+                packagesData = data.content || {};
+                renderPackages();
+            } catch (err) {
+                console.error('Failed to fetch packages:', err);
+            }
+        }
+
+        function renderPackages() {
+            const grid = document.getElementById('pkg-grid');
+            if (!grid) return;
+
+            grid.innerHTML = Object.entries(packagesData).map(([id, pkg]) => `
+                <div class="pkg-card">
+                    <div class="pkg-header">
+                        <div class="pkg-title">
+                            <h3>${pkg.icon || '📦'} ${pkg.name}</h3>
+                            <div class="pkg-id">ID: ${id}</div>
+                        </div>
+                        <div class="live-badge">Live</div>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="form-label" for="subtitle-${id}">Subtitle / Description</label>
+                        <textarea class="admin-textarea" id="subtitle-${id}" data-pkg="${id}" data-field="subtitle" rows="2">${pkg.subtitle || ''}</textarea>
+                    </div>
+
+                    <div class="pricing-section" style="margin-top: 2rem;">
+                        <div class="pricing-header">Monthly Access</div>
+                        <div class="pricing-row">
+                            <div class="field-group">
+                                <label class="form-label" for="price-egp-${id}">Price (EGP)</label>
+                                <input type="number" id="price-egp-${id}" data-pkg="${id}" data-field="price_egp" value="${pkg.price_egp || 0}" />
+                            </div>
+                            <div class="field-group">
+                                <label class="form-label" for="price-usd-${id}">Price (USD)</label>
+                                <input type="number" id="price-usd-${id}" data-pkg="${id}" data-field="price_usd" value="${pkg.price_usd || 0}" />
+                            </div>
+                        </div>
+
+                        <div class="pricing-header" style="margin-top: 2rem;">3-Month Special</div>
+                        <div class="pricing-row">
+                            <div class="field-group">
+                                <label class="form-label" for="price-3m-egp-${id}">Price (EGP)</label>
+                                <input type="number" id="price-3m-egp-${id}" data-pkg="${id}" data-field="price_3m_egp" value="${pkg.price_3m_egp || 0}" />
+                            </div>
+                            <div class="field-group">
+                                <label class="form-label" for="price-3m-usd-${id}">Price (USD)</label>
+                                <input type="number" id="price-3m-usd-${id}" data-pkg="${id}" data-field="price_3m_usd" value="${pkg.price_3m_usd || 0}" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="form-label" for="cta-${id}">Button Text</label>
+                        <input type="text" id="cta-${id}" data-pkg="${id}" data-field="cta_text" value="${pkg.cta_text || ''}" />
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function saveAllPackages() {
+            const inputs = document.querySelectorAll('[data-pkg]');
+            inputs.forEach(input => {
+                const pkgId = input.dataset.pkg;
+                const field = input.dataset.field;
+                if (!packagesData[pkgId]) packagesData[pkgId] = {};
+                
+                packagesData[pkgId][field] = input.type === 'number' ? Number(input.value) : input.value;
+            });
+
+            try {
+                const res = await fetch('/api/admin/content', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: 'packages', content: packagesData })
+                });
+
+                if (res.ok) {
+                    showToast('All packages saved successfully!', 'success');
+                } else {
+                    showToast('Failed to save changes.', 'error');
+                }
+            } catch (err) {
+                showToast('Network error while saving.', 'error');
+            }
+        }
+
+        // Init
+        fetchPackages();
+    </script>
+</AdminLayout>

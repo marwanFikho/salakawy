@@ -51,8 +51,8 @@ const { title } = Astro.props;
             <div class="preloader-overlay"></div>
             
             <div class="preloader-logo-wrapper">
-                <div class="perimeter-light"></div>
-                <img src="/salakawy-logo.png" alt="Salakawy" class="preloader-logo" />
+                <img src="/salakawy-logo-trace.svg" class="perimeter-light-svg" alt="" />
+                <img src="/salakawy-logo.svg" alt="Salakawy" class="preloader-logo" />
             </div>
 		</div>
 
@@ -514,29 +514,14 @@ const { title } = Astro.props;
                 transform: translateZ(0);
             }
 
-            .perimeter-light {
+            .perimeter-light-svg {
                 position: absolute;
-                /* Stretch slightly beyond the logo to create the border thickness */
-                inset: -12px; 
-                -webkit-mask-image: url('/salakawy-logo.png');
-                mask-image: url('/salakawy-logo.png');
-                -webkit-mask-size: 100% 100%;
-                mask-size: 100% 100%;
-                -webkit-mask-position: center;
-                mask-position: center;
-                -webkit-mask-repeat: no-repeat;
-                mask-repeat: no-repeat;
-                z-index: 1;
-                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); /* Glow effect for high visibility */
-            }
-
-            .perimeter-light::before {
-                content: '';
-                position: absolute;
-                inset: -50%; /* Large enough to cover corners while rotating */
-                /* Solid white strip with hard edges */
-                background: conic-gradient(from 0deg, transparent 0%, transparent 10%, #ffffff 10%, #ffffff 30%, transparent 30%, transparent 100%);
-                animation: light-spin 3s linear infinite;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                z-index: 3; /* Sits above the inner logo to show the white stroke */
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9)); /* High visibility glow */
             }
 
             .preloader-logo {
@@ -544,13 +529,8 @@ const { title } = Astro.props;
                 height: 100%;
                 width: auto;
                 object-fit: contain;
-                z-index: 2; /* Sit on top to hide the inner light */
+                z-index: 2;
                 transform: translateZ(0); 
-            }
-
-            @keyframes light-spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
             }
 
             /* Reveal Animation */
@@ -678,5 +658,25 @@ const { title } = Astro.props;
 		<Chatbot />
         <SocialProof />
         <AggressiveConversion />
+        <script>
+        (function(){
+            if(window.location.pathname.startsWith('/admin'))return;
+            const sid=Math.random().toString(36).slice(2)+'_'+Date.now();
+            const start=Date.now();
+            const isMobile=/Mobi|Android/i.test(navigator.userAgent);
+            fetch('/api/admin/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+                page_url:window.location.pathname,
+                referrer:document.referrer||null,
+                device_type:isMobile?'mobile':'desktop',
+                session_id:sid
+            })}).catch(()=>{});
+            function sendDuration(){
+                const dur=Math.round((Date.now()-start)/1000);
+                navigator.sendBeacon&&navigator.sendBeacon('/api/admin/track',new Blob([JSON.stringify({session_id:sid,duration_seconds:dur})],{type:'application/json'}));
+            }
+            window.addEventListener('beforeunload',sendDuration);
+            document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')sendDuration();});
+        })();
+        </script>
 	</body>
 </html>

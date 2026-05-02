@@ -1,0 +1,228 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { checkAdminAuth } from '../../lib/admin-auth';
+
+const auth = checkAdminAuth(Astro);
+if (!auth.authenticated) return auth.redirect;
+---
+
+<AdminLayout title="Media Library" activePanel="photos">
+    <div class="media-page">
+        <div class="media-controls glass-card">
+            <div class="category-tabs">
+                <button class="cat-tab active" data-cat="hero">Hero Images</button>
+                <button class="cat-tab" data-cat="transformations">Transformations</button>
+                <button class="cat-tab" data-cat="coach">Coach Photos</button>
+                <button class="cat-tab" data-cat="assistant">Assistant</button>
+            </div>
+            
+            <div class="upload-trigger" id="upload-zone">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>Upload New Media</span>
+                <input type="file" id="file-input" accept="image/*" multiple style="display:none" />
+            </div>
+        </div>
+
+        <div class="media-grid" id="photos-grid">
+            <!-- Loaded via JS -->
+        </div>
+    </div>
+
+    <style>
+        .media-page { display: flex; flex-direction: column; gap: 2.5rem; }
+
+        .media-controls { 
+            padding: 1.25rem 2rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            position: sticky;
+            top: 6rem;
+            z-index: 100;
+        }
+
+        .category-tabs { display: flex; gap: 0.75rem; }
+        .cat-tab {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 0.6rem 1.25rem;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .cat-tab:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .cat-tab.active { background: rgba(226, 255, 0, 0.1); border-color: rgba(226, 255, 0, 0.2); color: #E2FF00; }
+
+        .upload-trigger {
+            background: var(--brand-lime);
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(226, 255, 0, 0.2);
+        }
+        .upload-trigger:hover { transform: scale(1.05); box-shadow: 0 15px 30px rgba(226, 255, 0, 0.3); }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .photo-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 1;
+            transition: all 0.3s;
+        }
+        .photo-card:hover { transform: translateY(-5px); border-color: var(--brand-lime); }
+
+        .photo-card img { width: 100%; height: 100%; object-fit: cover; }
+
+        .photo-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .badge-draft { background: #fbbf24; color: #000; }
+        .badge-published { background: #4ade80; color: #000; }
+
+        .photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            opacity: 0;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .photo-card:hover .photo-overlay { opacity: 1; }
+
+        .action-btn {
+            width: 160px;
+            padding: 0.75rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .pub-btn { background: var(--brand-lime); color: #000; }
+        .unpub-btn { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .del-btn { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .del-btn:hover { background: rgba(239, 68, 68, 0.4); }
+    </style>
+
+    <script is:inline>
+        let currentCat = 'hero';
+
+        async function fetchPhotos() {
+            try {
+                const res = await fetch(`/api/admin/upload?category=${currentCat}`);
+                const photos = await res.json();
+                renderPhotos(photos);
+            } catch (err) {
+                console.error('Failed to fetch photos:', err);
+            }
+        }
+
+        function renderPhotos(photos) {
+            const grid = document.getElementById('photos-grid');
+            if (!photos.length) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; padding: 10rem; text-align: center; color: rgba(255,255,255,0.2);">No media found in this category.</div>';
+                return;
+            }
+
+            grid.innerHTML = photos.map(p => `
+                <div class="photo-card">
+                    <img src="${p.public_url}" alt="" loading="lazy" />
+                    <div class="photo-badge badge-${p.status}">${p.status}</div>
+                    <div class="photo-overlay">
+                        ${p.status === 'draft' 
+                            ? `<button class="action-btn pub-btn" onclick="updateStatus('${p.id}', 'published')">Publish to Site</button>`
+                            : `<button class="action-btn unpub-btn" onclick="updateStatus('${p.id}', 'draft')">Revert to Draft</button>`
+                        }
+                        <button class="action-btn del-btn" onclick="deletePhoto('${p.id}', '${p.storage_path}')">Delete Permanently</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function updateStatus(id, status) {
+            const res = await fetch('/api/admin/upload', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status })
+            });
+            if (res.ok) {
+                showToast(status === 'published' ? 'Image is now LIVE!' : 'Image moved to DRAFTS');
+                fetchPhotos();
+            }
+        }
+
+        async function deletePhoto(id, storage_path) {
+            if (!confirm('Are you sure? This cannot be undone.')) return;
+            const res = await fetch('/api/admin/upload', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, storage_path })
+            });
+            if (res.ok) {
+                showToast('Image deleted from storage.', 'success');
+                fetchPhotos();
+            }
+        }
+
+        // Upload zone
+        const zone = document.getElementById('upload-zone');
+        const input = document.getElementById('file-input');
+        zone.addEventListener('click', () => input.click());
+        input.addEventListener('change', async () => {
+            const files = Array.from(input.files);
+            for (const file of files) {
+                const fd = new FormData();
+                fd.append('file', file);
+                fd.append('category', currentCat);
+                showToast(`Uploading ${file.name}...`);
+                const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+                if (res.ok) showToast('Upload complete!');
+            }
+            fetchPhotos();
+        });
+
+        // Tabs
+        document.querySelectorAll('.cat-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCat = btn.dataset.cat;
+                fetchPhotos();
+            });
+        });
+
+        fetchPhotos();
+    </script>
+</AdminLayout>

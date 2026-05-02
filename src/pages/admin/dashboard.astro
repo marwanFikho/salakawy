@@ -1,0 +1,262 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { checkAdminAuth } from '../../lib/admin-auth';
+
+const auth = checkAdminAuth(Astro);
+if (!auth.authenticated) return auth.redirect;
+---
+
+<AdminLayout title="Analytics Overview" activePanel="analytics">
+    <div class="analytics-page">
+        <div class="range-selector glass-card">
+            <div class="selector-group">
+                <button class="range-btn active" data-range="24h">24 Hours</button>
+                <button class="range-btn" data-range="7d">7 Days</button>
+                <button class="range-btn" data-range="30d">30 Days</button>
+                <button class="range-btn" data-range="all">All Time</button>
+            </div>
+            <div class="last-updated">Real-time tracking enabled</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card glass-card">
+                <span class="stat-label">Total Pageviews</span>
+                <div class="stat-value" id="stat-total">...</div>
+                <div class="stat-trend positive">↑ Live</div>
+            </div>
+            <div class="stat-card glass-card">
+                <span class="stat-label">Mobile Traffic</span>
+                <div class="stat-value" id="stat-mobile">...</div>
+                <div class="stat-trend">Device Split</div>
+            </div>
+            <div class="stat-card glass-card">
+                <span class="stat-label">Avg. Engagement</span>
+                <div class="stat-value" id="stat-duration">...</div>
+                <div class="stat-trend">Seconds</div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <div class="chart-container glass-card main-chart">
+                <div class="chart-header">
+                    <h3>Traffic History</h3>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="daily-chart"></canvas>
+                </div>
+            </div>
+            <div class="chart-container glass-card side-chart">
+                <div class="chart-header">
+                    <h3>Devices</h3>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="device-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-tables">
+            <div class="table-container glass-card">
+                <div class="table-header">
+                    <h3>Most Visited Pages</h3>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>URL Path</th>
+                            <th>Views</th>
+                            <th>Avg. Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pages-tbody">
+                        <tr><td colspan="3" class="loading-cell">Loading data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-container glass-card">
+                <div class="table-header">
+                    <h3>Top Traffic Sources</h3>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Referrer</th>
+                            <th>Visits</th>
+                        </tr>
+                    </thead>
+                    <tbody id="referrers-tbody">
+                        <tr><td colspan="2" class="loading-cell">Loading data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .analytics-page { display: flex; flex-direction: column; gap: 2.5rem; }
+
+        /* Range Selector */
+        .range-selector { padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+        .selector-group { display: flex; gap: 0.5rem; }
+        .range-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .range-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .range-btn.active { background: rgba(226, 255, 0, 0.1); border-color: rgba(226, 255, 0, 0.2); color: #E2FF00; }
+        .last-updated { font-size: 0.75rem; color: #4ade80; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .stat-card { padding: 2rem; position: relative; overflow: hidden; }
+        .stat-label { font-size: 0.75rem; font-weight: 800; color: rgba(255, 255, 255, 0.3); text-transform: uppercase; letter-spacing: 0.1em; }
+        .stat-value { font-size: 3rem; font-weight: 800; color: #fff; margin: 0.5rem 0; letter-spacing: -0.04em; }
+        .stat-trend { font-size: 0.8rem; font-weight: 700; color: rgba(255, 255, 255, 0.2); }
+        .stat-trend.positive { color: #4ade80; }
+
+        /* Charts Row */
+        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        .chart-container { padding: 2.5rem; }
+        .chart-header h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 2rem; color: rgba(255, 255, 255, 0.8); }
+        .canvas-wrapper { position: relative; height: 300px; width: 100%; }
+
+        /* Tables */
+        .data-tables { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .table-header { margin-bottom: 1.5rem; }
+        .table-header h3 { font-size: 1.1rem; font-weight: 700; color: rgba(255, 255, 255, 0.8); }
+
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th { text-align: left; font-size: 0.7rem; font-weight: 800; color: rgba(255, 255, 255, 0.3); text-transform: uppercase; letter-spacing: 0.1em; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .admin-table td { padding: 1.25rem 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255, 255, 255, 0.03); color: rgba(255, 255, 255, 0.8); }
+        .admin-table tr:last-child td { border-bottom: none; }
+        .loading-cell { text-align: center; color: rgba(255, 255, 255, 0.2); padding: 3rem 0; }
+    </style>
+
+    <script is:inline>
+        let dailyChart, deviceChart;
+        let currentRange = '24h';
+
+        async function loadAnalytics() {
+            try {
+                const res = await fetch(`/api/admin/analytics?range=${currentRange}`);
+                const data = await res.json();
+                updateStats(data);
+                renderCharts(data);
+                renderTables(data);
+            } catch (err) {
+                console.error('Analytics load error:', err);
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('stat-total').textContent = data.totalViews.toLocaleString();
+            
+            const mobile = data.devices.mobile || 0;
+            const total = Object.values(data.devices).reduce((a, b) => a + b, 0);
+            document.getElementById('stat-mobile').textContent = total > 0 ? Math.round((mobile / total) * 100) + '%' : '0%';
+            
+            if (data.pages.length) {
+                const avg = Math.round(data.pages.reduce((a, b) => a + b.avgDuration, 0) / data.pages.length);
+                document.getElementById('stat-duration').textContent = avg + 's';
+            }
+        }
+
+        function renderCharts(data) {
+            const ctx1 = document.getElementById('daily-chart').getContext('2d');
+            const labels = data.daily.map(d => d.date);
+            const counts = data.daily.map(d => d.count);
+
+            if (dailyChart) dailyChart.destroy();
+            dailyChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Visits',
+                        data: counts,
+                        borderColor: '#E2FF00',
+                        backgroundColor: 'rgba(226, 255, 0, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#E2FF00'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.3)' } }
+                    }
+                }
+            });
+
+            const ctx2 = document.getElementById('device-chart').getContext('2d');
+            if (deviceChart) deviceChart.destroy();
+            deviceChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Desktop', 'Mobile', 'Tablet'],
+                    datasets: [{
+                        data: [data.devices.desktop || 0, data.devices.mobile || 0, data.devices.tablet || 0],
+                        backgroundColor: ['#E2FF00', '#00A3FF', '#FF6B6B'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom',
+                            labels: { color: 'rgba(255,255,255,0.5)', font: { family: 'Outfit', weight: '700' } }
+                        } 
+                    }
+                }
+            });
+        }
+
+        function renderTables(data) {
+            const pagesBody = document.getElementById('pages-tbody');
+            pagesBody.innerHTML = data.pages.map(p => `
+                <tr>
+                    <td><strong>${p.url}</strong></td>
+                    <td>${p.views}</td>
+                    <td>${p.avgDuration}s</td>
+                </tr>
+            `).join('') || '<tr><td colspan="3">No data for this period</td></tr>';
+
+            const refBody = document.getElementById('referrers-tbody');
+            refBody.innerHTML = data.referrers.map(r => `
+                <tr>
+                    <td><strong>${r.source}</strong></td>
+                    <td>${r.count} visits</td>
+                </tr>
+            `).join('') || '<tr><td colspan="2">Direct traffic only</td></tr>';
+        }
+
+        // Event listeners
+        document.querySelectorAll('.range-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentRange = btn.dataset.range;
+                loadAnalytics();
+            });
+        });
+
+        loadAnalytics();
+    </script>
+</AdminLayout>

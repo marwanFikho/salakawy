@@ -1,0 +1,183 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { checkAdminAuth } from '../../lib/admin-auth';
+
+const auth = checkAdminAuth(Astro);
+if (!auth.authenticated) return auth.redirect;
+---
+
+<AdminLayout title="Contact Management" activePanel="contacts">
+    <div class="contacts-page">
+        <div class="page-intro">
+            <p>Edit the visible assistant names, phone numbers, and WhatsApp IDs across the site.</p>
+        </div>
+
+        <div class="contacts-grid">
+            <div class="contact-card glass-card">
+                <div class="card-header">
+                    <div class="icon-circle">🏋️</div>
+                    <h3>Head Coach Details</h3>
+                </div>
+                
+                <div class="form-body">
+                    <div class="input-group">
+                        <label class="form-label">Display Name</label>
+                        <input type="text" id="coach-name" placeholder="Salakawy" />
+                    </div>
+                    <div class="input-group">
+                        <label class="form-label">Professional Role</label>
+                        <input type="text" id="coach-role" placeholder="Head Coach" />
+                    </div>
+                    <div class="input-group">
+                        <label class="form-label">Public Phone Number</label>
+                        <input type="text" id="coach-phone" placeholder="+20 121 772 0267" />
+                    </div>
+                    <div class="input-group">
+                        <label class="form-label">WhatsApp ID (Digits Only)</label>
+                        <input type="text" id="coach-whatsapp" placeholder="201217720267" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-card glass-card">
+                <div class="card-header">
+                    <div class="icon-circle">👩</div>
+                    <h3>Assistant Coach Details</h3>
+                </div>
+                
+                <div class="form-body">
+                    <div class="input-group">
+                        <label class="form-label">Display Name</label>
+                        <input type="text" id="asst-name" placeholder="Nour" />
+                    </div>
+                    <div class="input-group">
+                        <label class="form-label">Professional Role</label>
+                        <input type="text" id="asst-role" placeholder="Assistant Coach" />
+                    </div>
+                    <div class="input-group">
+                        <label class="form-label">Public Phone Number</label>
+                        <input type="text" id="asst-phone" placeholder="+20 109 215 1540" />
+                    </div>
+                    <div class="input-group">
+                        <label class="form-label">WhatsApp ID (Digits Only)</label>
+                        <input type="text" id="asst-whatsapp" placeholder="201092151540" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="save-btn" onclick="saveContacts()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Update Contact Information
+            </button>
+        </div>
+    </div>
+
+    <style>
+        .contacts-page { max-width: 1200px; margin: 0 auto; }
+        .page-intro { margin-bottom: 3rem; color: rgba(255, 255, 255, 0.5); }
+        
+        .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-bottom: 4rem; }
+        
+        .contact-card { padding: 2.5rem; display: flex; flex-direction: column; gap: 2rem; }
+        .card-header { display: flex; align-items: center; gap: 1rem; }
+        .icon-circle { 
+            width: 50px; 
+            height: 50px; 
+            background: rgba(226, 255, 0, 0.1); 
+            border: 1px solid rgba(226, 255, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .card-header h3 { font-size: 1.2rem; font-weight: 800; }
+
+        .form-body { display: flex; flex-direction: column; gap: 1.5rem; }
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        .action-bar { display: flex; justify-content: center; }
+        .save-btn {
+            background: var(--brand-lime);
+            color: #000;
+            border: none;
+            padding: 1.25rem 3rem;
+            border-radius: 100px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 15px 30px rgba(226, 255, 0, 0.2);
+            transition: all 0.3s;
+        }
+        .save-btn:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(226, 255, 0, 0.3); }
+    </style>
+
+    <script is:inline>
+        let contactsData = {};
+
+        async function loadContacts() {
+            try {
+                const res = await fetch('/api/admin/content?id=contacts');
+                const data = await res.json();
+                contactsData = data.content || {};
+                
+                const c = contactsData.coach || {};
+                const a = contactsData.assistant || {};
+
+                document.getElementById('coach-name').value = c.name || '';
+                document.getElementById('coach-role').value = c.role || '';
+                document.getElementById('coach-phone').value = c.phone || '';
+                document.getElementById('coach-whatsapp').value = c.whatsapp || '';
+
+                document.getElementById('asst-name').value = a.name || '';
+                document.getElementById('asst-role').value = a.role || '';
+                document.getElementById('asst-phone').value = a.phone || '';
+                document.getElementById('asst-whatsapp').value = a.whatsapp || '';
+            } catch (err) {
+                console.error('Failed to load contacts:', err);
+            }
+        }
+
+        async function saveContacts() {
+            const content = {
+                coach: {
+                    name: document.getElementById('coach-name').value,
+                    role: document.getElementById('coach-role').value,
+                    phone: document.getElementById('coach-phone').value,
+                    whatsapp: document.getElementById('coach-whatsapp').value,
+                    photo: contactsData.coach?.photo || '/coach.jpg'
+                },
+                assistant: {
+                    name: document.getElementById('asst-name').value,
+                    role: document.getElementById('asst-role').value,
+                    phone: document.getElementById('asst-phone').value,
+                    whatsapp: document.getElementById('asst-whatsapp').value,
+                    photo: contactsData.assistant?.photo || '/Nour Assistant.jpeg'
+                }
+            };
+
+            try {
+                const res = await fetch('/api/admin/content', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: 'contacts', content })
+                });
+
+                if (res.ok) {
+                    showToast('Contact information updated!', 'success');
+                } else {
+                    showToast('Failed to save changes.', 'error');
+                }
+            } catch (err) {
+                showToast('Network error.', 'error');
+            }
+        }
+
+        loadContacts();
+    </script>
+</AdminLayout>

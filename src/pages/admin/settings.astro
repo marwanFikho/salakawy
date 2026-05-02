@@ -1,0 +1,149 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { checkAdminAuth } from '../../lib/admin-auth';
+
+const auth = checkAdminAuth(Astro);
+if (!auth.authenticated) return auth.redirect;
+---
+
+<AdminLayout title="System Settings" activePanel="settings">
+    <div class="settings-page">
+        <div class="settings-container glass-card">
+            <div class="settings-header">
+                <div class="icon-box">🔐</div>
+                <div>
+                    <h3>Security & Authentication</h3>
+                    <p>Manage your administrative access and credentials.</p>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="input-group">
+                    <label class="form-label">Current Password</label>
+                    <input type="password" id="current-pw" placeholder="••••••••" />
+                </div>
+                
+                <div class="divider"></div>
+
+                <div class="input-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" id="new-pw" placeholder="At least 6 characters" />
+                </div>
+                
+                <div class="input-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" id="confirm-pw" placeholder="Repeat new password" />
+                </div>
+
+                <div id="pw-error" class="error-text" style="display:none"></div>
+
+                <button class="update-btn" onclick="updatePassword()">Update Access Password</button>
+            </div>
+        </div>
+
+        <div class="info-section glass-card">
+            <h4>Dashboard Info</h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span>Admin Username</span>
+                    <strong>salakawy</strong>
+                </div>
+                <div class="info-item">
+                    <span>Database Engine</span>
+                    <strong>Supabase (PostgreSQL)</strong>
+                </div>
+                <div class="info-item">
+                    <span>Storage Bucket</span>
+                    <strong>Supabase Storage (Public)</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .settings-page { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 2.5rem; }
+        
+        .settings-container { padding: 3rem; }
+        .settings-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 3rem; }
+        .icon-box { font-size: 2.5rem; background: rgba(255,255,255,0.05); width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 20px; }
+        .settings-header h3 { font-size: 1.25rem; font-weight: 800; }
+        .settings-header p { font-size: 0.9rem; color: rgba(255,255,255,0.4); margin-top: 0.25rem; }
+
+        .form-section { display: flex; flex-direction: column; gap: 2rem; }
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .divider { height: 1px; background: rgba(255,255,255,0.05); margin: 0.5rem 0; }
+
+        .update-btn {
+            background: var(--brand-lime);
+            color: #000;
+            border: none;
+            padding: 1.1rem;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+        .update-btn:hover { background: #f0ff4d; transform: translateY(-2px); }
+
+        .error-text { color: #f87171; font-size: 0.85rem; font-weight: 700; background: rgba(239, 68, 68, 0.1); padding: 0.75rem 1rem; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        .info-section { padding: 2rem; }
+        .info-section h4 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-bottom: 1.5rem; }
+        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .info-item span { display: block; font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; }
+        .info-item strong { display: block; font-size: 0.95rem; color: #fff; }
+    </style>
+
+    <script is:inline>
+        async function updatePassword() {
+            const cur = document.getElementById('current-pw').value;
+            const nw = document.getElementById('new-pw').value;
+            const cf = document.getElementById('confirm-pw').value;
+            const errEl = document.getElementById('pw-error');
+            
+            errEl.style.display = 'none';
+
+            if (!cur || !nw || !cf) {
+                errEl.textContent = 'Please fill in all password fields.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            if (nw !== cf) {
+                errEl.textContent = 'New passwords do not match.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            if (nw.length < 6) {
+                errEl.textContent = 'New password must be at least 6 characters.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/admin/settings', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword: cur, newPassword: nw })
+                });
+                
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast('Password updated successfully!', 'success');
+                    document.getElementById('current-pw').value = '';
+                    document.getElementById('new-pw').value = '';
+                    document.getElementById('confirm-pw').value = '';
+                } else {
+                    errEl.textContent = data.error || 'Failed to update password.';
+                    errEl.style.display = 'block';
+                }
+            } catch (err) {
+                showToast('Network error.', 'error');
+            }
+        }
+    </script>
+</AdminLayout>

@@ -1,0 +1,10 @@
+---
+// Redirect /admin to /admin/login or /admin/dashboard based on auth
+import { checkAdminAuth } from '../../lib/admin-auth';
+
+const auth = checkAdminAuth(Astro);
+if (auth.authenticated) {
+    return Astro.redirect('/admin/dashboard');
+}
+return Astro.redirect('/admin/login');
+---

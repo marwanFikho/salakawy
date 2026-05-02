@@ -144,35 +144,35 @@
 						<thead>
 							<tr>
 								<th>Goal</th>
-								<th>Protein (2.2g/kg)</th>
-								<th>Fats (25%)</th>
-								<th>Carbs (Rest)</th>
+								<th>Protein (25-40%)</th>
+								<th>Carbs (25-40%)</th>
+								<th>Fats (15-25%)</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr class="row-maintain">
 								<td><span class="goal-dot maintain"></span> Maintain Weight</td>
 								<td id="macro-maintain-protein" class="cal-val">--</td>
-								<td id="macro-maintain-fats" class="cal-val">--</td>
 								<td id="macro-maintain-carbs" class="cal-val">--</td>
+								<td id="macro-maintain-fats" class="cal-val">--</td>
 							</tr>
 							<tr class="row-loss">
 								<td><span class="goal-dot loss"></span> Weight Loss</td>
 								<td id="macro-loss-protein" class="cal-val">--</td>
-								<td id="macro-loss-fats" class="cal-val">--</td>
 								<td id="macro-loss-carbs" class="cal-val">--</td>
+								<td id="macro-loss-fats" class="cal-val">--</td>
 							</tr>
 							<tr class="row-gain">
 								<td><span class="goal-dot gain"></span> Weight Gain</td>
 								<td id="macro-gain-protein" class="cal-val">--</td>
-								<td id="macro-gain-fats" class="cal-val">--</td>
 								<td id="macro-gain-carbs" class="cal-val">--</td>
+								<td id="macro-gain-fats" class="cal-val">--</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
                 <p class="warning-text" style="background: rgba(255, 255, 255, 0.05); color: #ccc; border-color: rgba(255,255,255,0.1); margin-top: 1rem; border-left: 3px solid var(--accent-color);">
-                    <strong>💡 Pro Tip:</strong> The ideal fitness approach fixes your Protein at ~2.2g per kg of bodyweight to preserve/build muscle. Fats are set to 25% of your target calories for hormone health, and Carbohydrates fill the remaining calories to fuel your workouts!
+                    <strong>💡 Pro Tip:</strong> 1P = 4C (1 gram of protein = 4 calories), 1C = 4C (1 gram of carbs = 4 calories), 1F = 9C (1 gram of fat = 9 calories). The exact gram amount you choose within these ranges depends entirely on your body type and preferences.
                 </p>
 			</div>
 
@@ -695,39 +695,39 @@ document.addEventListener('astro:page-load', () => {
 			warnEl.classList.add('hidden');
 		}
 
-		// Calculate Macros based on Gold-Standard Bodybuilding guidelines
-		function calcMacros(cals, weight) {
-			// Protein: 2.2g per kg of bodyweight
-			const p = Math.round(weight * 2.2);
+		// Calculate Macros based on min/max percentage ranges
+		function calcMacros(cals) {
+			const pMin = Math.round((cals * 0.25) / 4);
+			const pMax = Math.round((cals * 0.40) / 4);
 			
-			// Fats: 25% of total target calories
-			const f = Math.round((cals * 0.25) / 9);
-			
-			// Carbs: The remaining calories
-			const c = Math.round((cals - (p * 4) - (f * 9)) / 4);
+			const cMin = Math.round((cals * 0.25) / 4);
+			const cMax = Math.round((cals * 0.40) / 4);
+
+			const fMin = Math.round((cals * 0.15) / 9);
+			const fMax = Math.round((cals * 0.25) / 9);
 			
 			return {
-				p: `${p}g`,
-				f: `${f}g`,
-				c: `${c > 0 ? c : 0}g`
+				p: `${pMin} - ${pMax}g`,
+				c: `${cMin} - ${cMax}g`,
+				f: `${fMin} - ${fMax}g`
 			};
 		}
 
-		const macMaintain = calcMacros(vals.maintain, weightKg);
-		const macLoss = calcMacros(vals.loss, weightKg);
-		const macGain = calcMacros(vals.gain, weightKg);
+		const macMaintain = calcMacros(vals.maintain);
+		const macLoss = calcMacros(vals.loss);
+		const macGain = calcMacros(vals.gain);
 
 		document.getElementById('macro-maintain-protein').textContent = macMaintain.p;
-		document.getElementById('macro-maintain-fats').textContent = macMaintain.f;
 		document.getElementById('macro-maintain-carbs').textContent = macMaintain.c;
+		document.getElementById('macro-maintain-fats').textContent = macMaintain.f;
 
 		document.getElementById('macro-loss-protein').textContent = macLoss.p;
-		document.getElementById('macro-loss-fats').textContent = macLoss.f;
 		document.getElementById('macro-loss-carbs').textContent = macLoss.c;
+		document.getElementById('macro-loss-fats').textContent = macLoss.f;
 
 		document.getElementById('macro-gain-protein').textContent = macGain.p;
-		document.getElementById('macro-gain-fats').textContent = macGain.f;
 		document.getElementById('macro-gain-carbs').textContent = macGain.c;
+		document.getElementById('macro-gain-fats').textContent = macGain.f;
 
 		// Zigzag Schedule 1: Alternating high/low
 		const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
