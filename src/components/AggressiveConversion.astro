@@ -1,10 +1,13 @@
 ---
+import { getContent, getVal } from '../backend/content';
+
+const c = getContent('conversion');
 ---
 <!-- Sticky CTA Banner -->
 <div class="sticky-cta" id="sticky-cta">
     <div class="cta-inner">
-        <span>Ready to <strong>force your success</strong>?</span>
-        <a href="/contact-us" class="btn btn-primary compact-btn">Claim Your Body Now</a>
+        <span data-editable="conversion:sticky.text" set:html={getVal(c, 'sticky.text', 'Ready to <strong>force your success</strong>?')} />
+        <a href="/contact-us" class="btn btn-primary compact-btn" data-editable="conversion:sticky.btn" set:html={getVal(c, 'sticky.btn', 'Claim Your Body Now')} />
     </div>
 </div>
 
@@ -12,11 +15,11 @@
 <div class="exit-modal" id="exit-modal" aria-hidden="true">
     <div class="exit-modal-content">
         <button class="exit-close-btn" id="exit-close-btn">&times;</button>
-        <span class="exit-icon">⚠️</span>
-        <h2 class="exit-title">Leaving before you even begin?</h2>
-        <p class="exit-desc">Tomorrow is a myth. The time will pass anyway. <strong>Stop making excuses</strong> and claim your transformation today.</p>
+        <span class="exit-icon" data-editable="conversion:exit.icon" set:html={getVal(c, 'exit.icon', '⚠️')} />
+        <h2 class="exit-title" data-editable="conversion:exit.title" set:html={getVal(c, 'exit.title', 'Leaving before you even begin?')} />
+        <p class="exit-desc" data-editable="conversion:exit.desc" set:html={getVal(c, 'exit.desc', 'Tomorrow is a myth. The time will pass anyway. <strong>Stop making excuses</strong> and claim your transformation today.')} />
         <div class="exit-actions">
-            <a href="/contact-us" class="btn btn-primary btn-large">Force Your Success</a>
+            <a href="/contact-us" class="btn btn-primary btn-large" data-editable="conversion:exit.btn" set:html={getVal(c, 'exit.btn', 'Force Your Success')} />
         </div>
     </div>
 </div>

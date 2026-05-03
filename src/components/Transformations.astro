@@ -1,5 +1,32 @@
 ---
-const transformations = [
+import { getContent, getVal } from '../backend/content';
+
+const defaultTransformations = [
+	{
+		image: "/transformations/Lina el tahtawy.jpeg",
+		text: "Lina el tahtawy lost 7 kg in 1 month despite a very busy lifestyle and high water retention...",
+		fullText: "Lina el tahtawy lost 7 kg in 1 month despite a very busy lifestyle and high water retention. She followed my plan strictly and the results were very motivating and visible within weeks."
+	},
+	{
+		image: "/transformations/Gamila.jpeg",
+		text: "Me and Gamila achieved a strong transformation, losing 12 kg in 6 months. The real difference was in body composition...",
+		fullText: "Me and Gamila achieved a strong transformation, losing 12 kg in 6 months. The real difference was in body composition — more muscle, less fat, and a completely improved physique shape."
+	},
+	{
+		image: "/transformations/Nadine.jpeg",
+		text: "Me and Nadine lost 8 kg going from 62 to 54. She used to eat only one meal per day...",
+		fullText: "Me and Nadine lost 8 kg going from 62 to 54. She used to eat only one meal per day, but I switched her to 3–4 balanced meals to support better consistency and energy. Her body fat dropped clearly with just diet, good sleep, and proper hydration, without training."
+	},
+	{
+		image: "/transformations/Samar.jpeg",
+		text: "In 43 days, Samar achieved a clear transformation. Her body composition improved significantly...",
+		fullText: "In 43 days, Samar achieved a clear transformation. Her body composition improved significantly, but she still had stubborn belly fat and higher skin fat, which is normal and improves over time with a structured diet. With proper macros, good sleep, and consistent tracking, her progress is on the right path."
+	},
+	{
+		image: "/transformations/Maryam.jpeg",
+		text: "Maryam, 71 years old, lost 13 kg in 4 months working with me. She stayed consistent and actually enjoyed the process...",
+		fullText: "Maryam, 71 years old, lost 13 kg in 4 months working with me. She stayed consistent and actually enjoyed the process without feeling overwhelmed or bored. She’s clear proof that fat loss is possible at any age, no matter the circumstances, as long as the plan is right and followed properly."
+	},
 	{
 		image: "/transformations/2.jpg",
 		text: "Eyad Is Just 8 years old! The hero eyad was able to transform in just two months and continues to shock us to this day.",
@@ -41,14 +68,17 @@ const transformations = [
 		fullText: "One Of the Most Special Transformations For me was my mom, She's 53 years old, a busy professor with no time for workouts and I helped her lose 15kg in 13 months, just with diet."
 	}
 ];
+
+const c = getContent('transformations_page');
+const items = getVal(c, 'items', defaultTransformations);
 ---
 
 <section id="transformations" class="section transformations-bg">
 	<div class="container">
 		<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; margin-bottom: 3rem;">
-			<h2 class="section-title fade-in-up" style="margin-bottom: 0;">Transformations</h2>
-			<span class="badge fade-in-up" style="margin-bottom: 0;">Success Stories</span>
-			<p class="trans-desc fade-in-up delay-100" style="margin-top: 0;">See what happens when you combine the right lifestyle, a tailored diet, and real dedication. Real results from our amazing clients!</p>
+			<h2 class="section-title fade-in-up" style="margin-bottom: 0;" data-editable="transformations_page:header.title" set:html={getVal(c, 'header.title', 'Transformations')} />
+			<span class="badge fade-in-up" style="margin-bottom: 0;" data-editable="transformations_page:header.badge" set:html={getVal(c, 'header.badge', 'Success Stories')} />
+			<p class="trans-desc fade-in-up delay-100" style="margin-top: 0;" data-editable="transformations_page:header.desc" set:html={getVal(c, 'header.desc', 'See what happens when you combine the right lifestyle, a tailored diet, and real dedication. Real results from our amazing clients!')} />
 		</div>
 
 		<div class="scroller-container fade-in-up delay-200">
@@ -58,7 +88,7 @@ const transformations = [
 				<span class="hint-arrow">→</span>
 			</div>
 			<div class="transformations-slider">
-				{transformations.map((item, index) => (
+				{items.map((item, index) => (
 					<div class="transform-card glass-panel glass-panel-hover" data-fulltext={item.fullText} data-imgsrc={item.image}>
 						<div class="transform-img-wrap">
 							<img src={item.image} alt={`Transformation ${index + 1}`} loading="lazy" />
@@ -67,7 +97,7 @@ const transformations = [
 							</div>
 						</div>
 						<div class="transform-text">
-							<p>{item.text}</p>
+							<p data-editable={`transformations_page:items.${index}.text`} set:html={item.text}></p>
 						</div>
 					</div>
 				))}
@@ -75,7 +105,7 @@ const transformations = [
 		</div>
 
 		<div style="text-align: center; margin-top: 3rem;" class="fade-in-up delay-300">
-			<a href="/all-transformations" class="btn btn-primary">Show All Transformations</a>
+			<a href="/all-transformations" class="btn btn-primary" data-editable="transformations_page:header.btn" set:html={getVal(c, 'header.btn', 'Show All Transformations')} />
 		</div>
 	</div>
 </section>
@@ -169,7 +199,8 @@ const transformations = [
 	.transform-img-wrap img {
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
+		object-fit: contain;
+		background-color: #000;
 		transition: transform var(--transition);
 	}
 
@@ -300,7 +331,8 @@ const transformations = [
 		width: 100%;
 		flex: 1 1 50%;
 		max-width: 500px;
-		object-fit: cover;
+		object-fit: contain;
+		background-color: #000;
 	}
 
 	.modal-info {

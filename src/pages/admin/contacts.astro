@@ -36,13 +36,25 @@ if (!auth.authenticated) return auth.redirect;
                         <label class="form-label">WhatsApp ID (Digits Only)</label>
                         <input type="text" id="coach-whatsapp" placeholder="201217720267" />
                     </div>
+                    <div class="input-group">
+                        <label class="form-label">Profile Photo</label>
+                        <div class="photo-upload-row">
+                            <img id="coach-photo-preview" src="/coach.jpg" alt="Coach" class="preview-img" />
+                            <button type="button" class="upload-btn" onclick="document.getElementById('coach-photo-input').click()">Change Photo</button>
+                            <input type="file" id="coach-photo-input" accept="image/*" style="display:none" onchange="uploadPhoto(this, 'coach')" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="contact-card glass-card">
-                <div class="card-header">
-                    <div class="icon-circle">👩</div>
-                    <h3>Assistant Coach Details</h3>
+                <div class="card-header" style="justify-content: space-between;">
+                    <div style="display:flex; align-items:center; gap: 1rem;">
+                        <div class="icon-circle">👩</div>
+                        <h3>Assistant Details</h3>
+                    </div>
+                    <select id="asst-selector" class="asst-dropdown" onchange="switchAssistant(this.value)">
+                    </select>
                 </div>
                 
                 <div class="form-body">
@@ -61,6 +73,21 @@ if (!auth.authenticated) return auth.redirect;
                     <div class="input-group">
                         <label class="form-label">WhatsApp ID (Digits Only)</label>
                         <input type="text" id="asst-whatsapp" placeholder="201092151540" />
+                    </div>
+                    <div class="input-group">
+                        <label class="form-label">Profile Photo</label>
+                        <div class="photo-upload-row">
+                            <img id="asst-photo-preview" src="/Nour Assistant.jpeg" alt="Assistant" class="preview-img" />
+                            <button type="button" class="upload-btn" onclick="document.getElementById('asst-photo-input').click()">Change Photo</button>
+                            <input type="file" id="asst-photo-input" accept="image/*" style="display:none" onchange="uploadPhoto(this, 'assistant')" />
+                        </div>
+                    </div>
+                    <div class="input-group" style="flex-direction: row; align-items: center; justify-content: space-between; margin-top: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="asst-active" style="width: 1.2rem; height: 1.2rem; cursor: pointer;" />
+                            <label for="asst-active" style="cursor: pointer;">Set as Active Assistant</label>
+                        </div>
+                        <button type="button" class="upload-btn" style="background: rgba(255,50,50,0.2); color: #ff5555; border-color: rgba(255,50,50,0.4);" onclick="deleteCurrentAssistant()">Delete</button>
                     </div>
                 </div>
             </div>
@@ -115,10 +142,83 @@ if (!auth.authenticated) return auth.redirect;
             transition: all 0.3s;
         }
         .save-btn:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(226, 255, 0, 0.3); }
+
+        .photo-upload-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        .preview-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(226, 255, 0, 0.3);
+            background: #000;
+        }
+        .upload-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .upload-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Improved Dropdown Styling */
+        .asst-dropdown {
+            background: #111;
+            color: var(--brand-lime);
+            border: 1px solid rgba(226, 255, 0, 0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            outline: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-width: 200px;
+            transition: all 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e2ff00' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 3rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .asst-dropdown:hover {
+            border-color: var(--brand-lime);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(226, 255, 0, 0.15);
+        }
+
+        .asst-dropdown option {
+            background: #111;
+            color: #fff;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .asst-dropdown option:checked {
+            background: var(--brand-lime);
+            color: #000;
+        }
     </style>
 
     <script is:inline>
         let contactsData = {};
+        let currentAsstId = null;
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
 
         async function loadContacts() {
             try {
@@ -127,38 +227,231 @@ if (!auth.authenticated) return auth.redirect;
                 contactsData = data.content || {};
                 
                 const c = contactsData.coach || {};
-                const a = contactsData.assistant || {};
+                
+                // Migrate legacy assistant data to assistants array
+                if (!contactsData.assistants) {
+                    if (contactsData.assistant) {
+                        contactsData.assistants = [{
+                            ...contactsData.assistant,
+                            id: generateId()
+                        }];
+                        contactsData.activeAssistantId = contactsData.assistants[0].id;
+                    } else {
+                        contactsData.assistants = [];
+                        contactsData.activeAssistantId = null;
+                    }
+                }
 
                 document.getElementById('coach-name').value = c.name || '';
                 document.getElementById('coach-role').value = c.role || '';
                 document.getElementById('coach-phone').value = c.phone || '';
                 document.getElementById('coach-whatsapp').value = c.whatsapp || '';
+                if (c.photo) document.getElementById('coach-photo-preview').src = c.photo;
 
-                document.getElementById('asst-name').value = a.name || '';
-                document.getElementById('asst-role').value = a.role || '';
-                document.getElementById('asst-phone').value = a.phone || '';
-                document.getElementById('asst-whatsapp').value = a.whatsapp || '';
+                updateAsstSelector();
+
+                if (contactsData.assistants.length > 0) {
+                    // Load active assistant or first one
+                    const activeId = contactsData.activeAssistantId || contactsData.assistants[0].id;
+                    switchAssistant(activeId);
+                } else {
+                    switchAssistant('new');
+                }
             } catch (err) {
                 console.error('Failed to load contacts:', err);
             }
         }
 
+        function updateAsstSelector() {
+            const sel = document.getElementById('asst-selector');
+            sel.innerHTML = '';
+            contactsData.assistants.forEach(a => {
+                const opt = document.createElement('option');
+                opt.value = a.id;
+                opt.textContent = a.name + (a.id === contactsData.activeAssistantId ? ' (Active)' : '');
+                sel.appendChild(opt);
+            });
+            const newOpt = document.createElement('option');
+            newOpt.value = 'new';
+            newOpt.textContent = '+ Add New Assistant';
+            sel.appendChild(newOpt);
+
+            if (currentAsstId) {
+                sel.value = currentAsstId;
+            }
+        }
+
+        function switchAssistant(id) {
+            // Save current form to currentAsstId if it exists before switching
+            saveCurrentAssistantToMemory();
+
+            currentAsstId = id === 'new' ? null : id;
+            
+            const sel = document.getElementById('asst-selector');
+            sel.value = id;
+
+            if (id === 'new') {
+                document.getElementById('asst-name').value = '';
+                document.getElementById('asst-role').value = '';
+                document.getElementById('asst-phone').value = '';
+                document.getElementById('asst-whatsapp').value = '';
+                document.getElementById('asst-photo-preview').src = '/Nour Assistant.jpeg';
+                document.getElementById('asst-active').checked = contactsData.assistants.length === 0;
+            } else {
+                const a = contactsData.assistants.find(asst => asst.id === id);
+                if (a) {
+                    document.getElementById('asst-name').value = a.name || '';
+                    document.getElementById('asst-role').value = a.role || '';
+                    document.getElementById('asst-phone').value = a.phone || '';
+                    document.getElementById('asst-whatsapp').value = a.whatsapp || '';
+                    if (a.photo) document.getElementById('asst-photo-preview').src = a.photo;
+                    document.getElementById('asst-active').checked = (a.id === contactsData.activeAssistantId);
+                }
+            }
+        }
+
+        function saveCurrentAssistantToMemory() {
+            if (!currentAsstId && !document.getElementById('asst-name').value) return;
+
+            const a = {
+                id: currentAsstId || generateId(),
+                name: document.getElementById('asst-name').value,
+                role: document.getElementById('asst-role').value,
+                phone: document.getElementById('asst-phone').value,
+                whatsapp: document.getElementById('asst-whatsapp').value,
+                photo: document.getElementById('asst-photo-preview').src
+            };
+
+            const idx = contactsData.assistants.findIndex(asst => asst.id === a.id);
+            if (idx >= 0) {
+                contactsData.assistants[idx] = a;
+            } else {
+                contactsData.assistants.push(a);
+            }
+            
+            currentAsstId = a.id;
+            
+            if (document.getElementById('asst-active').checked) {
+                contactsData.activeAssistantId = a.id;
+                contactsData.assistant = { ...a }; // keep active copy
+            } else if (contactsData.activeAssistantId === a.id) {
+                // If it was active and we unchecked it, and it's the only one, force it back
+                if (contactsData.assistants.length === 1) {
+                    document.getElementById('asst-active').checked = true;
+                    contactsData.activeAssistantId = a.id;
+                    contactsData.assistant = { ...a };
+                } else {
+                    contactsData.activeAssistantId = null;
+                }
+            }
+        }
+
+        function deleteCurrentAssistant() {
+            if (!currentAsstId) {
+                // Just clear the new form
+                switchAssistant('new');
+                return;
+            }
+            if (!confirm('Are you sure you want to delete this assistant?')) return;
+
+            contactsData.assistants = contactsData.assistants.filter(a => a.id !== currentAsstId);
+            if (contactsData.activeAssistantId === currentAsstId) {
+                contactsData.activeAssistantId = null;
+                contactsData.assistant = {};
+            }
+
+            updateAsstSelector();
+            if (contactsData.assistants.length > 0) {
+                switchAssistant(contactsData.assistants[0].id);
+            } else {
+                switchAssistant('new');
+            }
+        }
+
+        // Convert any image to real JPEG via canvas (handles HEIF, HEVC, etc.)
+        function convertToJpeg(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    URL.revokeObjectURL(url);
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            const name = file.name.replace(/\.[^.]+$/, '.jpg');
+                            resolve(new File([blob], name, { type: 'image/jpeg' }));
+                        } else {
+                            reject(new Error('Canvas conversion failed'));
+                        }
+                    }, 'image/jpeg', 0.85);
+                };
+                img.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    reject(new Error('Image load failed'));
+                };
+                img.src = url;
+            });
+        }
+
+        async function uploadPhoto(input, person) {
+            const originalFile = input.files[0];
+            if (!originalFile) return;
+
+            showToast(`Processing ${person} photo...`);
+            let file;
+            try {
+                file = await convertToJpeg(originalFile);
+            } catch (e) {
+                file = originalFile;
+            }
+
+            showToast(`Uploading ${person} photo...`);
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('category', 'MISC');
+
+            try {
+                const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+                if (res.ok) {
+                    showToast('Upload complete!');
+                    const listRes = await fetch('/api/admin/upload?category=MISC');
+                    const list = await listRes.json();
+                    if (list && list.length > 0) {
+                        const newPhotoUrl = list[0].public_url;
+                        document.getElementById(`${person === 'coach' ? 'coach' : 'asst'}-photo-preview`).src = newPhotoUrl;
+                    }
+                } else {
+                    showToast('Upload failed!', 'error');
+                }
+            } catch (err) {
+                showToast('Network error', 'error');
+            }
+        }
+
         async function saveContacts() {
+            saveCurrentAssistantToMemory();
+            
+            // if no active assistant is set, auto-set the first one
+            if (!contactsData.activeAssistantId && contactsData.assistants.length > 0) {
+                contactsData.activeAssistantId = contactsData.assistants[0].id;
+                contactsData.assistant = { ...contactsData.assistants[0] };
+            }
+
             const content = {
                 coach: {
                     name: document.getElementById('coach-name').value,
                     role: document.getElementById('coach-role').value,
                     phone: document.getElementById('coach-phone').value,
                     whatsapp: document.getElementById('coach-whatsapp').value,
-                    photo: contactsData.coach?.photo || '/coach.jpg'
+                    photo: document.getElementById('coach-photo-preview').src
                 },
-                assistant: {
-                    name: document.getElementById('asst-name').value,
-                    role: document.getElementById('asst-role').value,
-                    phone: document.getElementById('asst-phone').value,
-                    whatsapp: document.getElementById('asst-whatsapp').value,
-                    photo: contactsData.assistant?.photo || '/Nour Assistant.jpeg'
-                }
+                assistants: contactsData.assistants,
+                activeAssistantId: contactsData.activeAssistantId,
+                assistant: contactsData.assistant
             };
 
             try {
@@ -170,6 +463,7 @@ if (!auth.authenticated) return auth.redirect;
 
                 if (res.ok) {
                     showToast('Contact information updated!', 'success');
+                    updateAsstSelector(); // refresh names
                 } else {
                     showToast('Failed to save changes.', 'error');
                 }

@@ -4,19 +4,28 @@
 <style>
     path {
         fill: none !important;
-        stroke: none; /* Hide all by default */
+        stroke: none;
     }
     path:first-of-type {
-        stroke: #ffffff;
-        stroke-width: 40; /* Increased width as requested */
+        stroke: #E2FF00; /* Signature Salakawy Lime */
+        stroke-width: 50; /* Increased thickness */
         stroke-linecap: round;
-        stroke-dasharray: 20 100; /* 20% line, 100% gap */
-        stroke-dashoffset: 120;
-        animation: trace 4.5s linear infinite; /* Slower speed */
+        /* Comet effect: Bright head (20), then decreasing segments for the tail */
+        stroke-dasharray: 20 4 10 4 5 57; 
+        stroke-dashoffset: 100;
+        animation: trace 3s linear infinite, glowPulse 2s ease-in-out infinite alternate;
     }
     @keyframes trace {
-        100% {
-            stroke-dashoffset: 20;
+        to {
+            stroke-dashoffset: 0;
+        }
+    }
+    @keyframes glowPulse {
+        from {
+            filter: drop-shadow(0 0 5px #E2FF00) brightness(1);
+        }
+        to {
+            filter: drop-shadow(0 0 15px #E2FF00) brightness(1.5);
         }
     }
 </style>

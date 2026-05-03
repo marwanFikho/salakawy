@@ -133,6 +133,8 @@ if (!auth.authenticated) return auth.redirect;
         .header-actions { display: flex; align-items: center; gap: 1.25rem; }
         .view-site-link { color: var(--text-dim); font-size: 0.9rem; text-decoration: none; transition: color 0.2s; font-weight: 600; }
         .view-site-link:hover { color: #fff; }
+        .btn-visual-builder { background: linear-gradient(45deg, #00e5ff, #00ff88); color: #000; padding: 0.6rem 1.2rem; border-radius: 100px; font-weight: 800; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: transform 0.2s, box-shadow 0.2s; }
+        .btn-visual-builder:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 229, 255, 0.4); }
         .user-badge { background: var(--brand-lime); color: #000; padding: 0.4rem 0.9rem; border-radius: 100px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; }
 
         .admin-content { padding: 3rem; flex: 1; }
@@ -270,7 +272,11 @@ if (!auth.authenticated) return auth.redirect;
                 <p>Salakawy Transformation Admin Dashboard</p>
             </div>
             <div class="header-actions">
-                <a href="/" target="_blank" class="view-site-link">View Public Site →</a>
+                <a href="/" target="_blank" class="view-site-link">View Live Site</a>
+                <a href="/" class="btn-visual-builder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 Z"/></svg>
+                    Open Visual Builder
+                </a>
                 <div class="user-badge">Admin</div>
             </div>
         </header>

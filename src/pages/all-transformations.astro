@@ -3,23 +3,26 @@ import Layout from '../layouts/Layout.astro';
 import fs from 'fs';
 import path from 'path';
 import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
+import db from '../backend/db';
 
 function getImagesFromDir(dirName) {
     const dirPath = path.join(process.cwd(), 'public', 'all-transformations', dirName);
-    if (!fs.existsSync(dirPath)) return [];
-    
-    const allFiles = fs.readdirSync(dirPath)
-        .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file));
-        
-    const filtered = new Map();
-    allFiles.forEach(file => {
-        const baseIdentity = file.replace(/(-(\d+x\d+|scaled|1|2|3|v\d+))(\.(jpg|jpeg|png|webp))$/i, '$3');
-        if (!filtered.has(baseIdentity) || (!file.includes('x') && filtered.get(baseIdentity).includes('x'))) {
-            filtered.set(baseIdentity, file);
-        }
-    });
+    let fsImages = [];
+    if (fs.existsSync(dirPath)) {
+        const allFiles = fs.readdirSync(dirPath)
+            .filter(file => !file.startsWith('_draft_') && /\.(jpg|jpeg|png|webp)$/i.test(file));
+            
+        const filtered = new Map();
+        allFiles.forEach(file => {
+            const baseIdentity = file.replace(/(-(\d+x\d+|scaled|1|2|3|v\d+))(\.(jpg|jpeg|png|webp))$/i, '$3');
+            if (!filtered.has(baseIdentity) || (!file.includes('x') && filtered.get(baseIdentity).includes('x'))) {
+                filtered.set(baseIdentity, file);
+            }
+        });
+        fsImages = Array.from(filtered.values()).map(img => `/all-transformations/${dirName}/${img}`);
+    }
 
-    return Array.from(filtered.values()).map(img => `/all-transformations/${dirName}/${img}`);
+    return fsImages;
 }
 
 const ageGroups = [
@@ -56,7 +59,7 @@ const ageGroups = [
 ];
 
 const miscImages = getImagesFromDir('MISC');
-const imagePaths = [...ageGroups.flatMap(group => group.images), ...miscImages];
+const imagePaths = [...miscImages];
 
 // A simple deterministic shuffle so the wall looks mixed nicely
 const seedRandom = (seed) => {
@@ -705,7 +708,7 @@ for (let i = shuffledImagePaths.length - 1; i > 0; i--) {
 			            : count <= 3  ? (isMobile ? 200 : 350)
 			            : count <= 6  ? (isMobile ? 160 : 260)
 			            :               (isMobile ? 130 : 200);
-			const cardH = Math.round(cardW * 0.75);
+			const cardH = Math.round(cardW * 1.25); // more portrait aspect for images
 
 			explodeCanvas.innerHTML = '';
 			activeCards = [];
@@ -769,8 +772,8 @@ for (let i = shuffledImagePaths.length - 1; i > 0; i--) {
 
 				const img = document.createElement('img');
 				Object.assign(img.style, {
-					width:'100%', height:'100%', objectFit:'cover',
-					display:'block', pointerEvents:'none',
+					width:'100%', height:'100%', objectFit:'contain',
+					display:'block', pointerEvents:'none', backgroundColor: '#000'
 				});
 				img.src = src;
 				cardEl.appendChild(img);

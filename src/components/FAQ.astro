@@ -1,45 +1,46 @@
 ---
-const faqs = [
+import { getContent, getVal } from '../backend/content';
+
+const defaultFaqs = [
 	{
 		q: "What happens after I subscribe to your program?",
 		a: "1. Personalized Plan Creation: You’ll receive a detailed questionnaire so we can craft the exact roadmap to **force your success**, without sacrificing your favorite foods.\n2. Tailored to Your Life: Your plan will be customized to fit your schedule, so you can **start acting today**.\n3. Quick Turnaround: Once you complete the payment, your customized plan will be ready within 4-5 days so you can **take control now**."
 	},
 	{
 		q: "What does the program include?",
-		a: "1. Flexible Diet Plan: Adjusted to your needs, preferences, and BMR, focusing on your favorite foods.\n2. Daily Check-ins & Updates: Stay motivated with daily support.\n3. WhatsApp Q&A: Got questions? I’m here for you anytime.\n4. Supplement Recommendations (optional): Provided only if you’re interested.\n5. Cardio & Abs Routines: To help you tone up and shed fat.\n6. Gym & Home Workouts: Includes videos to ensure perfect form.\n7. Direct Access to Me: You’ll have my personal number for any support."
+		a: "1. Flexible Diet Plan: Adjusted to your needs, preferences, and BMR, focusing on your favorite foods.\n2. Daily Responses & Updates: Stay motivated with daily support.\n3. WhatsApp Q&A: Got questions? I’m here for you anytime.\n4. Supplement Recommendations (optional): Provided only if you’re interested.\n5. Cardio & Abs Routines: To help you tone up and shed fat.\n6. Gym & Home Workouts: Includes videos to ensure perfect form.\n7. Direct Access to Me: You’ll have my personal number for any support."
 	},
 	{
 		q: "What are the available package options?",
-		a: "We offer 4 levels of support to fit every need and budget:\n\n💎 **Platinum Package**: The ultimate VIP experience. I reach out to YOU proactively every day for weight & mindset checks. Maximum support.\n\n👑 **Gold Package**: Daily check-ins and direct phone access. You can call or message me anytime for instant support.\n\n🌟 **Silver Package**: Weekly check-ins directly with me via WhatsApp to keep you on track.\n\n👤 **Support Team**: Weekly follow-ups handled by my assistant team (plans are still designed by me).\n\nAll tiers include the same high-quality personalized diet and workout programs!"
+		a: "We offer 4 levels of support to fit every need and budget:\n\n💎 **Platinum Package**: The ultimate VIP experience. I reach out to YOU proactively every day for weight & mindset checks. Maximum support.\n\n👑 **Gold Package**: Daily responses and direct phone access. You can call or message me anytime for instant support.\n\n🌟 **Silver Package**: Weekly responses directly with me via WhatsApp to keep you on track.\n\n👤 **Support Team**: Weekly follow-ups handled by my assistant team (plans are still designed by me).\n\nAll tiers include the same high-quality personalized diet and workout programs!"
 	},
 	{
 		q: "Refund Policy?",
-		a: "• **1-Month Package**:\n- If the plan has been sent: **No refunds available**.\n- If the plan has NOT been sent yet: You receive a **75% refund**.\n\n• **3-Month Package**:\n- Cancel within the first 30 days: The equivalent price of 1 month of the same package is deducted, and the rest is refunded.\n- Cancel within 30-60 days: The equivalent price of 2 months of the same package is deducted, and the rest is refunded.\n- After 60 days: **No refunds are sent** for any 3-month package."
+		a: "• **1-Month Package**:\n- If the plan has been sent: **No refunds available**.\n- If the plan has NOT been sent yet: You receive a **75% refund**.\n\n• **3-Month Package**:\n- Cancel within the first 30 days: The equivalent price of 1 month of the same package is deducted, and the rest is refunded.\n- Cancel within 30-60 days: The equivalent price of 2 months of the same package is deducted, and the rest is refunded.\n- After 60 days: **No refunds are sent** for any 3-month package. \n - **No package can be refunded by dividing it's value on 3 months**"
 	}
 ];
+
+const c = getContent('faq_page');
+const items = getVal(c, 'items', defaultFaqs);
 ---
 
 <section id="faqs" class="section faq-bg">
 	<div class="container">
 		<div class="faq-header fade-in-up" style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
-			<h2 class="section-title" style="margin-bottom: 0;">All You Need To Know</h2>
-			<span class="badge" style="margin-bottom: 0;">FAQs</span>
+			<h2 class="section-title" style="margin-bottom: 0;" data-editable="faq_page:header.title" set:html={getVal(c, 'header.title', 'All You Need To Know')} />
+			<span class="badge" style="margin-bottom: 0;" data-editable="faq_page:header.badge" set:html={getVal(c, 'header.badge', 'FAQs')} />
 		</div>
 
 		<div class="faq-list fade-in-up delay-200">
-			{faqs.map((faq, index) => (
+			{items.map((faq, index) => (
 				<div class="faq-item">
 					<button class="faq-question">
-						{faq.q}
+						<span data-editable={`faq_page:items.${index}.q`} set:html={faq.q} />
 						<span class="icon">+</span>
 					</button>
 					<div class="faq-answer-wrapper">
 						<div class="faq-answer-inner">
-							<div class="faq-answer-content">
-								{faq.a.split('\n').map((line) => (
-									<p set:html={line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')} />
-								))}
-							</div>
+							<div class="faq-answer-content" data-editable={`faq_page:items.${index}.a`} set:html={faq.a.includes('<p') ? faq.a : faq.a.split('\n').map((line: string) => `<p>${line.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')}</p>`).join('')} />
 						</div>
 					</div>
 				</div>

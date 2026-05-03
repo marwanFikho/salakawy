@@ -1,6 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
+import { getContent, getVal } from '../backend/content';
+
+const c = getContent('resources_page');
+const defaultRoadmaps = {
+        'fat-loss': [
+            { title: "Deficit Focus", desc: "Setting your caloric deficit (300-500 kcal). Prioritizing high-protein intake to preserve muscle." },
+            { title: "NEAT Optimization", desc: "Aiming for 10k steps daily and mastering meal prep for busy days." },
+            { title: "Hard Training", desc: "Heavy weightlifting to keep metabolism firing and signal muscle retention." },
+            { title: "Refining Progress", desc: "Adjusting calories and adding targeted cardio as fat loss plateaus occur." }
+        ],
+        'muscle-gain': [
+            { title: "Caloric Surplus", desc: "Slight surplus (200-300 kcal). Focus on complex carbs for training fuel." },
+            { title: "Volume Increase", desc: "Mastering form and gradually adding weight or reps (Progressive Overload)." },
+            { title: "Recovery Protocol", desc: "Mastering sleep (7-8h) and ensuring adequate post-workout nutrition." },
+            { title: "Peak Intensity", desc: "Pushing sets to technical failure and utilizing advanced training methods." }
+        ],
+        'recomp': [
+            { title: "Maintenance", desc: "Eating at maintenance or slight cycling between rest and training days." },
+            { title: "Macro Precision", desc: "Extremely high protein (2.2g/kg+) to build while losing fat slowly." },
+            { title: "Steady State", desc: "Combining heavy lifting with low-intensity steady-state cardio (LISS)." },
+            { title: "The Mirror Test", desc: "Ignoring the scale and focusing on measurements and body composition." }
+        ]
+};
+const roadmaps = getVal(c, 'roadmaps', defaultRoadmaps);
 ---
 
 <Layout title="Premium Resources, Roadmap & Tracker | Salakawy">
@@ -8,19 +32,20 @@ import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
         <!-- Hero Section -->
         <section class="resources-hero section">
             <div class="container text-center">
-                <span class="badge fade-in-up">Unlock Your Potential</span>
-                <h1 class="hero-title fade-in-up delay-100">Transformation Toolbox</h1>
-                <p class="hero-desc fade-in-up delay-200">Tools, tracking, and elite knowledge to <strong>guarantee your results</strong>. No fluff, just <strong>take action today</strong>.</p>
+                <span class="badge fade-in-up" data-editable="resources_page:hero.badge" set:html={getVal(c, 'hero.badge', 'Unlock Your Potential')} />
+                <h1 class="hero-title fade-in-up delay-100" data-editable="resources_page:hero.title" set:html={getVal(c, 'hero.title', 'Transformation Toolbox')} />
+                <p class="hero-desc fade-in-up delay-200" data-editable="resources_page:hero.desc" set:html={getVal(c, 'hero.desc', 'Tools, tracking, and elite knowledge to <strong>guarantee your results</strong>. No fluff, just <strong>take action today</strong>.')} />
             </div>
             <div class="glow-bg"></div>
         </section>
 
         <!-- 1. Transformation Roadmap Generator -->
         <section class="section roadmap-section" id="roadmap">
+            <div id="roadmap-data" data-roadmaps={JSON.stringify(roadmaps)} style="display:none;"></div>
             <div class="container">
                 <div class="section-header text-center">
-                    <h2 class="section-title">Your 4-Week Roadmap</h2>
-                    <p class="header-desc">Select your primary goal to generate a customized strategy.</p>
+                    <h2 class="section-title" data-editable="resources_page:roadmap.title" set:html={getVal(c, 'roadmap.title', 'Your 4-Week Roadmap')} />
+                    <p class="header-desc" data-editable="resources_page:roadmap.desc" set:html={getVal(c, 'roadmap.desc', 'Select your primary goal to generate a customized strategy.')} />
                 </div>
 
                 <div class="goal-selector">
@@ -148,10 +173,10 @@ import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
         <!-- Final CTA -->
         <section class="section cta-section" style="margin-top: -6rem;">
             <div class="container text-center">
-                <h2>Want a Plan Built for YOU?</h2>
-                <p>Stop experimenting and <strong>claim the body you deserve</strong> with a custom roadmap that will <strong>force your success</strong>.</p>
+                <h2 data-editable="resources_page:cta.title" set:html={getVal(c, 'cta.title', 'Want a Plan Built for YOU?')} />
+                <p data-editable="resources_page:cta.desc" set:html={getVal(c, 'cta.desc', 'Stop experimenting and <strong>claim the body you deserve</strong> with a custom roadmap that will <strong>force your success</strong>.')} />
                 <div class="btn-group" style="margin-top: 1rem;">
-                    <a href="/#packages" class="btn btn-primary glare-effect">View Packages</a>
+                    <a href="/#packages" class="btn btn-primary glare-effect" data-editable="resources_page:cta.btn" set:html={getVal(c, 'cta.btn', 'View Packages')} />
                 </div>
             </div>
         </section>
@@ -340,26 +365,8 @@ import { gsap } from 'gsap';
 
 document.addEventListener('astro:page-load', () => {
     /* ── Roadmap Generator ── */
-    const roadmaps = {
-        'fat-loss': [
-            { title: "Deficit Focus", desc: "Setting your caloric deficit (300-500 kcal). Prioritizing high-protein intake to preserve muscle." },
-            { title: "NEAT Optimization", desc: "Aiming for 10k steps daily and mastering meal prep for busy days." },
-            { title: "Hard Training", desc: "Heavy weightlifting to keep metabolism firing and signal muscle retention." },
-            { title: "Refining Progress", desc: "Adjusting calories and adding targeted cardio as fat loss plateaus occur." }
-        ],
-        'muscle-gain': [
-            { title: "Caloric Surplus", desc: "Slight surplus (200-300 kcal). Focus on complex carbs for training fuel." },
-            { title: "Volume Increase", desc: "Mastering form and gradually adding weight or reps (Progressive Overload)." },
-            { title: "Recovery Protocol", desc: "Mastering sleep (7-8h) and ensuring adequate post-workout nutrition." },
-            { title: "Peak Intensity", desc: "Pushing sets to technical failure and utilizing advanced training methods." }
-        ],
-        'recomp': [
-            { title: "Maintenance", desc: "Eating at maintenance or slight cycling between rest and training days." },
-            { title: "Macro Precision", desc: "Extremely high protein (2.2g/kg+) to build while losing fat slowly." },
-            { title: "Steady State", desc: "Combining heavy lifting with low-intensity steady-state cardio (LISS)." },
-            { title: "The Mirror Test", desc: "Ignoring the scale and focusing on measurements and body composition." }
-        ]
-    };
+    const rdEl = document.getElementById('roadmap-data');
+    const roadmaps = rdEl ? JSON.parse(rdEl.dataset.roadmaps) : {};
 
     const roadmapMount = document.getElementById('roadmap-display');
     const goalBtns = document.querySelectorAll('.goal-btn');
@@ -369,8 +376,8 @@ document.addEventListener('astro:page-load', () => {
             roadmapMount.innerHTML = roadmaps[goal].map((step, i) => `
                 <div class="roadmap-card">
                     <div class="step-num">${i + 1}</div>
-                    <h4>${step.title}</h4>
-                    <p>${step.desc}</p>
+                    <h4 data-editable="resources_page:roadmaps.${goal}.${i}.title">${step.title}</h4>
+                    <p data-editable="resources_page:roadmaps.${goal}.${i}.desc">${step.desc}</p>
                 </div>
             `).join('');
             gsap.fromTo('.roadmap-card', { opacity: 0, y: 30 }, { opacity: 1, y: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out' });

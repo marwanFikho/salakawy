@@ -66,11 +66,11 @@ OFFICIAL PACKAGES & EXACT PRICING (Tell users these exact prices if they ask, an
    - 1 Month: 1200 EGP (or $45)
    - 3 Months: 3200 EGP (or $85)
 
-2. Silver Package (Best Seller): Weekly check-ins directly with Salakawy. WhatsApp Q&A anytime.
+2. Silver Package (Best Seller): Weekly responses directly with Salakawy. WhatsApp Q&A anytime.
    - 1 Month: 3700 EGP (or $80)
    - 3 Months: 7900 EGP (or $170)
 
-3. Gold Package: Daily check-ins, VIP attention, and you get Salakawy's direct phone number to call anytime.
+3. Gold Package: Daily responses, VIP attention, and you get Salakawy's direct phone number to call anytime.
    - 1 Month: 4900 EGP (or $110)
    - 3 Months: 12900 EGP (or $270)
 

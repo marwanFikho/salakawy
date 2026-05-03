@@ -9,11 +9,15 @@ if (!auth.authenticated) return auth.redirect;
 <AdminLayout title="Media Library" activePanel="photos">
     <div class="media-page">
         <div class="media-controls glass-card">
-            <div class="category-tabs">
+            <div class="category-tabs" style="flex-wrap: wrap;">
                 <button class="cat-tab active" data-cat="hero">Hero Images</button>
-                <button class="cat-tab" data-cat="transformations">Transformations</button>
+                <button class="cat-tab" data-cat="8-20">Ages 8-20</button>
+                <button class="cat-tab" data-cat="20-30">Ages 20-30</button>
+                <button class="cat-tab" data-cat="30-40">Ages 30-40</button>
+                <button class="cat-tab" data-cat="40-50">Ages 40-50</button>
+                <button class="cat-tab" data-cat="50-70">Ages 50-70</button>
+                <button class="cat-tab" data-cat="MISC">Overall Gallery (MISC)</button>
                 <button class="cat-tab" data-cat="coach">Coach Photos</button>
-                <button class="cat-tab" data-cat="assistant">Assistant</button>
             </div>
             
             <div class="upload-trigger" id="upload-zone">
@@ -26,9 +30,21 @@ if (!auth.authenticated) return auth.redirect;
         <div class="media-grid" id="photos-grid">
             <!-- Loaded via JS -->
         </div>
+
+        <!-- Custom Delete Modal -->
+        <div id="delete-modal" class="custom-modal">
+            <div class="custom-modal-content">
+                <h3>Delete Photo</h3>
+                <p>Are you sure you want to permanently delete this photo? This cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="modal-btn cancel" onclick="closeDeleteModal()">Cancel</button>
+                    <button class="modal-btn danger" onclick="confirmDelete()">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <style>
+    <style is:global>
         .media-page { display: flex; flex-direction: column; gap: 2.5rem; }
 
         .media-controls { 
@@ -79,17 +95,33 @@ if (!auth.authenticated) return auth.redirect;
         }
 
         .photo-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
             overflow: hidden;
-            position: relative;
-            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
             transition: all 0.3s;
         }
-        .photo-card:hover { transform: translateY(-5px); border-color: var(--brand-lime); }
+        
+        .photo-card:hover {
+            border-color: rgba(226, 255, 0, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
 
-        .photo-card img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-img-wrap {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            background: #050505;
+        }
+
+        .photo-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
 
         .photo-badge {
             position: absolute;
@@ -100,40 +132,73 @@ if (!auth.authenticated) return auth.redirect;
             font-size: 0.7rem;
             font-weight: 800;
             text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .badge-draft { background: #fbbf24; color: #000; }
         .badge-published { background: #4ade80; color: #000; }
 
-        .photo-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
+        .photo-actions {
+            padding: 1rem;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            opacity: 0;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
+            gap: 0.5rem;
+            justify-content: space-between;
         }
-        .photo-card:hover .photo-overlay { opacity: 1; }
 
         .action-btn {
-            width: 160px;
-            padding: 0.75rem;
-            border-radius: 12px;
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 8px;
             border: none;
-            font-weight: 800;
-            font-size: 0.85rem;
+            font-weight: 700;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.2s;
             font-family: inherit;
         }
         .pub-btn { background: var(--brand-lime); color: #000; }
+        .pub-btn:hover { background: #cce600; }
         .unpub-btn { background: rgba(255, 255, 255, 0.1); color: #fff; }
-        .del-btn { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
-        .del-btn:hover { background: rgba(239, 68, 68, 0.4); }
+        .unpub-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .del-btn { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .del-btn:hover { background: rgba(239, 68, 68, 0.2); }
+
+        .custom-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s;
+        }
+        .custom-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .custom-modal-content {
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: all 0.2s;
+        }
+        .custom-modal.active .custom-modal-content {
+            transform: scale(1);
+        }
+        .custom-modal-content h3 { margin-top: 0; color: #fff; }
+        .custom-modal-content p { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 2rem; }
+        .modal-actions { display: flex; gap: 1rem; }
+        .modal-btn { flex: 1; padding: 0.8rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .modal-btn.cancel { background: rgba(255,255,255,0.1); color: #fff; }
+        .modal-btn.danger { background: #ef4444; color: #fff; }
     </style>
 
     <script is:inline>
@@ -158,14 +223,16 @@ if (!auth.authenticated) return auth.redirect;
 
             grid.innerHTML = photos.map(p => `
                 <div class="photo-card">
-                    <img src="${p.public_url}" alt="" loading="lazy" />
-                    <div class="photo-badge badge-${p.status}">${p.status}</div>
-                    <div class="photo-overlay">
+                    <div class="photo-img-wrap">
+                        <img src="${p.public_url}" alt="" loading="lazy" />
+                        <div class="photo-badge badge-${p.status}">${p.status}</div>
+                    </div>
+                    <div class="photo-actions">
                         ${p.status === 'draft' 
-                            ? `<button class="action-btn pub-btn" onclick="updateStatus('${p.id}', 'published')">Publish to Site</button>`
-                            : `<button class="action-btn unpub-btn" onclick="updateStatus('${p.id}', 'draft')">Revert to Draft</button>`
+                            ? `<button class="action-btn pub-btn" onclick="updateStatus('${p.id}', 'published')">Publish</button>`
+                            : `<button class="action-btn unpub-btn" onclick="updateStatus('${p.id}', 'draft')">Draft</button>`
                         }
-                        <button class="action-btn del-btn" onclick="deletePhoto('${p.id}', '${p.storage_path}')">Delete Permanently</button>
+                        <button class="action-btn del-btn" onclick="deletePhoto('${p.id}', '${p.storage_path}')">Delete</button>
                     </div>
                 </div>
             `).join('');
@@ -175,7 +242,7 @@ if (!auth.authenticated) return auth.redirect;
             const res = await fetch('/api/admin/upload', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, status })
+                body: JSON.stringify({ id, status, category: currentCat })
             });
             if (res.ok) {
                 showToast(status === 'published' ? 'Image is now LIVE!' : 'Image moved to DRAFTS');
@@ -183,17 +250,63 @@ if (!auth.authenticated) return auth.redirect;
             }
         }
 
+        let photoToDelete = null;
+
         async function deletePhoto(id, storage_path) {
-            if (!confirm('Are you sure? This cannot be undone.')) return;
+            photoToDelete = { id, storage_path, category: currentCat };
+            document.getElementById('delete-modal').classList.add('active');
+        }
+
+        async function confirmDelete() {
+            if (!photoToDelete) return;
+            const { id, storage_path, category } = photoToDelete;
+            
             const res = await fetch('/api/admin/upload', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, storage_path })
+                body: JSON.stringify({ id, storage_path, category })
             });
+            
+            closeDeleteModal();
+            
             if (res.ok) {
-                showToast('Image deleted from storage.', 'success');
+                showToast('Image deleted.', 'success');
                 fetchPhotos();
             }
+        }
+
+        function closeDeleteModal() {
+            photoToDelete = null;
+            document.getElementById('delete-modal').classList.remove('active');
+        }
+
+        // Convert any image to real JPEG via canvas (handles HEIF, HEVC, etc.)
+        function convertToJpeg(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    URL.revokeObjectURL(url);
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            const name = file.name.replace(/\.[^.]+$/, '.jpg');
+                            resolve(new File([blob], name, { type: 'image/jpeg' }));
+                        } else {
+                            reject(new Error('Canvas conversion failed'));
+                        }
+                    }, 'image/jpeg', 0.85);
+                };
+                img.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    reject(new Error('Image load failed'));
+                };
+                img.src = url;
+            });
         }
 
         // Upload zone
@@ -202,14 +315,24 @@ if (!auth.authenticated) return auth.redirect;
         zone.addEventListener('click', () => input.click());
         input.addEventListener('change', async () => {
             const files = Array.from(input.files);
-            for (const file of files) {
+            for (const originalFile of files) {
+                showToast(`Processing ${originalFile.name}...`);
+                let file;
+                try {
+                    file = await convertToJpeg(originalFile);
+                } catch (e) {
+                    // Fallback: upload as-is if conversion fails
+                    file = originalFile;
+                }
                 const fd = new FormData();
                 fd.append('file', file);
                 fd.append('category', currentCat);
                 showToast(`Uploading ${file.name}...`);
                 const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
                 if (res.ok) showToast('Upload complete!');
+                else showToast('Upload failed!');
             }
+            input.value = '';
             fetchPhotos();
         });
 

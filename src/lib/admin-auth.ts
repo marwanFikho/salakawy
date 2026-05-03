@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { supabaseAdmin } from './supabase';
+import db from '../backend/db';
 
 const JWT_SECRET = import.meta.env.ADMIN_JWT_SECRET || 'fallback_dev_secret_change_me';
 const COOKIE_NAME = 'salakawy_admin_token';
@@ -8,37 +8,28 @@ const TOKEN_EXPIRY = '24h';
 
 // Initialize default admin credentials if they don't exist yet
 export async function ensureAdminExists() {
-    const { data } = await supabaseAdmin
-        .from('admin_settings')
-        .select('value')
-        .eq('key', 'admin_password_hash')
-        .single();
+    const data = db.prepare('SELECT value FROM admin_settings WHERE key = ?').get('admin_password_hash') as { value: string } | undefined;
 
     if (!data) {
         // First-time setup: hash the default password and store it
         const defaultPassword = 'password123';
         const hash = await bcrypt.hash(defaultPassword, 12);
         
-        await supabaseAdmin.from('admin_settings').upsert([
-            { key: 'admin_password_hash', value: hash },
-            { key: 'admin_username', value: import.meta.env.ADMIN_USERNAME || 'salakawy' }
-        ]);
+        const stmt = db.prepare(`
+            INSERT INTO admin_settings (key, value, updated_at) 
+            VALUES (?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=CURRENT_TIMESTAMP
+        `);
+        
+        stmt.run('admin_password_hash', hash);
+        stmt.run('admin_username', import.meta.env.ADMIN_USERNAME || 'salakawy');
     }
 }
 
 // Verify login credentials
 export async function verifyCredentials(username: string, password: string): Promise<boolean> {
-    const { data: usernameRow } = await supabaseAdmin
-        .from('admin_settings')
-        .select('value')
-        .eq('key', 'admin_username')
-        .single();
-
-    const { data: passwordRow } = await supabaseAdmin
-        .from('admin_settings')
-        .select('value')
-        .eq('key', 'admin_password_hash')
-        .single();
+    const usernameRow = db.prepare('SELECT value FROM admin_settings WHERE key = ?').get('admin_username') as { value: string } | undefined;
+    const passwordRow = db.prepare('SELECT value FROM admin_settings WHERE key = ?').get('admin_password_hash') as { value: string } | undefined;
 
     if (!usernameRow || !passwordRow) return false;
     if (username !== usernameRow.value) return false;
@@ -86,11 +77,7 @@ export function checkAdminAuth(Astro: any): { authenticated: boolean; redirect?:
 
 // Change admin password
 export async function changePassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; error?: string }> {
-    const { data: passwordRow } = await supabaseAdmin
-        .from('admin_settings')
-        .select('value')
-        .eq('key', 'admin_password_hash')
-        .single();
+    const passwordRow = db.prepare('SELECT value FROM admin_settings WHERE key = ?').get('admin_password_hash') as { value: string } | undefined;
 
     if (!passwordRow) return { success: false, error: 'Admin not found' };
 
@@ -98,10 +85,7 @@ export async function changePassword(currentPassword: string, newPassword: strin
     if (!isValid) return { success: false, error: 'Current password is incorrect' };
 
     const newHash = await bcrypt.hash(newPassword, 12);
-    await supabaseAdmin
-        .from('admin_settings')
-        .update({ value: newHash, updated_at: new Date().toISOString() })
-        .eq('key', 'admin_password_hash');
+    db.prepare('UPDATE admin_settings SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?').run(newHash, 'admin_password_hash');
 
     return { success: true };
 }

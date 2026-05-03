@@ -1,0 +1,232 @@
+---
+import { verifyToken, COOKIE_NAME } from '../lib/admin-auth';
+
+// This component renders the Visual Builder toolbar if the user is an admin.
+const token = Astro.cookies.get(COOKIE_NAME)?.value;
+const isAdmin = token ? verifyToken(token) : false;
+
+if (!isAdmin) {
+    return; // Render nothing if not an authenticated admin
+}
+---
+
+<div id="visual-builder-toolbar" class="vb-toolbar">
+    <div class="vb-left">
+        <span class="vb-badge">🛠 Visual Builder Active</span>
+        <span class="vb-status" id="vb-status">Ready</span>
+    </div>
+    <div class="vb-right">
+        <button id="vb-toggle-edit" class="vb-btn vb-btn-primary">Enable Editing</button>
+        <button id="vb-save" class="vb-btn vb-btn-success" style="display: none;">Save Changes</button>
+        <a href="/admin/settings" class="vb-btn vb-btn-secondary">Dashboard</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('astro:page-load', () => {
+        const toolbar = document.getElementById('visual-builder-toolbar');
+        if (!toolbar) return; // Not an admin
+
+        const toggleBtn = document.getElementById('vb-toggle-edit');
+        const saveBtn = document.getElementById('vb-save');
+        const statusText = document.getElementById('vb-status');
+        let isEditing = false;
+        let modifiedData = {}; // { documentId: { path: value, path2: value } }
+
+        toggleBtn.addEventListener('click', () => {
+            isEditing = !isEditing;
+            toggleBtn.textContent = isEditing ? 'Disable Editing' : 'Enable Editing';
+            toggleBtn.className = isEditing ? 'vb-btn vb-btn-danger' : 'vb-btn vb-btn-primary';
+            saveBtn.style.display = isEditing ? 'inline-block' : 'none';
+            
+            const editableElements = document.querySelectorAll('[data-editable]');
+            
+            editableElements.forEach(el => {
+                if (isEditing) {
+                    el.setAttribute('contenteditable', 'true');
+                    el.classList.add('vb-editable-active');
+                    
+                    // Listen for changes
+                    el.addEventListener('input', handleInput);
+                } else {
+                    el.removeAttribute('contenteditable');
+                    el.classList.remove('vb-editable-active');
+                    el.removeEventListener('input', handleInput);
+                }
+            });
+
+            statusText.textContent = isEditing ? 'Editing Mode ON' : 'Ready';
+        });
+
+        function handleInput(e) {
+            const el = e.target;
+            const keyPath = el.getAttribute('data-editable'); // e.g. "homepage:hero.title"
+            if (!keyPath) return;
+
+            const [docId, path] = keyPath.split(':');
+            if (!docId || !path) return;
+
+            if (!modifiedData[docId]) {
+                modifiedData[docId] = {};
+            }
+
+            // We use innerHTML if it has child tags (like <strong>), otherwise innerText
+            // For simple text, innerHTML is fine and preserves formatting if the admin adds <br> or <b>
+            // We will strip potential dangerous scripts on the backend.
+            modifiedData[docId][path] = el.innerHTML.trim();
+            
+            statusText.textContent = 'Unsaved changes...';
+            statusText.style.color = '#ffd700';
+        }
+
+        saveBtn.addEventListener('click', async () => {
+            if (Object.keys(modifiedData).length === 0) {
+                alert('No changes to save.');
+                return;
+            }
+
+            saveBtn.textContent = 'Saving...';
+            saveBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/admin/content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ updates: modifiedData })
+                });
+
+                if (response.ok) {
+                    statusText.textContent = 'Saved successfully!';
+                    statusText.style.color = '#00ff88';
+                    modifiedData = {}; // clear modifications
+                    setTimeout(() => {
+                        statusText.textContent = 'Editing Mode ON';
+                        statusText.style.color = '#fff';
+                    }, 3000);
+                } else {
+                    throw new Error('Failed to save');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error saving content. Check console.');
+                statusText.textContent = 'Error saving!';
+                statusText.style.color = '#ff3333';
+            } finally {
+                saveBtn.textContent = 'Save Changes';
+                saveBtn.disabled = false;
+            }
+        });
+    });
+</script>
+
+<style>
+    .vb-toolbar {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(15, 15, 20, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        z-index: 999999;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .vb-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .vb-badge {
+        background: linear-gradient(45deg, #ff3366, #ff9933);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .vb-status {
+        color: #ccc;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .vb-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .vb-btn {
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+
+    .vb-btn-primary {
+        background: #00e5ff;
+        color: #000;
+    }
+
+    .vb-btn-primary:hover {
+        background: #00b3cc;
+    }
+
+    .vb-btn-success {
+        background: #00ff88;
+        color: #000;
+    }
+
+    .vb-btn-success:hover {
+        background: #00cc6a;
+    }
+
+    .vb-btn-danger {
+        background: #ff3333;
+        color: #fff;
+    }
+
+    .vb-btn-secondary {
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+    }
+
+    .vb-btn-secondary:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+    /* Styles injected globally for active editable elements */
+    :global(.vb-editable-active) {
+        outline: 2px dashed #00e5ff !important;
+        outline-offset: 4px !important;
+        cursor: text !important;
+        transition: all 0.2s ease !important;
+        background: rgba(0, 229, 255, 0.05) !important;
+        min-width: 20px;
+        display: inline-block;
+    }
+
+    :global(.vb-editable-active:hover) {
+        background: rgba(0, 229, 255, 0.15) !important;
+    }
+
+    :global(.vb-editable-active:focus) {
+        outline: 2px solid #00ff88 !important;
+        background: rgba(0, 255, 136, 0.1) !important;
+    }
+</style>

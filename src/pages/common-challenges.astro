@@ -2,11 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import fs from 'fs';
 import path from 'path';
+import { getContent, getVal } from '../backend/content';
 
-// Define the challenges, tracking them with multiple images if they have specific folders.
-const baseTopics = [
+const defaultTopics = [
 	{ title: "Low Motivation", folderKeywords: [], customImage: "/transformations/1.jpg", hint: "I know how hard it feels because I've been exactly where you are. I used to be miserable about how I looked and felt, but I started working out until I absolutely fell in love with it. That journey completely changed my reality, and now it's my mission to change yours. I will be checking in with you every single day—acting as your push forward until your own discipline kicks in!" },
-	{ title: "Emotional Eating", folderKeywords: ["Emotional Eating", "Emotional Eating 2"], hint: "Salakawy targets emotional eating by providing flexible, enjoyable meal plans that reduce restrictive mindsets, alongside daily check-ins to keep you accountable without guilt." },
+	{ title: "Emotional Eating", folderKeywords: ["Emotional Eating", "Emotional Eating 2"], hint: "Salakawy targets emotional eating by providing flexible, enjoyable meal plans that reduce restrictive mindsets, alongside daily responses to keep you accountable without guilt." },
 	{ title: "Sugar Cravings", folderKeywords: ["Sugar Craving"], hint: "Even these children did control their sugar craving, imagine what you can do. By balancing your macronutrients and ensuring you eat satisfying food, Salakawy naturally curbs intense sugar cravings without asking you to give up everything you love." },
 	{ title: "Belly Fat", folderKeywords: ["Belly Fat"], hint: "Nothing is called spot fat reduction, that's a myth. Stubborn belly fat requires a consistent caloric deficit and targeted lifestyle changes. Salakawy's precise nutrition planning ensures fat is burned efficiently over time." },
 	{ title: "Arm Fat", folderKeywords: ["Arm Fats"], hint: "Targeting overall body fat through progressive training and diet is the key. Coach Salakawy incorporates strength exercises that tone and redefine your arms." },
@@ -27,6 +27,9 @@ const baseTopics = [
 	{ title: "Comparisons", folderKeywords: [], hint: "Social media can be tough. Salakawy roots you in your own progress through data tracking, showing how far YOU have come." },
 	{ title: "Aging", folderKeywords: ["50_plus_old_age"], hint: "Age is just a number. Coach Salakawy adapts the intensity and volume specifically to support your joints, hormones, and metabolism as you age." }
 ];
+
+const c = getContent('challenges_page');
+const baseTopics = getVal(c, 'items', defaultTopics);
 
 const publicDir = path.join(process.cwd(), 'public');
 
@@ -65,11 +68,10 @@ const struggles = baseTopics.map(topic => {
 
 <Layout title="Your Struggles & Fat Types - Salakawy">
 	<main>
-		<!-- Struggles Hero -->
 		<section class="section struggles-hero" style="padding-top: 150px; text-align: center;">
 			<div class="container">
-				<h1 class="fade-in-up" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-main);">Identify Your <span style="color: var(--accent-color);">Obstacles</span></h1>
-				<p class="fade-in-up delay-100" style="max-width: 700px; margin: 0 auto 2rem auto; color: var(--text-muted); font-size: 1.2rem;">Everyone fights a different battle. Explore the struggles below and discover how Coach Salakawy can <strong>force your success</strong>. It is time to <strong>stop making excuses</strong> and <strong>start acting today</strong>.</p>
+				<h1 class="fade-in-up" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-main);" data-editable="challenges_page:header.title" set:html={getVal(c, 'header.title', 'Identify Your <span style="color: var(--accent-color);">Obstacles</span>')} />
+				<p class="fade-in-up delay-100" style="max-width: 700px; margin: 0 auto 2rem auto; color: var(--text-muted); font-size: 1.2rem;" data-editable="challenges_page:header.desc" set:html={getVal(c, 'header.desc', 'Everyone fights a different battle. Explore the struggles below and discover how Coach Salakawy can <strong>force your success</strong>. It is time to <strong>stop making excuses</strong> and <strong>start acting today</strong>.')} />
 			</div>
 		</section>
 
@@ -111,8 +113,8 @@ const struggles = baseTopics.map(topic => {
 									</div>
 								)}
 								<div class="card-content">
-									<h3 class="card-title">{item.title}</h3>
-									<p class="card-hint">{item.hint}</p>
+									<h3 class="card-title" data-editable={`challenges_page:items.${index}.title`} set:html={item.title} />
+									<p class="card-hint" data-editable={`challenges_page:items.${index}.hint`} set:html={item.hint} />
 								</div>
 							</div>
 						);
@@ -120,8 +122,8 @@ const struggles = baseTopics.map(topic => {
 				</div>
 
 				<div style="text-align: center; margin-top: 4rem;" class="fade-in-up delay-300">
-					<h3 style="margin-bottom: 1.5rem;">Ready to stop making excuses and <strong>claim your transformation now</strong>?</h3>
-					<a href="/contact-us" class="btn btn-primary">Force Your Success</a>
+					<h3 style="margin-bottom: 1.5rem;" data-editable="challenges_page:footer.title" set:html={getVal(c, 'footer.title', 'Ready to stop making excuses and <strong>claim your transformation now</strong>?')} />
+					<a href="/contact-us" class="btn btn-primary" data-editable="challenges_page:footer.btn" set:html={getVal(c, 'footer.btn', 'Force Your Success')} />
 				</div>
 			</div>
 		</section>
@@ -557,8 +559,8 @@ const struggles = baseTopics.map(topic => {
 
 				const img = document.createElement('img');
 				Object.assign(img.style, {
-					width:'100%', height:'100%', objectFit:'cover',
-					display:'block', pointerEvents:'none',
+					width:'100%', height:'100%', objectFit:'contain',
+					display:'block', pointerEvents:'none', backgroundColor: '#000'
 				});
 				img.src = src;
 				cardEl.appendChild(img);

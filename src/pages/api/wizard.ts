@@ -21,7 +21,7 @@ The user has answered 3 questions:
 
 Rules for recommendation:
 - If they selected "I need daily pushes" or "VIP", recommend "Platinum Package" or "Gold Package".
-- If they selected "Weekly check-ins", recommend "Silver Package" or "Support Team".
+- If they selected "Weekly responses", recommend "Silver Package" or "Support Team".
 - If they just want a sheet, recommend "1-Month Diet Plan".
 
 RETURN A STRICT JSON RESPONSE ONLY:

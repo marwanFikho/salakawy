@@ -1,6 +1,9 @@
 ---
 import fs from 'fs';
 import path from 'path';
+import { getContent, getVal } from '../backend/content';
+
+const c = getContent('homepage');
 
 const picsDir = path.join(process.cwd(), 'public', 'Salakawy Pics');
 let heroImages = [];
@@ -63,17 +66,14 @@ displayImages.forEach((src, i) => {
 	<div class="hero-overlay"></div>
 	<div class="container hero-content">
 		<div class="hero-text fade-in-up">
-			<span class="badge">Changing Mindsets</span>
-			<h1 class="hero-title">
-				Real <span class="highlight">Transformation</span>. <br />
-				Not Just a Diet Plan.
+			<div class="badge fade-in-up" data-editable="homepage:hero.badge" set:html={getVal(c, 'hero.badge', '🔥 Salakawy Coaching')} />
+			<h1 class="hero-title fade-in-up delay-100">
+				<span class="highlight" data-editable="homepage:hero.highlight" set:html={getVal(c, 'hero.highlight', 'Transform')} /> <span data-editable="homepage:hero.title" set:html={getVal(c, 'hero.title', 'Your Body.<br />Transform Your Life.')} />
 			</h1>
-			<p class="hero-subtitle delay-100">
-				I don’t just sell a simple diet plan. I sell a mindset. <strong>Stop saying you'll start tomorrow</strong> and <strong>start acting today</strong>. A generic routine you can get anywhere, but if you are ready to hit the gym and <strong>build the body you deserve</strong>, this is your only stop.
-			</p>
+			<p class="hero-subtitle delay-100" data-editable="homepage:hero.desc" set:html={getVal(c, 'hero.desc', 'I don’t just sell a simple diet plan. I sell a mindset. <strong>Stop saying you\'ll start tomorrow</strong> and <strong>start acting today</strong>. A generic routine you can get anywhere, but if you are ready to hit the gym and <strong>build the body you deserve</strong>, this is your only stop.')} />
 			<div class="hero-actions delay-200">
-				<a href="/contact-us" class="btn btn-primary">Start Your Journey Now</a>
-				<a href="#packages" class="btn btn-outline">Explore Packages</a>
+				<a href="/contact-us" class="btn btn-primary" data-editable="homepage:hero.btn1" set:html={getVal(c, 'hero.btn1', 'Start Your Journey Now')} />
+				<a href="#packages" class="btn btn-outline" data-editable="homepage:hero.btn2" set:html={getVal(c, 'hero.btn2', 'Explore Packages')} />
 			</div>
 		</div>
 	</div>

@@ -1,42 +1,32 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/salakawy-logo.png';
+import { getContent, getVal } from '../backend/content';
+import db from '../backend/db';
+
+const c = getContent('packages_page');
+
+const stmt = db.prepare('SELECT content FROM site_content WHERE id = ?');
+const row = stmt.get('contacts') as { content: string } | undefined;
+let asstName = 'Assistant';
+if (row) {
+    try {
+        const contacts = JSON.parse(row.content);
+        if (contacts && contacts.assistant && contacts.assistant.name) {
+            asstName = contacts.assistant.name;
+        }
+    } catch (e) {}
+}
 ---
 <section id="packages" class="section packages-bg">
 	<div class="container">
 		<div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; margin-bottom: 4rem;">
-			<h2 class="section-title fade-in-up" style="margin-bottom: 0;">Start Your Journey</h2>
-			<span class="badge fade-in-up" style="margin-bottom: 0;">Pricing Plans</span>
-			<p class="packages-desc fade-in-up delay-100" style="margin-top: 0;">Choose the package that works best for you. Whether you need a daily roadmap to <strong>force your success</strong> or weekly updates, you must <strong>make a decision today</strong> to <strong>guarantee your transformation</strong>.</p>
+			<h2 class="section-title fade-in-up" style="margin-bottom: 0;" data-editable="packages_page:header.title" set:html={getVal(c, 'header.title', 'Start Your Journey')} />
+			<span class="badge fade-in-up" style="margin-bottom: 0;" data-editable="packages_page:header.badge" set:html={getVal(c, 'header.badge', 'Pricing Plans')} />
+			<p class="packages-desc fade-in-up delay-100" style="margin-top: 0;" data-editable="packages_page:header.desc" set:html={getVal(c, 'header.desc', 'Choose the package that works best for you. Whether you need a daily roadmap to <strong>force your success</strong> or weekly updates, you must <strong>make a decision today</strong> to <strong>guarantee your transformation</strong>.')} />
 		</div>
 		
-		<div class="packages-grid fade-in-up delay-200">
-			<!-- Support Team Package -->
-			<div class="package-card glass-panel standard">
-				<div class="package-header">
-                    <div class="package-logo-container standard-logo">
-                        <img src="/salakawy-logo.png" alt="Standard" class="package-logo" />
-                    </div>
-					<h3>Support Team</h3>
-					<span class="price-container">
-						<span class="price-from">From</span>
-						<span class="price">1200<small>EGP</small></span>
-						<span class="price-duration">1 Month (or $45)</span>
-					</span>
-				</div>
-				<div class="package-body">
-					<p class="package-sub">Weekly follow-up handled entirely by our Assistant Team.</p>
-					<ul class="package-features">
-						<li><span class="icon">✅</span> Plan designed by Salakawy</li>
-						<li><span class="icon">✅</span> Weekly assistant follow-up</li>
-						<li><span class="icon">✅</span> Adjusted Flexible Diet</li>
-						<li><span class="icon">✅</span> Gym & Home Workouts + Videos</li>
-					</ul>
-					<a href="/contact-us" class="btn btn-outline package-btn">Message Nour</a>
-                    <p class="price-note">3 Months: 3200 EGP / 85$</p>
-				</div>
-			</div>
-
+		<div class="packages-grid fade-in-up delay-200 main-packages">
 			<!-- Silver Package -->
 			<div class="popular-spin-border">
 				<div class="popular-badge">Best Seller</div>
@@ -45,24 +35,33 @@ import logo from '../assets/salakawy-logo.png';
 						<div class="package-logo-container silver-logo effect-shine">
 							<img src="/salakawy-logo.png" alt="Silver" class="package-logo" />
 						</div>
-						<h3>Silver</h3>
-						<span class="price-container">
-							<span class="price-from">From</span>
-							<span class="price">3700<small>EGP</small></span>
-							<span class="price-duration">1 Month (or $80)</span>
-						</span>
+						<h3 data-editable="packages_page:silver.title" set:html={getVal(c, 'silver.title', 'Silver')} />
+						<p class="package-sub" style="min-height: auto; margin-bottom: 0;" data-editable="packages_page:silver.subtitle" set:html={getVal(c, 'silver.subtitle', 'Great For Professional Users')} />
 					</div>
 					<div class="package-body">
-						<p class="package-sub">Weekly check-ins directly with Salakawy to keep you on track.</p>
 						<ul class="package-features">
-							<li><span class="icon">🌟</span> <strong>Direct Salakawy follow-up weekly</strong></li>
-							<li><span class="icon">🌟</span> WhatsApp Q & A anytime</li>
-							<li><span class="icon">🌟</span> Diet Based on BMR & Food Choices</li>
-							<li><span class="icon">🌟</span> Cardio and Abs routine</li>
-							<li><span class="icon">🌟</span> Gym & Home Workouts</li>
+							<li><span class="icon">📅</span> <span data-editable="packages_page:silver.f1" set:html={getVal(c, 'silver.f1', 'Weekly responses and updates with Salakawy directly to keep you on track and motivated. ⏰')} /></li>
+							<li><span class="icon">💬</span> <span data-editable="packages_page:silver.f2" set:html={getVal(c, 'silver.f2', 'Q & A via whatsapp.')} /></li>
+							<li><span class="icon">🍏</span> <span data-editable="packages_page:silver.f3" set:html={getVal(c, 'silver.f3', 'Adjusted Flexible Diet')} /></li>
+							<li><span class="icon">🥩</span> <span data-editable="packages_page:silver.f4" set:html={getVal(c, 'silver.f4', 'Diet Based on your BMR And Your Food Choices')} /></li>
+							<li><span class="icon">💊</span> <span data-editable="packages_page:silver.f5" set:html={getVal(c, 'silver.f5', 'Supplements recommendation (protein powder - creatine - etc)(optional)')} /></li>
+							<li><span class="icon">🚴</span> <span data-editable="packages_page:silver.f6" set:html={getVal(c, 'silver.f6', 'Cardio and Abs routine')} /></li>
+							<li><span class="icon">🏋️</span> <span data-editable="packages_page:silver.f7" set:html={getVal(c, 'silver.f7', 'Gym And Home Workouts Explained With Videos')} /></li>
 						</ul>
-						<a href="/contact-us" class="btn btn-primary package-btn">Book Silver</a>
-						<p class="price-note">3 Months: 7900 EGP / 170$</p>
+						<div class="pricing-list">
+							<div class="pricing-row">
+								<span class="duration" data-editable="packages_page:silver.p1_dur" set:html={getVal(c, 'silver.p1_dur', '3 Months:')} />
+								<span class="current-price" data-editable="packages_page:silver.p1_cur" set:html={getVal(c, 'silver.p1_cur', '7900EGP/170$')} />
+								<span class="old-price scratch-graffiti" data-editable="packages_page:silver.p1_old" set:html={getVal(c, 'silver.p1_old', '11200EGP')} />
+								<span class="best-seller-text" data-editable="packages_page:silver.badge" set:html={getVal(c, 'silver.badge', '(Best Seller)')} />
+							</div>
+							<div class="pricing-row">
+								<span class="duration" data-editable="packages_page:silver.p2_dur" set:html={getVal(c, 'silver.p2_dur', '1 Month:')} />
+								<span class="current-price" data-editable="packages_page:silver.p2_cur" set:html={getVal(c, 'silver.p2_cur', '3700EGP/80$')} />
+								<span class="old-price scratch-graffiti" data-editable="packages_page:silver.p2_old" set:html={getVal(c, 'silver.p2_old', '4900EGP')} />
+							</div>
+						</div>
+						<a href="/contact-us" class="btn btn-primary package-btn mt-auto" data-editable="packages_page:silver.btn" set:html={getVal(c, 'silver.btn', 'Shop Now')} />
 					</div>
 				</div>
 			</div>
@@ -78,24 +77,33 @@ import logo from '../assets/salakawy-logo.png';
                         <div class="sparkle s4"></div>
                         <div class="sparkle s5"></div>
                     </div>
-					<h3>Gold</h3>
-					<span class="price-container">
-						<span class="price-from">From</span>
-						<span class="price">4900<small>EGP</small></span>
-						<span class="price-duration">1 Month (or $110)</span>
-					</span>
+					<h3 data-editable="packages_page:gold.title" set:html={getVal(c, 'gold.title', 'Gold')} />
+					<p class="package-sub" style="min-height: auto; margin-bottom: 0;" data-editable="packages_page:gold.subtitle" set:html={getVal(c, 'gold.subtitle', 'Great For New Users')} />
 				</div>
 				<div class="package-body">
-					<p class="package-sub">Daily check-ins, VIP attention, and direct phone access.</p>
 					<ul class="package-features">
-						<li><span class="icon">👑</span> <strong>Daily check-ins & updates</strong></li>
-						<li><span class="icon">👑</span> <strong>My direct Phone Number</strong></li>
-						<li><span class="icon">👑</span> Feel free to call me anytime</li>
-						<li><span class="icon">👑</span> WhatsApp Q & A instantly</li>
-						<li><span class="icon">👑</span> Full Diet & Workout Plan</li>
+						<li><span class="icon">📅</span> <span data-editable="packages_page:gold.f1" set:html={getVal(c, 'gold.f1', 'Daily responses and updates with Salakawy directly to keep you on track and motivated. ⏰')} /></li>
+						<li><span class="icon">💬</span> <span data-editable="packages_page:gold.f2" set:html={getVal(c, 'gold.f2', 'Q & A via whatsapp.')} /></li>
+						<li><span class="icon">🍏</span> <span data-editable="packages_page:gold.f3" set:html={getVal(c, 'gold.f3', 'Adjusted Flexible Diet')} /></li>
+						<li><span class="icon">🥩</span> <span data-editable="packages_page:gold.f4" set:html={getVal(c, 'gold.f4', 'Diet Based on your BMR And Your Food Choices')} /></li>
+						<li><span class="icon">💊</span> <span data-editable="packages_page:gold.f5" set:html={getVal(c, 'gold.f5', 'Supplements recommendation (protein powder - creatine - etc)(optional)')} /></li>
+						<li><span class="icon">🚴</span> <span data-editable="packages_page:gold.f6" set:html={getVal(c, 'gold.f6', 'Cardio and Abs routine')} /></li>
+						<li><span class="icon">🏋️</span> <span data-editable="packages_page:gold.f7" set:html={getVal(c, 'gold.f7', 'Gym And Home Workouts Explained With Videos')} /></li>
+						<li><span class="icon">☎️</span> <span data-editable="packages_page:gold.f8" set:html={getVal(c, 'gold.f8', 'You Have My Phone Number Feel Free to Call Me Anytime')} /></li>
 					</ul>
-					<a href="/contact-us" class="btn btn-primary package-btn">Book Gold</a>
-                    <p class="price-note">3 Months: 12900 EGP / 270$</p>
+					<div class="pricing-list">
+						<div class="pricing-row">
+							<span class="duration" data-editable="packages_page:gold.p1_dur" set:html={getVal(c, 'gold.p1_dur', '3 Months:')} />
+							<span class="current-price" data-editable="packages_page:gold.p1_cur" set:html={getVal(c, 'gold.p1_cur', '12900EGP/270$')} />
+							<span class="old-price scratch-graffiti" data-editable="packages_page:gold.p1_old" set:html={getVal(c, 'gold.p1_old', '21700EGP')} />
+						</div>
+						<div class="pricing-row">
+							<span class="duration" data-editable="packages_page:gold.p2_dur" set:html={getVal(c, 'gold.p2_dur', '1 Month:')} />
+							<span class="current-price" data-editable="packages_page:gold.p2_cur" set:html={getVal(c, 'gold.p2_cur', '4900EGP/110$')} />
+							<span class="old-price scratch-graffiti" data-editable="packages_page:gold.p2_old" set:html={getVal(c, 'gold.p2_old', '8200EGP')} />
+						</div>
+					</div>
+					<a href="/contact-us" class="btn btn-primary package-btn mt-auto" data-editable="packages_page:gold.btn" set:html={getVal(c, 'gold.btn', 'Shop Now')} />
 				</div>
 			</div>
 
@@ -107,26 +115,100 @@ import logo from '../assets/salakawy-logo.png';
                         <div class="bolt b1"></div>
                         <div class="bolt b2"></div>
                     </div>
-					<h3>Platinum</h3>
-					<span class="price-container">
-						<span class="price-from">From</span>
-						<span class="price">12700<small>EGP</small></span>
-						<span class="price-duration">1 Month (or $230)</span>
-					</span>
+					<h3 data-editable="packages_page:plat.title" set:html={getVal(c, 'plat.title', 'Platinum')} />
+					<p class="package-sub" style="min-height: auto; margin-bottom: 0;" data-editable="packages_page:plat.subtitle" set:html={getVal(c, 'plat.subtitle', 'Great For emotional & stress management')} />
 				</div>
 				<div class="package-body">
-					<p class="package-sub">The ultimate VIP experience. I reach out to you proactively every day.</p>
 					<ul class="package-features">
-						<li><span class="icon">💎</span> <strong>I reach out to YOU daily</strong></li>
-						<li><span class="icon">💎</span> Proactive weight & mindset checks</li>
-						<li><span class="icon">💎</span> Everything in Gold Package</li>
-						<li><span class="icon">💎</span> Absolute maximum support level</li>
+						<li><span class="icon">💎</span> <span data-editable="packages_page:plat.f1" set:html={getVal(c, 'plat.f1', 'Includes everything in the Gold Package. The only difference is that I personally reach out to you every single day for your updates, weight check, and mindset support — instead of waiting for you to message first.')} /></li>
+						<li><span class="icon">💬</span> <span data-editable="packages_page:plat.f2" set:html={getVal(c, 'plat.f2', 'Q & A via whatsapp.')} /></li>
+						<li><span class="icon">🍏</span> <span data-editable="packages_page:plat.f3" set:html={getVal(c, 'plat.f3', 'Adjusted Flexible Diet')} /></li>
+						<li><span class="icon">🥩</span> <span data-editable="packages_page:plat.f4" set:html={getVal(c, 'plat.f4', 'Diet Based on your BMR And Your Food Choices')} /></li>
+						<li><span class="icon">💊</span> <span data-editable="packages_page:plat.f5" set:html={getVal(c, 'plat.f5', 'Supplements recommendation (protein powder - creatine - etc)(optional)')} /></li>
+						<li><span class="icon">🚴</span> <span data-editable="packages_page:plat.f6" set:html={getVal(c, 'plat.f6', 'Cardio and Abs routine')} /></li>
+						<li><span class="icon">🏋️</span> <span data-editable="packages_page:plat.f7" set:html={getVal(c, 'plat.f7', 'Gym And Home Workouts Explained With Videos')} /></li>
+						<li><span class="icon">☎️</span> <span data-editable="packages_page:plat.f8" set:html={getVal(c, 'plat.f8', 'You Have My Phone Number Feel Free to Call Me Anytime')} /></li>
 					</ul>
-					<a href="/contact-us" class="btn btn-outline package-btn" style="border-color: var(--text-main);">Book Platinum</a>
-                    <p class="price-note">3 Months: 29700 EGP / 590$</p>
+					<div class="pricing-list">
+						<div class="pricing-row">
+							<span class="duration" data-editable="packages_page:plat.p1_dur" set:html={getVal(c, 'plat.p1_dur', '3 Months:')} />
+							<span class="current-price" data-editable="packages_page:plat.p1_cur" set:html={getVal(c, 'plat.p1_cur', '29700EGP/590$')} />
+							<span class="old-price scratch-graffiti" data-editable="packages_page:plat.p1_old" set:html={getVal(c, 'plat.p1_old', '43700EGP')} />
+						</div>
+						<div class="pricing-row">
+							<span class="duration" data-editable="packages_page:plat.p2_dur" set:html={getVal(c, 'plat.p2_dur', '1 Month:')} />
+							<span class="current-price" data-editable="packages_page:plat.p2_cur" set:html={getVal(c, 'plat.p2_cur', '12700EGP/230$')} />
+							<span class="old-price scratch-graffiti" data-editable="packages_page:plat.p2_old" set:html={getVal(c, 'plat.p2_old', '19900EGP')} />
+						</div>
+					</div>
+					<a href="/contact-us" class="btn btn-outline package-btn mt-auto" style="border-color: var(--text-main);" data-editable="packages_page:plat.btn" set:html={getVal(c, 'plat.btn', 'Shop Now')} />
 				</div>
 			</div>
 		</div>
+
+        <!-- Support Package (Horizontal) -->
+        <div class="support-package-wrapper fade-in-up delay-300">
+            <div class="package-card glass-panel support-horizontal">
+                <div class="support-content-flex">
+                    <div class="support-left">
+                        <div class="package-logo-container standard-logo">
+                            <img src="/salakawy-logo.png" alt="Support" class="package-logo" />
+                        </div>
+                        <h3 data-editable="packages_page:support.title" set:html={getVal(c, 'support.title', 'Support Package')} />
+                        <p class="package-sub" data-editable="packages_page:support.subtitle" set:html={getVal(c, 'support.subtitle', 'Great For Independent Achievers')} />
+                    </div>
+                    <div class="support-right">
+                        <ul class="package-features">
+                            <li><span class="icon">👥</span> <span data-editable="packages_page:support.f1" set:html={getVal(c, 'support.f1', 'This package includes the full program, with the plan arranged by me inside the WhatsApp group (only me, the client, and the assistant).')} /></li>
+                            <li><span class="icon">🥇</span> <span data-editable="packages_page:support.f2" set:html={getVal(c, 'support.f2', '<strong>Gold Tier:</strong> Includes daily responses where my Assistant monitors you day by day.')} /></li>
+                            <li><span class="icon">🥈</span> <span data-editable="packages_page:support.f3" set:html={getVal(c, 'support.f3', '<strong>Silver Tier:</strong> Includes weekly responses handled by my Assistant.')} /></li>
+                            <li><span class="icon">📅</span> <span data-editable="packages_page:support.f4" set:html={getVal(c, 'support.f4', 'You\'ll get the program plan from me in the group, and your Assistant will help you stay on track with responses based on your package. ⏰')} /></li>
+                            <li><span class="icon">🍏</span> <span data-editable="packages_page:support.f5" set:html={getVal(c, 'support.f5', 'Adjusted Flexible Diet')} /></li>
+                            <li><span class="icon">🥩</span> <span data-editable="packages_page:support.f6" set:html={getVal(c, 'support.f6', 'Diet Based on your BMR And Your Food Choices')} /></li>
+                            <li><span class="icon">💊</span> <span data-editable="packages_page:support.f7" set:html={getVal(c, 'support.f7', 'Supplements recommendation (protein powder - creatine - etc)(optional)')} /></li>
+                            <li><span class="icon">🚴</span> <span data-editable="packages_page:support.f8" set:html={getVal(c, 'support.f8', 'Cardio and Abs routine')} /></li>
+                            <li><span class="icon">🏋️</span> <span data-editable="packages_page:support.f9" set:html={getVal(c, 'support.f9', 'Gym And Home Workouts Explained With Videos')} /></li>
+                        </ul>
+                        
+                        <div class="support-pricing-grid">
+                            <div class="support-pricing-col">
+                                <h4 class="support-tier-title gold-text" data-editable="packages_page:support.gold_title" set:html={getVal(c, 'support.gold_title', 'Gold')} />
+                                <div class="pricing-list">
+                                    <div class="pricing-row">
+                                        <span class="duration" data-editable="packages_page:support.g_p1_dur" set:html={getVal(c, 'support.g_p1_dur', '3 Months:')} />
+                                        <span class="current-price" data-editable="packages_page:support.g_p1_cur" set:html={getVal(c, 'support.g_p1_cur', '4700EGP/120$')} />
+                                        <span class="old-price scratch-graffiti" data-editable="packages_page:support.g_p1_old" set:html={getVal(c, 'support.g_p1_old', '5900EGP')} />
+                                        <span class="best-seller-text" data-editable="packages_page:support.g_badge" set:html={getVal(c, 'support.g_badge', '(Best Seller)')} />
+                                    </div>
+                                    <div class="pricing-row">
+                                        <span class="duration" data-editable="packages_page:support.g_p2_dur" set:html={getVal(c, 'support.g_p2_dur', '1 Month:')} />
+                                        <span class="current-price" data-editable="packages_page:support.g_p2_cur" set:html={getVal(c, 'support.g_p2_cur', '2200EGP/60$')} />
+                                        <span class="old-price scratch-graffiti" data-editable="packages_page:support.g_p2_old" set:html={getVal(c, 'support.g_p2_old', '2700EGP')} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="support-pricing-col">
+                                <h4 class="support-tier-title silver-text" data-editable="packages_page:support.silv_title" set:html={getVal(c, 'support.silv_title', 'Silver')} />
+                                <div class="pricing-list">
+                                    <div class="pricing-row">
+                                        <span class="duration" data-editable="packages_page:support.s_p1_dur" set:html={getVal(c, 'support.s_p1_dur', '3 Months:')} />
+                                        <span class="current-price" data-editable="packages_page:support.s_p1_cur" set:html={getVal(c, 'support.s_p1_cur', '3200EGP/85$')} />
+                                        <span class="old-price scratch-graffiti" data-editable="packages_page:support.s_p1_old" set:html={getVal(c, 'support.s_p1_old', '4200EGP')} />
+                                    </div>
+                                    <div class="pricing-row">
+                                        <span class="duration" data-editable="packages_page:support.s_p2_dur" set:html={getVal(c, 'support.s_p2_dur', '1 Month:')} />
+                                        <span class="current-price" data-editable="packages_page:support.s_p2_cur" set:html={getVal(c, 'support.s_p2_cur', '1200EGP/45$')} />
+                                        <span class="old-price scratch-graffiti" data-editable="packages_page:support.s_p2_old" set:html={getVal(c, 'support.s_p2_old', '1700EGP')} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="/contact-us" class="btn btn-primary package-btn mt-auto" style="margin-top: 1.5rem;">Contact {asstName}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 	</div>
 </section>
 
@@ -156,11 +238,11 @@ import logo from '../assets/salakawy-logo.png';
 		text-transform: uppercase;
 	}
 
-	.packages-grid {
+	.packages-grid.main-packages {
 		display: grid;
-		grid-template-columns: repeat(4, 1fr);
+		grid-template-columns: repeat(3, 1fr);
 		gap: 1.5rem;
-		align-items: center;
+		align-items: stretch;
         margin-top: 2rem;
 	}
 
@@ -293,6 +375,7 @@ import logo from '../assets/salakawy-logo.png';
 	.golden   { border-top: none; }
 	.silver   { border-top: none; }
 
+    /* --- Typography and Structure Updates --- */
 	.package-header {
 		padding: 2.5rem 1.5rem 1.5rem;
 		border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -305,6 +388,8 @@ import logo from '../assets/salakawy-logo.png';
 
 	.golden .package-header h3 { color: #ffd700; }
     .standard .package-header h3 { color: #888; }
+    
+    .mt-auto { margin-top: auto; }
 
     /* Support Team (Standard) Logo Style */
     .standard-logo .package-logo {
@@ -331,7 +416,6 @@ import logo from '../assets/salakawy-logo.png';
 
     /* Silver Look & Shine */
     .silver-logo .package-logo {
-        /* Slightly lower base brightness so the high-intensity glare pops more */
         filter: grayscale(1) brightness(1.2) contrast(1.2);
     }
 
@@ -351,7 +435,7 @@ import logo from '../assets/salakawy-logo.png';
         position: absolute;
         top: 0;
         left: -200%;
-        width: 150%; /* Massive glare width */
+        width: 150%;
         height: 100%;
         background: linear-gradient(
             to right,
@@ -363,7 +447,6 @@ import logo from '../assets/salakawy-logo.png';
         );
         transform: skewX(-30deg);
         z-index: 2;
-        /* Aggressive, very visible sweep */
         animation: shine-sweep 1.5s infinite linear;
     }
 
@@ -388,7 +471,6 @@ import logo from '../assets/salakawy-logo.png';
         mask-position: center;
     }
 
-    /* Gold specific shine color */
     .gold-logo.effect-shine::after {
         background: linear-gradient(
             to right,
@@ -408,7 +490,6 @@ import logo from '../assets/salakawy-logo.png';
         border-radius: 50%;
         opacity: 0;
         z-index: 5;
-        /* Don't let the mask hide sparkles around the logo */
         -webkit-mask-image: none !important;
         mask-image: none !important;
     }
@@ -457,43 +538,6 @@ import logo from '../assets/salakawy-logo.png';
         81%, 85%, 89% { filter: brightness(5) contrast(2) drop-shadow(0 0 30px #00e5ff); }
     }
 
-
-	.price-container {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		margin-top: 1rem;
-	}
-
-	.price-from {
-		font-size: 0.85rem;
-		text-transform: uppercase;
-		letter-spacing: 1px;
-		color: var(--text-muted);
-		margin-bottom: -4px;
-	}
-
-	.price {
-		font-size: 2.2rem;
-		font-weight: 700;
-		color: var(--text-main);
-        display: flex;
-        align-items: baseline;
-        gap: 4px;
-	}
-
-	.price small {
-		font-size: 1rem;
-		font-weight: 600;
-		color: var(--text-muted);
-	}
-
-	.price-duration {
-		font-size: 0.95rem;
-		color: var(--text-muted);
-        margin-top: -2px;
-	}
-
 	.package-body {
 		padding: 1.5rem;
         flex-grow: 1;
@@ -502,10 +546,10 @@ import logo from '../assets/salakawy-logo.png';
 	}
 
 	.package-sub {
-		color: var(--text-main);
-		font-weight: 600;
+		color: var(--text-muted);
+		font-weight: 500;
 		margin-bottom: 1.5rem;
-        min-height: 48px;
+        font-size: 0.95rem;
 	}
 
 	.package-features {
@@ -515,7 +559,7 @@ import logo from '../assets/salakawy-logo.png';
 	}
 
 	.package-features li {
-		margin-bottom: 1rem;
+		margin-bottom: 0.8rem;
 		display: flex;
 		align-items: flex-start;
 		color: var(--text-muted);
@@ -524,12 +568,9 @@ import logo from '../assets/salakawy-logo.png';
 	}
 
 	.package-features .icon {
-		margin-right: 10px;
+		margin-right: 8px;
 		font-size: 1.1rem;
-	}
-
-	.package-features strong {
-		color: var(--text-main);
+        flex-shrink: 0;
 	}
 
 	.package-btn {
@@ -544,34 +585,170 @@ import logo from '../assets/salakawy-logo.png';
         box-shadow: 0 8px 24px rgba(255, 255, 0, 0.25);
     }
     
-    .price-note {
-        text-align: center;
-        margin-top: 1rem;
-        font-size: 0.9rem;
-        color: var(--text-muted);
-        font-weight: 500;
+    /* --- New Pricing UI --- */
+    .pricing-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
     }
 
+    .pricing-row {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .duration {
+        font-weight: 700;
+        color: var(--text-main);
+        font-size: 1rem;
+    }
+
+    .current-price {
+        font-weight: 800;
+        color: var(--text-main);
+        font-size: 1.15rem;
+    }
+
+    .old-price {
+        position: relative;
+        display: inline-block;
+        color: #888;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-left: 4px;
+        text-decoration: none;
+    }
+
+    /* Graffiti Scratch Effect */
+    .scratch-graffiti::before, .scratch-graffiti::after {
+        content: '';
+        position: absolute;
+        left: -10%;
+        width: 120%;
+        height: 2px;
+        background-color: #ff3333;
+        border-radius: 2px;
+        opacity: 0.85;
+    }
+
+    .scratch-graffiti::before {
+        top: 45%;
+        transform: rotate(-10deg);
+        box-shadow: 0 0 8px rgba(255, 51, 51, 0.6);
+    }
+
+    .scratch-graffiti::after {
+        top: 55%;
+        transform: rotate(6deg);
+        background-color: #ff1a1a;
+    }
+
+    .best-seller-text {
+        color: #ff3333;
+        font-weight: bold;
+        font-size: 0.85rem;
+        margin-left: 2px;
+    }
+
+    /* --- Horizontal Support Package --- */
+    .support-package-wrapper {
+        margin-top: 3rem;
+        width: 100%;
+    }
+
+    .support-horizontal {
+        padding: 2rem;
+    }
+
+    .support-content-flex {
+        display: flex;
+        flex-direction: row;
+        gap: 3rem;
+        align-items: stretch;
+    }
+
+    .support-left {
+        flex: 0 0 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        border-right: 1px solid rgba(255,255,255,0.05);
+        padding-right: 2rem;
+        justify-content: center;
+    }
+
+    .support-left .package-logo-container {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 1rem;
+    }
+
+    .support-left h3 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .support-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .support-pricing-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .support-tier-title {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    .gold-text { color: #ffd700; }
+    .silver-text { color: #ccc; }
+
 	@media (max-width: 1200px) {
-		.packages-grid {
+		.packages-grid.main-packages {
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1.5rem;
+		}
+	}
+
+	@media (max-width: 992px) {
+		.packages-grid.main-packages {
 			grid-template-columns: repeat(2, 1fr);
-			gap: 3rem 1.5rem;
-			align-items: stretch;
 		}
-		.popular {
-			transform: scale(1);
-		}
-        .popular:hover {
-		    transform: translateY(-5px);
-	    }
+        .support-content-flex {
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .support-left {
+            border-right: none;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-right: 0;
+            padding-bottom: 2rem;
+            flex: auto;
+        }
 	}
 
 	@media (max-width: 768px) {
-		.packages-grid {
+		.packages-grid.main-packages {
 			grid-template-columns: 1fr;
 		}
-        .package-sub {
-            min-height: auto;
+        .support-pricing-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        .support-horizontal {
+            padding: 1.5rem;
         }
 	}
 </style>
