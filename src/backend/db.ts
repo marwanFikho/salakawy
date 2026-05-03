@@ -1,12 +1,41 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Store DB in the project root data/ folder
-const dbPath = path.resolve(process.cwd(), 'data/database.sqlite');
-const db = new Database(dbPath);
+// Using a path relative to this file to be safer in different environments
+const dbPath = path.resolve(__dirname, '../../data/database.sqlite');
 
-// Enable WAL mode for better performance
-db.pragma('journal_mode = WAL');
+console.log('Attempting to open database at:', dbPath);
+
+let db: any;
+
+try {
+    db = new Database(dbPath, { fileMustExist: false, timeout: 5000 });
+    console.log('Database opened successfully');
+    
+    // Disable WAL mode on Vercel as it requires write access to the directory
+    if (!process.env.VERCEL) {
+        db.pragma('journal_mode = WAL');
+    }
+} catch (err) {
+    console.error('SQLite initialization failed. Fallback to :memory:', err);
+    try {
+        db = new Database(':memory:');
+        console.log('Fallback in-memory database initialized');
+    } catch (memErr) {
+        console.error('Even in-memory database failed:', memErr);
+        // Last resort: mock object to prevent crashes
+        db = {
+            prepare: () => ({ get: () => ({}), all: () => [], run: () => ({}) }),
+            exec: () => {},
+            pragma: () => {}
+        };
+    }
+}
 
 // Initialize schema
 db.exec(`
