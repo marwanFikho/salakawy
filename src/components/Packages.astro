@@ -108,13 +108,44 @@ if (row) {
 			</div>
 
 			<!-- Platinum Package -->
-			<div class="package-card glass-panel platinum">
-				<div class="package-header">
-                    <div class="package-logo-container platinum-logo effect-lightning">
-                        <img src="/salakawy-logo.png" alt="Platinum" class="package-logo" />
-                        <div class="bolt b1"></div>
-                        <div class="bolt b2"></div>
+			<div class="package-card glass-panel platinum" id="platinum-card">
+				<div class="package-header platinum-header">
+                    <!-- Diamond sparkle canvas in the background -->
+                    <canvas id="plat-canvas" class="plat-canvas"></canvas>
+
+                    <!-- Logo with metallic SVG overlay -->
+                    <div class="plat-logo-wrap" id="plat-logo-wrap">
+                        <svg class="platinum-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <filter id="plat-glow">
+                                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                    <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                </filter>
+                                <linearGradient id="metallic-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#c0c0c0"/>
+                                    <stop offset="30%" stop-color="#ffffff"/>
+                                    <stop offset="60%" stop-color="#909090"/>
+                                    <stop offset="100%" stop-color="#e0e0e0"/>
+                                </linearGradient>
+                                <linearGradient id="shine-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="white" stop-opacity="0"/>
+                                    <stop offset="50%" stop-color="white" stop-opacity="0.9"/>
+                                    <stop offset="100%" stop-color="white" stop-opacity="0"/>
+                                </linearGradient>
+                                <mask id="logo-mask">
+                                    <image href="/salakawy-logo.png" x="0" y="0" width="120" height="120"/>
+                                </mask>
+                                <clipPath id="logo-clip">
+                                    <image href="/salakawy-logo.png" x="0" y="0" width="120" height="120"/>
+                                </clipPath>
+                            </defs>
+                            <!-- Metallic base fill masked to logo shape -->
+                            <rect x="0" y="0" width="120" height="120" fill="url(#metallic-grad)" mask="url(#logo-mask)" filter="url(#plat-glow)"/>
+                            <!-- Shine beam: Angled gradient for a sharp, non-distorted glare -->
+                            <rect id="plat-shine" x="-120" y="0" width="100" height="120" fill="url(#shine-grad)" mask="url(#logo-mask)"/>
+                        </svg>
                     </div>
+
 					<h3 data-editable="packages_page:plat.title" set:html={getVal(c, 'plat.title', 'Platinum')} />
 					<p class="package-sub" style="min-height: auto; margin-bottom: 0;" data-editable="packages_page:plat.subtitle" set:html={getVal(c, 'plat.subtitle', 'Great For emotional & stress management')} />
 				</div>
@@ -155,7 +186,7 @@ if (row) {
                             <img src="/salakawy-logo.png" alt="Support" class="package-logo" />
                         </div>
                         <h3 data-editable="packages_page:support.title" set:html={getVal(c, 'support.title', 'Support Package')} />
-                        <p class="package-sub" data-editable="packages_page:support.subtitle" set:html={getVal(c, 'support.subtitle', 'Great For Independent Achievers')} />
+                        <p class="package-sub" data-editable="packages_page:support.subtitle" set:html={getVal(c, 'support.subtitle', 'Great For Guided Achievers ')} />
                     </div>
                     <div class="support-right">
                         <ul class="package-features">
@@ -506,32 +537,121 @@ if (row) {
         30% { opacity: 0; transform: scale(0) rotate(90deg); }
     }
 
-    /* Platinum Look (Metallic White) & Lightning */
-    .platinum-logo .package-logo {
-        filter: grayscale(1) brightness(2.5) contrast(1.2) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    /* ============================================
+       PLATINUM PREMIUM CARD
+    ============================================ */
+    .platinum.package-card {
+        background: linear-gradient(160deg, #0a0b0f 0%, #141620 50%, #0a0b0f 100%);
+        border: 1px solid rgba(200, 200, 255, 0.15);
+        box-shadow:
+            0 30px 80px rgba(0, 0, 0, 0.9),
+            0 0 0 1px rgba(255,255,255,0.05),
+            inset 0 1px 0 rgba(255,255,255,0.08);
+        position: relative;
+        overflow: hidden;
     }
 
-    .effect-lightning {
-        animation: flicker 4s infinite;
+    /* Subtle shimmer sweep on the whole card */
+    .platinum.package-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.03) 50%, transparent 60%);
+        animation: card-shimmer 5s ease-in-out infinite;
+        pointer-events: none;
     }
 
+    @keyframes card-shimmer {
+        0%, 100% { opacity: 0; }
+        50% { opacity: 1; }
+    }
+
+    .platinum.package-card .package-btn {
+        background: linear-gradient(135deg, #d0d0d0 0%, #ffffff 50%, #c0c0c0 100%);
+        color: #000;
+        border: none;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        box-shadow: 0 5px 25px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.5);
+        transition: all 0.3s ease;
+    }
+
+    .platinum.package-card .package-btn:hover {
+        background: linear-gradient(135deg, #ffffff 0%, #e8e8e8 100%);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 35px rgba(255,255,255,0.35);
+    }
+
+    .platinum.package-card h3 {
+        font-size: 2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #aaa 0%, #fff 40%, #bbb 70%, #fff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 200% auto;
+        animation: metallic-text-shine 4s linear infinite;
+    }
+
+    @keyframes metallic-text-shine {
+        0% { background-position: 0% center; }
+        100% { background-position: 200% center; }
+    }
+
+    /* PLATINUM HEADER LAYOUT */
+    .platinum-header {
+        position: relative;
+        overflow: hidden;
+        min-height: 220px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        padding-bottom: 1rem;
+    }
+
+    .plat-canvas {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .plat-logo-wrap {
+        position: relative;
+        z-index: 2;
+        width: 110px;
+        height: 110px;
+        margin-bottom: 1rem;
+        filter: drop-shadow(0 0 20px rgba(200, 200, 255, 0.5));
+    }
+
+    .platinum-svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .platinum-header h3,
+    .platinum-header .package-sub {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Legacy bolt styles (kept for other packages) */
     .bolt {
         position: absolute;
-        width: 2px;
-        height: 20px;
-        background: #00e5ff;
-        box-shadow: 0 0 12px #00e5ff;
+        width: 3px;
+        height: 30px;
+        background: #fff;
+        box-shadow: 0 0 15px #00e5ff;
         opacity: 0;
+        z-index: 5;
     }
+    .b1 { top: 10%; right: 15%; transform: rotate(20deg); }
+    .b2 { bottom: 10%; left: 15%; transform: rotate(-25deg); }
 
-    .b1 { top: 10%; left: 70%; transform: rotate(15deg); animation: bolt-anim 5s infinite 1s; }
-    .b2 { bottom: 20%; left: 20%; transform: rotate(-20deg); animation: bolt-anim 4s infinite 2.5s; }
-
-    @keyframes bolt-anim {
-        0%, 90%, 100% { opacity: 0; height: 0; }
-        92% { opacity: 1; height: 30px; }
-        95% { opacity: 0; height: 20px; }
-    }
 
     @keyframes flicker {
         0%, 80%, 84%, 88%, 92%, 100% { filter: grayscale(1) brightness(2.8) contrast(1.3) drop-shadow(0 0 15px rgba(255, 255, 255, 0.6)); }
@@ -622,8 +742,8 @@ if (row) {
         text-decoration: none;
     }
 
-    /* Graffiti Scratch Effect */
-    .scratch-graffiti::before, .scratch-graffiti::after {
+    /* Graffiti Scratch Effect - Single line for better visibility */
+    .scratch-graffiti::before {
         content: '';
         position: absolute;
         left: -10%;
@@ -632,18 +752,9 @@ if (row) {
         background-color: #ff3333;
         border-radius: 2px;
         opacity: 0.85;
-    }
-
-    .scratch-graffiti::before {
-        top: 45%;
-        transform: rotate(-10deg);
+        top: 50%;
+        transform: rotate(-6deg);
         box-shadow: 0 0 8px rgba(255, 51, 51, 0.6);
-    }
-
-    .scratch-graffiti::after {
-        top: 55%;
-        transform: rotate(6deg);
-        background-color: #ff1a1a;
     }
 
     .best-seller-text {
@@ -751,4 +862,119 @@ if (row) {
             padding: 1.5rem;
         }
 	}
-</style>
+    </style>
+
+	<!-- GSAP Platinum Effects -->
+	<script>
+		import gsap from 'gsap';
+
+		document.addEventListener('astro:page-load', () => {
+			const canvas = document.getElementById('plat-canvas') as HTMLCanvasElement;
+			const logoWrap = document.getElementById('plat-logo-wrap') as HTMLElement;
+			const shine = document.getElementById('plat-shine') as SVGRectElement;
+
+			if (!canvas) return;
+
+			const ctx = canvas.getContext('2d')!;
+
+			function resize() {
+				canvas.width = canvas.offsetWidth;
+				canvas.height = canvas.offsetHeight;
+			}
+			resize();
+			window.addEventListener('resize', resize);
+
+			// ── Diamond particle class ──
+			class DiamondParticle {
+				x: number; y: number;
+				size: number; opacity: number;
+				vx: number; vy: number;
+				rotation: number; rotSpeed: number;
+				pulse: number; pulseSpeed: number;
+
+				constructor() {
+					this.x = Math.random() * canvas.width;
+					this.y = Math.random() * canvas.height;
+					this.size = Math.random() * 6 + 3;
+					this.opacity = Math.random() * 0.7 + 0.1;
+					this.vx = (Math.random() - 0.5) * 0.3;
+					this.vy = (Math.random() - 0.5) * 0.3;
+					this.rotation = Math.random() * Math.PI * 2;
+					this.rotSpeed = (Math.random() - 0.5) * 0.03;
+					this.pulse = Math.random() * Math.PI * 2;
+					this.pulseSpeed = Math.random() * 0.04 + 0.01;
+				}
+
+				draw() {
+					const s = this.size * (0.7 + 0.3 * Math.sin(this.pulse));
+					const op = this.opacity * (0.5 + 0.5 * Math.sin(this.pulse));
+					ctx.save();
+					ctx.translate(this.x, this.y);
+					ctx.rotate(this.rotation);
+					ctx.globalAlpha = op;
+
+					// Diamond shape (4-sided)
+					ctx.beginPath();
+					ctx.moveTo(0, -s);
+					ctx.lineTo(s * 0.6, 0);
+					ctx.lineTo(0, s);
+					ctx.lineTo(-s * 0.6, 0);
+					ctx.closePath();
+
+					// Gradient fill per particle
+					const grad = ctx.createLinearGradient(-s, -s, s, s);
+					grad.addColorStop(0, `rgba(220,230,255,${op})`);
+					grad.addColorStop(0.5, `rgba(255,255,255,${op})`);
+					grad.addColorStop(1, `rgba(150,160,200,${op * 0.5})`);
+					ctx.fillStyle = grad;
+					ctx.fill();
+
+					// Bright center sparkle cross
+					ctx.globalAlpha = op * 0.9;
+					ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+					ctx.lineWidth = 0.5;
+					ctx.beginPath();
+					ctx.moveTo(-s * 1.8, 0); ctx.lineTo(s * 1.8, 0);
+					ctx.moveTo(0, -s * 1.8); ctx.lineTo(0, s * 1.8);
+					ctx.stroke();
+
+					ctx.restore();
+				}
+
+				update() {
+					this.x += this.vx;
+					this.y += this.vy;
+					this.rotation += this.rotSpeed;
+					this.pulse += this.pulseSpeed;
+					if (this.x < -20) this.x = canvas.width + 20;
+					if (this.x > canvas.width + 20) this.x = -20;
+					if (this.y < -20) this.y = canvas.height + 20;
+					if (this.y > canvas.height + 20) this.y = -20;
+				}
+			}
+
+			const particles: DiamondParticle[] = Array.from({ length: 28 }, () => new DiamondParticle());
+
+			function tick() {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				particles.forEach(p => { p.update(); p.draw(); });
+				requestAnimationFrame(tick);
+			}
+			tick();
+
+			// ── SVG shine sweep (GSAP) ──
+			if (shine) {
+				gsap.fromTo(shine,
+					{ attr: { x: -120 } },
+					{ attr: { x: 160 }, duration: 2, ease: 'none', repeat: -1, repeatDelay: 1.5 }
+				);
+			}
+
+			// ── Logo float (GSAP) ──
+			if (logoWrap) {
+				gsap.to(logoWrap, {
+					y: -12, duration: 2.5, repeat: -1, yoyo: true, ease: 'sine.inOut'
+				});
+			}
+		});
+	</script>

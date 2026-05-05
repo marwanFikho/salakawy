@@ -95,9 +95,14 @@
         const STORAGE_KEY = 'salakawy_social_proof_queue_v1';
 
         function generateQueue() {
-            const firstNames = ["Ahmed", "Omar", "Youssef", "Aly", "Tarek", "Karim", "Seif", "Marwan", "Adam", "Ziad", "Yassin", "Amr", "Hazem", "Farida", "Laila", "Nour", "Salma", "Hana", "Malak", "Mayar", "Nadine", "Yasmine", "Amina", "Noha", "Habiba", "Zeina", "Ismail", "Hussein", "Yehia", "Hassan", "Kamal", "Haidy", "Nourhan", "Jana", "Retaj", "Tala", "Tia"];
+            const femaleNames = ["Laila", "Nour", "Salma", "Hana", "Malak", "Mayar", "Nadine", "Yasmine", "Amina", "Noha", "Habiba", "Zeina", "Haidy", "Nourhan", "Jana", "Retaj", "Tala", "Tia", "Mariam", "Dina", "Sarah", "Layla", "Fatma", "Reem", "Rawan", "Sama", "Maya", "Lina", "Gana", "Hagar", "Aya", "Ola", "Engy", "Rania", "Mona", "Abeer", "Shahd", "Farah", "Judy"];
+            const maleNames = ["Ahmed", "Omar", "Youssef", "Aly", "Tarek", "Karim", "Seif", "Marwan", "Adam", "Ziad", "Yassin", "Amr", "Hazem", "Ismail", "Hussein", "Yehia", "Hassan", "Kamal", "Sherif", "Maged", "Raafat", "Khaled", "Mostafa", "Mahmoud", "Ezz", "Adel"];
+            
             const lastNames = ["Shenawy", "Radwan", "Osman", "El-Masry", "Fahmy", "Tawfik", "Mansour", "El-Sawy", "Kamel", "El-Khatib", "Rostom", "El-Gendy", "Soliman", "Nassar", "Abdel-Rahman", "El-Sayed", "Badawi", "Fouad", "Wagdi", "Rizk", "El-Wakeel", "El-Maghraby", "Bahaa", "Allam", "El-Sherbiny", "Shafik", "El-Shazly", "Abou-Zeid", "Ghallab"];
-            const locations = ["Zamalek", "Sheikh Zayed", "New Cairo", "Tagamoa", "Maadi", "Heliopolis", "Madinaty", "Al Rehab", "Mohandeseen", "Alexandria", "The North Coast", "Sidi Abdel Rahman", "El Gouna", "Katameya", "Dokki", "Smouha", "Kafr Abdou"];
+            
+            const egyptLocations = ["Zamalek", "Heliopolis", "Maadi", "Sheikh Zayed", "New Cairo", "Garden City", "Dokki", "Mohandeseen", "Agouza", "Alexandria", "Giza", "Cairo", "Dahab", "Hurghada", "Sheraton", "Katameya"];
+            const otherArabCountries = ["Saudi Arabia", "UAE", "Kuwait", "Qatar", "Bahrain", "Oman", "Jordan", "Lebanon"];
+            
             const actions = [
                 "booked the Silver Package", "joined the VIP Transformation", "grabbed the 3-Month Plan",
                 "started their 1-Month Diet journey", "upgraded to Gold", "booked the Support Team Package",
@@ -108,22 +113,43 @@
             const emojis = ["🔥", "💎", "🏆", "🚀", "⭐", "👑", "✨", "💥", "🦍", "🎯", "🥗"];
 
             const queue = [];
-            // Generate 150 unique-ish items to last a very long time
             for (let i = 0; i < 150; i++) {
-                const fn = firstNames[Math.floor(Math.random() * firstNames.length)];
+                // Gender Bias: ~65% Female
+                const isFemale = Math.random() < 0.65;
+                const fn = isFemale 
+                    ? femaleNames[Math.floor(Math.random() * femaleNames.length)]
+                    : maleNames[Math.floor(Math.random() * maleNames.length)];
+                
                 const ln = lastNames[Math.floor(Math.random() * lastNames.length)];
-                const loc = locations[Math.floor(Math.random() * locations.length)];
+                
+                // Country Ratio: 80% Egypt, 20% Other Arab
+                const isEgypt = Math.random() < 0.8;
+                const loc = isEgypt
+                    ? egyptLocations[Math.floor(Math.random() * egyptLocations.length)]
+                    : otherArabCountries[Math.floor(Math.random() * otherArabCountries.length)];
+                
                 const act = actions[Math.floor(Math.random() * actions.length)];
                 const icon = emojis[Math.floor(Math.random() * emojis.length)];
 
                 let textTemplate = Math.random();
                 let text = "";
-                if (textTemplate < 0.4) {
-                    text = `${fn} ${ln} from ${loc} just ${act}! ${icon}`;
-                } else if (textTemplate < 0.7) {
-                    text = `${fn} from ${loc} just ${act}! ${icon}`;
+                
+                // Subtlety: Vary the templates
+                if (isEgypt) {
+                    if (textTemplate < 0.4) {
+                        text = `${fn} ${ln} from ${loc} just ${act}! ${icon}`;
+                    } else if (textTemplate < 0.7) {
+                        text = `${fn} from ${loc} just ${act}! ${icon}`;
+                    } else {
+                        text = `${fn} ${ln} just ${act}! ${icon}`;
+                    }
                 } else {
-                    text = `${fn} ${ln} just ${act}! ${icon}`;
+                    // For other countries, usually just Name + Country looks more natural
+                    if (textTemplate < 0.6) {
+                        text = `${fn} from ${loc} just ${act}! ${icon}`;
+                    } else {
+                        text = `${fn} ${ln} from ${loc} just ${act}! ${icon}`;
+                    }
                 }
 
                 queue.push({ text, icon });

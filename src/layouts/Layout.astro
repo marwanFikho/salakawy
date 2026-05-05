@@ -153,6 +153,7 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
 			</div>
             <div class="footer-bottom">
                 <p>&copy; {new Date().getFullYear()} Salakawy. All rights reserved.</p>
+                <p class="creator-credit">Made with 💛 by <a href="https://linktr.ee/marwanfikho" target="_blank" rel="noopener">Marwan El-Fakharany</a></p>
             </div>
 		</footer>
 
@@ -371,6 +372,26 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 font-size: 0.9rem;
                 color: var(--text-muted);
                 letter-spacing: 0.5px;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .creator-credit {
+                font-size: 0.85rem;
+                opacity: 0.8;
+            }
+
+            .creator-credit a {
+                color: var(--accent-color);
+                text-decoration: none;
+                font-weight: 600;
+                transition: opacity 0.2s;
+            }
+
+            .creator-credit a:hover {
+                opacity: 0.7;
+                text-decoration: underline;
             }
 
             /* Scroll to Top */
