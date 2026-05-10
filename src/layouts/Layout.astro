@@ -88,7 +88,7 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 <!-- Desktop Nav -->
                 <nav class="nav-links">
 					<a href="/#hero">Home</a>
-					<a href="/#transformations">Transformations</a>
+					<a href="/all-transformations">Transformations</a>
 					<a href="/common-challenges">Challenges</a>
 					<a href="/resources">Resources</a>
 					<a href="/#packages">Packages</a>
@@ -107,7 +107,7 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
         <nav class="mobile-menu" id="mobile-menu">
             <div class="mobile-menu-content">
                 <a href="/#hero" class="mobile-link">Home</a>
-                <a href="/#transformations" class="mobile-link">Transformations</a>
+                <a href="/all-transformations" class="mobile-link">Transformations</a>
                 <a href="/common-challenges" class="mobile-link">Challenges</a>
                 <a href="/resources" class="mobile-link">Resources</a>
                 <a href="/#packages" class="mobile-link">Packages</a>
@@ -129,7 +129,7 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                     <h3 data-editable="layout:footer.l1" set:html={getVal(c, 'footer.l1', 'Quick Links')} />
                     <ul>
                         <li><a href="/#hero">Home</a></li>
-                        <li><a href="/#transformations">Transformations</a></li>
+                        <li><a href="/all-transformations">Transformations</a></li>
                         <li><a href="/common-challenges">Challenges</a></li>
                         <li><a href="/resources">Resources</a></li>
                         <li><a href="/#packages">Packages</a></li>
@@ -165,14 +165,21 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
 		<style>
 			.navbar {
 				position: fixed;
-				top: 44px; /* Offset to sit exactly below the top marquee */
+				top: 44px; /* Offset for marquee */
+				left: 0;
 				width: 100%;
 				background: rgba(13, 14, 18, 0.85);
 				backdrop-filter: blur(15px);
 				-webkit-backdrop-filter: blur(15px);
 				z-index: 1000;
 				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-				transition: top 0s linear; /* Instant so it moves seamlessly with scroll */
+				transition: top 0.1s ease-out;
+				-webkit-tap-highlight-color: transparent;
+			}
+
+			.navbar *, .navbar *:focus {
+				outline: none !important;
+				-webkit-tap-highlight-color: transparent !important;
 			}
 
 			.nav-content {
@@ -219,7 +226,13 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 border: none;
                 cursor: pointer;
                 z-index: 1001; /* Above mobile menu overlay */
+				outline: none !important;
+				-webkit-tap-highlight-color: transparent !important;
             }
+			
+			.hamburger:focus {
+				outline: none !important;
+			}
 
             .hamburger span {
                 height: 3px;
@@ -277,6 +290,8 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 font-weight: 700;
                 color: var(--text-muted);
                 transition: color 0.3s ease;
+				outline: none !important;
+				-webkit-tap-highlight-color: transparent !important;
             }
 
             .mobile-link:hover, .mobile-link:active {

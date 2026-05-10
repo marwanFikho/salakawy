@@ -17,6 +17,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+*:focus {
+  outline: none !important;
 }
 
 html {
@@ -24,11 +29,16 @@ html {
   background-color: var(--bg-color);
   color: var(--text-main);
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 body {
   line-height: 1.6;
+  width: 100%;
   overflow-x: hidden;
+  position: relative;
 }
 
 h1,

@@ -50,23 +50,28 @@ const items = getVal(c, 'items', defaultFaqs);
 </section>
 
 <script>
-	// Client side script to handle the accordion logic
-	const faqQuestions = document.querySelectorAll('.faq-question');
-	faqQuestions.forEach(question => {
-		question.addEventListener('click', () => {
-			const item = question.parentElement;
-			const wasOpen = item.classList.contains('active');
-			
-			// Close all other items (Accordion effect)
-			document.querySelectorAll('.faq-item').forEach(el => {
-				el.classList.remove('active');
-			});
+	function initFaq() {
+		const faqQuestions = document.querySelectorAll('.faq-question');
+		faqQuestions.forEach(question => {
+			question.addEventListener('click', () => {
+				const item = question.parentElement;
+				if (!item) return;
+				const wasOpen = item.classList.contains('active');
+				
+				// Close all other items (Accordion effect)
+				document.querySelectorAll('.faq-item').forEach(el => {
+					el.classList.remove('active');
+				});
 
-			if (!wasOpen) {
-				item.classList.add('active');
-			}
+				if (!wasOpen) {
+					item.classList.add('active');
+				}
+			});
 		});
-	});
+	}
+
+	// Run on initial load and after view transitions
+	document.addEventListener('astro:page-load', initFaq);
 </script>
 
 <style>
@@ -127,6 +132,10 @@ const items = getVal(c, 'items', defaultFaqs);
 		text-align: left;
 		font-family: inherit;
 		outline: none;
+		-webkit-appearance: none;
+		-webkit-tap-highlight-color: transparent;
+		position: relative;
+		z-index: 2;
 	}
 
 	.faq-question .icon {
