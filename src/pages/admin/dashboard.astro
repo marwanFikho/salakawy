@@ -138,6 +138,16 @@ if (!auth.authenticated) return auth.redirect;
         .admin-table td { padding: 1.25rem 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255, 255, 255, 0.03); color: rgba(255, 255, 255, 0.8); }
         .admin-table tr:last-child td { border-bottom: none; }
         .loading-cell { text-align: center; color: rgba(255, 255, 255, 0.2); padding: 3rem 0; }
+
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .charts-row { grid-template-columns: 1fr; }
+            .data-tables { grid-template-columns: 1fr; }
+            .range-selector { flex-direction: column; gap: 1rem; align-items: flex-start; }
+            .selector-group { flex-wrap: wrap; }
+            .chart-container { padding: 1.5rem; }
+            .stat-card { padding: 1.5rem; }
+        }
     </style>
 
     <script is:inline>

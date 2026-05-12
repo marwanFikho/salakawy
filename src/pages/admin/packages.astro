@@ -44,7 +44,7 @@ if (!auth.authenticated) return auth.redirect;
 
         .packages-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin-bottom: 6rem;
         }
@@ -202,6 +202,11 @@ if (!auth.authenticated) return auth.redirect;
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .pricing-row { grid-template-columns: 1fr; }
+            .pkg-card { padding: 1.5rem; }
         }
     </style>
 

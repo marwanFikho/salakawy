@@ -2,7 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import fs from 'fs';
 import path from 'path';
-import WhatsappFloatingButton from '../components/WhatsappFloatingButton.astro';
 import db from '../backend/db';
 
 function getImagesFromDir(dirName) {
@@ -58,7 +57,8 @@ const ageGroups = [
 	}
 ];
 
-const miscImages = getImagesFromDir('MISC');
+const beginImages = getImagesFromDir('MISC/Begin');
+const miscImages = getImagesFromDir('MISC').filter(img => !img.includes('/MISC/Begin/'));
 const imagePaths = [...miscImages];
 
 // A simple deterministic shuffle so the wall looks mixed nicely
@@ -71,11 +71,25 @@ const seedRandom = (seed) => {
     };
 };
 const rnd = seedRandom(12345);
-let shuffledImagePaths = [...imagePaths];
-for (let i = shuffledImagePaths.length - 1; i > 0; i--) {
+
+// 1. Begin folder images - sorted numerically (always at the top, never shuffled)
+const sortedBegin = beginImages
+    .map(imgPath => {
+        const filename = imgPath.split('/').pop();
+        const match = filename.match(/^(\d+)/);
+        return { imgPath, num: match ? parseInt(match[1]) : Infinity };
+    })
+    .sort((a, b) => a.num - b.num)
+    .map(item => item.imgPath);
+
+// 2. All other MISC images (excluding Begin) - shuffled
+let otherImages = [...imagePaths];
+for (let i = otherImages.length - 1; i > 0; i--) {
     const j = Math.floor(rnd() * (i + 1));
-    [shuffledImagePaths[i], shuffledImagePaths[j]] = [shuffledImagePaths[j], shuffledImagePaths[i]];
+    [otherImages[i], otherImages[j]] = [otherImages[j], otherImages[i]];
 }
+
+const shuffledImagePaths = [...sortedBegin, ...otherImages];
 ---
 
 <Layout title="All Transformations - Salakawy | Diet & Gym Coach">
@@ -130,13 +144,25 @@ for (let i = shuffledImagePaths.length - 1; i > 0; i--) {
 			</div>
 		</div>
 
-		<div class="masonry-grid fade-in-up delay-200" id="masonry-grid">
-			{shuffledImagePaths.map((image, i) => (
-				<div class="masonry-item glass-panel glass-panel-hover" style="padding: 10px; border-radius: 12px;">
-					<img src={image} alt={`Transformation ${i + 1}`} loading="lazy" style="border-radius: 8px;" />
-				</div>
-			))}
-		</div>
+		{sortedBegin.length > 0 && (
+			<div class="begin-grid fade-in-up delay-200" id="masonry-begin">
+				{sortedBegin.map((image, i) => (
+					<div class="masonry-item glass-panel glass-panel-hover" style="padding: 10px; border-radius: 12px;">
+						<img src={image} alt={`Featured Transformation ${i + 1}`} loading="lazy" style="border-radius: 8px;" />
+					</div>
+				))}
+			</div>
+		)}
+
+		{otherImages.length > 0 && (
+			<div class="masonry-grid fade-in-up delay-300" id="masonry-grid">
+				{otherImages.map((image, i) => (
+					<div class="masonry-item glass-panel glass-panel-hover" style="padding: 10px; border-radius: 12px;">
+						<img src={image} alt={`Transformation ${i + 1}`} loading="lazy" style="border-radius: 8px;" />
+					</div>
+				))}
+			</div>
+		)}
 		</div>
 	</main>
 
@@ -167,8 +193,6 @@ for (let i = shuffledImagePaths.length - 1; i > 0; i--) {
         <img id="gallery-modal-img" class="modal-content-img" src="" alt="Full view" />
         <span class="nav-btn next-btn" aria-label="Next">&#10095;</span>
     </div>
-
-	<WhatsappFloatingButton />
 </Layout>
 
 <style>
@@ -216,6 +240,22 @@ for (let i = shuffledImagePaths.length - 1; i > 0; i--) {
 	.masonry-grid {
 		column-count: 3;
 		column-gap: 1.5rem;
+	}
+
+	/* Begin section: responsive row-based grid to avoid gaps and keep L→R order */
+	.begin-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.5rem;
+		margin-bottom: 1.5rem;
+		align-items: start;
+	}
+
+	@media (max-width: 900px) {
+		.begin-grid {
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1rem;
+		}
 	}
 
 	.masonry-item {
@@ -634,10 +674,12 @@ for (let i = shuffledImagePaths.length - 1; i > 0; i--) {
 </style>
 
 <script>
-    document.addEventListener('astro:page-load', () => {
+		document.addEventListener('astro:page-load', () => {
+		});
 
-		// ── Age Group Explosion — powered by GSAP ──────────────────
-		import('gsap').then(({ gsap }) => {
+		// ── Age Group Explosion — powered by GSAP ──────────────────────
+		document.addEventListener('astro:page-load', () => {
+			import('gsap').then(({ gsap }) => {
 
 		const overlay      = document.getElementById('age-explode-overlay');
 		const explodeCanvas= document.getElementById('explode-canvas');
@@ -871,94 +913,92 @@ for (let i = shuffledImagePaths.length - 1; i > 0; i--) {
 			}
 		});
 
-		}); // end import('gsap')
+			}); // end import('gsap')
+		}); // end astro:page-load (GSAP block)
 
+		// ── Gallery Modal ────────────────────────────────────
+		document.addEventListener('astro:page-load', () => {
+			const modal = document.getElementById('gallery-modal');
+			const modalImg = document.getElementById('gallery-modal-img');
+			const closeBtn = document.querySelector('.close-modal');
+			const prevBtn = document.querySelector('.prev-btn');
+			const nextBtn = document.querySelector('.next-btn');
+			const items = document.querySelectorAll('.masonry-item img');
 
+			if(modal && modalImg && items.length > 0) {
+				let currentIndex = 0;
+				const imagesSrc = Array.from(items).map(img => img.getAttribute('src'));
 
+				function showImage(index) {
+					if (index < 0) index = imagesSrc.length - 1;
+					if (index >= imagesSrc.length) index = 0;
+					currentIndex = index;
+					modalImg.setAttribute('src', imagesSrc[currentIndex]);
+				}
 
+				items.forEach((item, index) => {
+					item.closest('.masonry-item').addEventListener('click', () => {
+						showImage(index);
+						modal.classList.add('show');
+						document.body.style.overflow = 'hidden';
+					});
+				});
 
+				closeBtn.addEventListener('click', () => {
+					modal.classList.remove('show');
+					document.body.style.overflow = '';
+				});
 
-        const modal = document.getElementById('gallery-modal');
-        const modalImg = document.getElementById('gallery-modal-img');
-        const closeBtn = document.querySelector('.close-modal');
-        const prevBtn = document.querySelector('.prev-btn');
-        const nextBtn = document.querySelector('.next-btn');
-        const items = document.querySelectorAll('.masonry-item img');
+				modal.addEventListener('click', (e) => {
+					if (e.target === modal) {
+						modal.classList.remove('show');
+						document.body.style.overflow = '';
+					}
+				});
 
-        if(modal && modalImg && items.length > 0) {
-            let currentIndex = 0;
-            const imagesSrc = Array.from(items).map(img => img.getAttribute('src'));
+				prevBtn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					showImage(currentIndex - 1);
+				});
 
-            function showImage(index) {
-                if (index < 0) index = imagesSrc.length - 1;
-                if (index >= imagesSrc.length) index = 0;
-                currentIndex = index;
-                modalImg.setAttribute('src', imagesSrc[currentIndex]);
-            }
+				nextBtn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					showImage(currentIndex + 1);
+				});
 
-            items.forEach((item, index) => {
-                item.closest('.masonry-item').addEventListener('click', () => {
-                    showImage(index);
-                    modal.classList.add('show');
-                    document.body.style.overflow = 'hidden';
-                });
-            });
+				// Keyboard navigation
+				document.addEventListener('keydown', (e) => {
+					if(modal.classList.contains('show')) {
+						if (e.key === 'Escape') closeBtn.click();
+						if (e.key === 'ArrowLeft') prevBtn.click();
+						if (e.key === 'ArrowRight') nextBtn.click();
+					}
+				});
 
-            closeBtn.addEventListener('click', () => {
-                modal.classList.remove('show');
-                document.body.style.overflow = '';
-            });
+				// Touch Swipe Support
+				let touchStartX = 0;
+				let touchEndX = 0;
 
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('show');
-                    document.body.style.overflow = '';
-                }
-            });
+				modalImg.addEventListener('touchstart', (e) => {
+					touchStartX = e.changedTouches[0].screenX;
+				}, {passive: true});
 
-            prevBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showImage(currentIndex - 1);
-            });
+				modalImg.addEventListener('touchend', (e) => {
+					touchEndX = e.changedTouches[0].screenX;
+					handleSwipe();
+				}, {passive: true});
 
-            nextBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showImage(currentIndex + 1);
-            });
-
-            // Keyboard navigation
-            document.addEventListener('keydown', (e) => {
-                if(modal.classList.contains('show')) {
-                    if (e.key === 'Escape') closeBtn.click();
-                    if (e.key === 'ArrowLeft') prevBtn.click();
-                    if (e.key === 'ArrowRight') nextBtn.click();
-                }
-            });
-
-            // Touch Swipe Support
-            let touchStartX = 0;
-            let touchEndX = 0;
-
-            modalImg.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, {passive: true});
-
-            modalImg.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            }, {passive: true});
-
-            function handleSwipe() {
-                const swipeThreshold = 50; // minimum pixel distance to register a swipe
-                if (touchEndX < touchStartX - swipeThreshold) {
-                    // Swiped Left - go to next
-                    nextBtn.click();
-                }
-                if (touchEndX > touchStartX + swipeThreshold) {
-                    // Swiped Right - go to prev
-                    prevBtn.click();
-                }
-            }
-        }
-    });
+				function handleSwipe() {
+					const swipeThreshold = 50; // minimum pixel distance to register a swipe
+					if (touchEndX < touchStartX - swipeThreshold) {
+						// Swiped Left - go to next
+						nextBtn.click();
+					}
+					if (touchEndX > touchStartX + swipeThreshold) {
+						// Swiped Right - go to prev
+						prevBtn.click();
+					}
+				}
+			}
+		}); // end astro:page-load (modal)
 </script>

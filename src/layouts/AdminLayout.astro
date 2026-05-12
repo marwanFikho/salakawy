@@ -221,13 +221,62 @@ if (!auth.authenticated) return auth.redirect;
         .toast.success { background: var(--brand-lime); }
         .toast.error { background: #f87171; color: #fff; }
 
+        /* Mobile Toggle & Overlay */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-right: 1rem;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
         @media (max-width: 1024px) {
-            .admin-sidebar { transform: translateX(-100%); }
-            .admin-main { margin-left: 0; }
+            .admin-sidebar { 
+                transform: translateX(-100%); 
+                transition: transform 0.3s ease;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            }
+            body.sidebar-open .admin-sidebar { transform: translateX(0); }
+            body.sidebar-open .sidebar-overlay { display: block; opacity: 1; }
+            
+            .admin-main { margin-left: 0; width: 100%; }
+            .mobile-toggle { display: block; }
+            
+            .admin-header {
+                padding: 1.5rem;
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+            .header-title-row {
+                display: flex;
+                align-items: center;
+                width: 100%;
+            }
+            .header-actions {
+                width: 100%;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+            .admin-content { padding: 1.5rem; }
         }
     </style>
 </head>
 <body class="admin-body">
+    <div class="sidebar-overlay" onclick="document.body.classList.remove('sidebar-open')"></div>
     <aside class="admin-sidebar">
         <div class="sidebar-brand">
             <img src="/salakawy-logo.png" alt="Salakawy" />
@@ -267,9 +316,14 @@ if (!auth.authenticated) return auth.redirect;
 
     <main class="admin-main">
         <header class="admin-header">
-            <div class="header-title">
-                <h1>{title}</h1>
-                <p>Salakawy Transformation Admin Dashboard</p>
+            <div class="header-title-row">
+                <button class="mobile-toggle" onclick="document.body.classList.toggle('sidebar-open')" aria-label="Toggle Menu">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <div class="header-title">
+                    <h1>{title}</h1>
+                    <p>Salakawy Transformation Admin Dashboard</p>
+                </div>
             </div>
             <div class="header-actions">
                 <a href="/" target="_blank" class="view-site-link">View Live Site</a>

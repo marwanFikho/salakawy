@@ -8,7 +8,6 @@ const VALID_URLS: Record<string, string> = {
   '/#packages': '/#packages',
   '/#struggles': '/#struggles',
   '/common-challenges': '/common-challenges',
-  '/resources': '/resources',
   '/contact-us': '/contact-us',
 };
 
@@ -42,7 +41,6 @@ ALLOWED URL PATHS (use ONLY these exact strings, nothing else):
 - "/#transformations" — Transformation results & before/after
 - "/#packages" — Pricing packages
 - "/common-challenges" — Common challenges & obstacles
-- "/resources" — Free resources & tools
 - "/contact-us" — Contact & payment info
 
 RULES FOR BUTTONS:

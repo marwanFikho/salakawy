@@ -62,6 +62,16 @@ export const POST: APIRoute = async ({ request, cookies }) => {
             fs.writeFileSync(filePath, jpegBuffer);
 
             return new Response(JSON.stringify({ success: true }), { status: 200 });
+        } else if (category === 'IN_Pics') {
+            // Coach/Assistant pics bypass DB and go straight to public/IN_Pics
+            const filename = `${timestamp}_${safeName}`;
+            const uploadDir = path.resolve(process.cwd(), `public/IN_Pics`);
+            if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+            
+            const filePath = path.join(uploadDir, filename);
+            fs.writeFileSync(filePath, jpegBuffer);
+
+            return new Response(JSON.stringify({ success: true, url: `/IN_Pics/${filename}` }), { status: 200 });
         } else {
             // DB-based for other media
             const filename = `${timestamp}_${safeName}`;

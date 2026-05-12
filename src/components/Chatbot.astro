@@ -1,18 +1,20 @@
 ---
 import fs from 'fs';
 import path from 'path';
+import db from '../backend/db';
 
 let randomAvatar = '/coach.jpg'; // fallback
 try {
-	const picsDir = path.join(process.cwd(), 'public', 'Salakawy Pics');
-	if (fs.existsSync(picsDir)) {
-		const files = fs.readdirSync(picsDir).filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f));
-		if (files.length > 0) {
-			randomAvatar = `/Salakawy Pics/${encodeURIComponent(files[Math.floor(Math.random() * files.length)])}`;
-		}
-	}
-} catch(e) {
-	console.error('Error loading chatbot avatar', e);
+    const stmt = db.prepare('SELECT content FROM site_content WHERE id = ?');
+    const row = stmt.get('contacts') as { content: string } | undefined;
+    if (row) {
+        const contacts = JSON.parse(row.content);
+        if (contacts.coach && contacts.coach.photo) {
+            randomAvatar = contacts.coach.photo;
+        }
+    }
+} catch (e) {
+    console.error('Error loading chatbot avatar from db', e);
 }
 ---
 

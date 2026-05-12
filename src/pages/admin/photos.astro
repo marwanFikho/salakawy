@@ -199,6 +199,16 @@ if (!auth.authenticated) return auth.redirect;
         .modal-btn { flex: 1; padding: 0.8rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
         .modal-btn.cancel { background: rgba(255,255,255,0.1); color: #fff; }
         .modal-btn.danger { background: #ef4444; color: #fff; }
+
+        @media (max-width: 768px) {
+            .media-controls { flex-direction: column; align-items: stretch; gap: 1rem; padding: 1rem; position: static; }
+            .category-tabs { overflow-x: auto; flex-wrap: nowrap !important; padding-bottom: 0.5rem; }
+            .cat-tab { white-space: nowrap; }
+            .upload-trigger { justify-content: center; }
+            .media-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+            .photo-img-wrap { height: 160px; }
+            .photo-actions { flex-direction: column; }
+        }
     </style>
 
     <script is:inline>

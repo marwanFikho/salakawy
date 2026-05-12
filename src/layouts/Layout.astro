@@ -56,10 +56,7 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
 
 		<!-- Preloader -->
 		<div id="preloader" class="preloader">
-            <!-- The dark screen that becomes a logo-shaped hole -->
-            <div class="preloader-overlay"></div>
-            
-            <div class="preloader-logo-wrapper">
+            <div class="preloader-logo-wrapper" id="preloader-logo-wrapper">
                 <img src="/salakawy-logo-trace.svg" class="perimeter-light-svg" alt="" />
                 <img src="/salakawy-logo.svg" alt="Salakawy" class="preloader-logo" />
             </div>
@@ -90,7 +87,6 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
 					<a href="/#hero">Home</a>
 					<a href="/all-transformations">Transformations</a>
 					<a href="/common-challenges">Challenges</a>
-					<a href="/resources">Resources</a>
 					<a href="/#packages">Packages</a>
 				</nav>
 
@@ -109,7 +105,6 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 <a href="/#hero" class="mobile-link">Home</a>
                 <a href="/all-transformations" class="mobile-link">Transformations</a>
                 <a href="/common-challenges" class="mobile-link">Challenges</a>
-                <a href="/resources" class="mobile-link">Resources</a>
                 <a href="/#packages" class="mobile-link">Packages</a>
             </div>
         </nav>
@@ -131,7 +126,6 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                         <li><a href="/#hero">Home</a></li>
                         <li><a href="/all-transformations">Transformations</a></li>
                         <li><a href="/common-challenges">Challenges</a></li>
-                        <li><a href="/resources">Resources</a></li>
                         <li><a href="/#packages">Packages</a></li>
                     </ul>
                 </div>
@@ -508,8 +502,7 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 0% { transform: translateX(0); }
                 100% { transform: translateX(-50%); }
             }
-
-            /* Preloader Styles */
+            /* ---- Preloader Styles ---- */
             .preloader {
                 position: fixed;
                 inset: 0;
@@ -517,34 +510,17 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                background: #0d0e12;
                 pointer-events: all;
+                overflow: hidden;
             }
 
-            .preloader.loaded {
+            .preloader.done {
                 pointer-events: none;
             }
 
-            .preloader-overlay {
-                position: absolute;
-                inset: 0;
-                background: #0d0e12;
-                -webkit-mask-image: url('/salakawy-logo.png'), linear-gradient(#fff, #fff);
-                mask-image: url('/salakawy-logo.png'), linear-gradient(#fff, #fff);
-                -webkit-mask-composite: xor;
-                mask-composite: exclude;
-                -webkit-mask-position: center, center;
-                mask-position: center, center;
-                -webkit-mask-repeat: no-repeat, no-repeat;
-                mask-repeat: no-repeat, no-repeat;
-                /* Hide the hole until loaded to keep background solid */
-                -webkit-mask-size: 0px 0px, 100% 100%;
-                mask-size: 0px 0px, 100% 100%;
-                will-change: mask-size, -webkit-mask-size, opacity; /* performance optimization */
-                transform: translateZ(0);
-            }
-
             .preloader-logo-wrapper {
-                position: absolute;
+                position: relative;
                 height: 150px;
                 display: flex;
                 align-items: center;
@@ -559,8 +535,15 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 width: 100%;
                 height: 100%;
                 object-fit: contain;
-                z-index: 3; /* Sits above the inner logo to show the white stroke */
-                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9)); /* High visibility glow */
+                z-index: 3;
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9));
+                animation: trace-rotate 3s linear infinite;
+            }
+
+            @keyframes trace-rotate {
+                0%   { filter: drop-shadow(0 0 6px rgba(255,255,0,0.5));  opacity: 0.8; }
+                50%  { filter: drop-shadow(0 0 18px rgba(255,255,0,0.9)); opacity: 1; }
+                100% { filter: drop-shadow(0 0 6px rgba(255,255,0,0.5));  opacity: 0.8; }
             }
 
             .preloader-logo {
@@ -569,62 +552,256 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 width: auto;
                 object-fit: contain;
                 z-index: 2;
-                transform: translateZ(0); 
-            }
-
-            /* Reveal Animation */
-            .preloader.loaded .preloader-logo-wrapper {
-                opacity: 0;
-                transition: opacity 0.2s ease-out;
-            }
-
-            .preloader.loaded .preloader-overlay {
-                animation: portal-zoom-out 1.2s forwards cubic-bezier(0.7, 0, 0.2, 1);
-            }
-
-            @keyframes portal-zoom-out {
-                0% {
-                    -webkit-mask-size: 150px auto, 100% 100%;
-                    mask-size: 150px auto, 100% 100%;
-                    opacity: 1;
-                }
-                15% {
-                    -webkit-mask-size: 140px auto, 100% 100%;
-                    mask-size: 140px auto, 100% 100%;
-                    opacity: 1;
-                }
-                100% {
-                    -webkit-mask-size: 5000px auto, 100% 100%;
-                    mask-size: 5000px auto, 100% 100%;
-                    opacity: 0;
-                }
+                transform: translateZ(0);
             }
 		</style>
 
         <script>
-            // Handle Preloader Logic
             function initPreloader() {
-                const preloader = document.getElementById('preloader');
+                var preloader = document.getElementById('preloader');
                 if (!preloader) return;
+                document.body.style.overflow = 'hidden';
 
-                if (!preloader.classList.contains('loaded')) {
-                    document.body.style.overflow = 'hidden';
+                function loadScript(src, cb) {
+                    var s = document.createElement('script');
+                    s.src = src;
+                    s.onload = cb;
+                    s.onerror = cb;
+                    document.head.appendChild(s);
                 }
 
-                // Hide preloader once resources are ready
-                // Using a slight delay for a smoother effect
-                const triggerHide = () => {
-                    setTimeout(() => {
-                        preloader.classList.add('loaded');
-                        document.body.style.overflow = '';
-                    }, 500);
-                };
+                function shatterAndExit() {
+                    var W = window.innerWidth;
+                    var H = window.innerHeight;
+                    var COLS = 10;
+                    var ROWS = Math.round(COLS * H / W) + 1;
 
-                // Check if page session is brand new (window load) or navigation (astro:page-load)
+                    // --- 1. Build jittered irregular polygon pieces ---
+                    var grid = [];
+                    for (var r = 0; r <= ROWS; r++) {
+                        grid[r] = [];
+                        for (var c = 0; c <= COLS; c++) {
+                            var px = (c / COLS) * W;
+                            var py = (r / ROWS) * H;
+                            if (r > 0 && r < ROWS && c > 0 && c < COLS) {
+                                px += (Math.random() - 0.5) * (W / COLS) * 0.55;
+                                py += (Math.random() - 0.5) * (H / ROWS) * 0.55;
+                            }
+                            grid[r][c] = { x: px, y: py };
+                        }
+                    }
+                    var polys = [];
+                    for (var r = 0; r < ROWS; r++) {
+                        for (var c = 0; c < COLS; c++) {
+                            var tl = grid[r][c], tr = grid[r][c+1],
+                                br = grid[r+1][c+1], bl = grid[r+1][c];
+                            if (Math.random() > 0.4) {
+                                if (Math.random() > 0.5) {
+                                    polys.push([tl, tr, br]);
+                                    polys.push([tl, br, bl]);
+                                } else {
+                                    polys.push([tl, tr, bl]);
+                                    polys.push([tr, br, bl]);
+                                }
+                            } else {
+                                polys.push([tl, tr, br, bl]);
+                            }
+                        }
+                    }
+
+                    // --- 2. Canvas overlay for rendering ---
+                    var canvas = document.createElement('canvas');
+                    canvas.width = W; canvas.height = H;
+                    canvas.style.cssText = 'position:fixed;inset:0;z-index:10000;pointer-events:none;';
+                    document.body.appendChild(canvas);
+                    var ctx = canvas.getContext('2d');
+
+                    // --- 3. SVG cracks overlay ---
+                    var NS = 'http://www.w3.org/2000/svg';
+                    var svg = document.createElementNS(NS, 'svg');
+                    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+                    svg.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:10001;pointer-events:none;opacity:0;transition:opacity 0.12s;';
+                    var edgeSet = {};
+                    polys.forEach(function(poly) {
+                        for (var i = 0; i < poly.length; i++) {
+                            var a = poly[i], b = poly[(i+1) % poly.length];
+                            var key = [a.x.toFixed(0), a.y.toFixed(0), b.x.toFixed(0), b.y.toFixed(0)].sort().join('|');
+                            if (edgeSet[key]) continue;
+                            edgeSet[key] = 1;
+                            // Skip screen border edges
+                            if ((a.x <= 1 && b.x <= 1) || (a.x >= W-1 && b.x >= W-1) ||
+                                (a.y <= 1 && b.y <= 1) || (a.y >= H-1 && b.y >= H-1)) continue;
+                            var line = document.createElementNS(NS, 'line');
+                            line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+                            line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+                            line.setAttribute('stroke', 'rgba(255,240,150,0.7)');
+                            line.setAttribute('stroke-width', '1.5');
+                            svg.appendChild(line);
+                        }
+                    });
+                    document.body.appendChild(svg);
+
+                    // --- 4. Piece data with physics state ---
+                    var cx = W / 2, cy = H / 2;
+                    var shardCount = polys.length;
+                    var shards = new Array(shardCount);
+                    for (var i = 0; i < shardCount; i++) {
+                        var poly = polys[i];
+                        var pcx = 0, pcy = 0;
+                        for (var j = 0; j < poly.length; j++) {
+                            pcx += poly[j].x;
+                            pcy += poly[j].y;
+                        }
+                        pcx /= poly.length;
+                        pcy /= poly.length;
+                        
+                        var dx = pcx - cx, dy = pcy - cy;
+                        var distSq = dx*dx + dy*dy;
+                        var speed = 10 + Math.random() * 12;
+                        var angle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.6;
+                        
+                        // Pre-calculate relative vertices
+                        var relVerts = [];
+                        for (var j = 0; j < poly.length; j++) {
+                            relVerts.push({ x: poly[j].x - pcx, y: poly[j].y - pcy });
+                        }
+
+                        shards[i] = {
+                            relVerts: relVerts,
+                            cx: pcx, cy: pcy,
+                            x: 0, y: 0,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed - (Math.random() * 3),
+                            angle: 0,
+                            va: (Math.random() - 0.5) * 0.12,
+                            opacity: 1,
+                            alive: true,
+                            delay: (Math.sqrt(distSq) / Math.sqrt(cx*cx+cy*cy)) * 35
+                        };
+                    }
+
+                    // --- 5. Physics loop ---
+                    var gravity = 0.38;
+                    var frame = 0;
+                    var allDone = false;
+                    var logoHidden = false;
+                    var fadeLimit = W * 0.8;
+
+                    preloader.style.background = 'transparent';
+
+                    function tick() {
+                        if (allDone) return;
+                        frame++;
+                        ctx.clearRect(0, 0, W, H);
+
+                        if (frame === 1) svg.style.opacity = '1';
+                        if (frame === 8) svg.style.opacity = '0';
+                        if (frame === 3 && !logoHidden) {
+                            var lw = document.getElementById('preloader-logo-wrapper');
+                            if (lw) lw.style.opacity = '0';
+                            logoHidden = true;
+                        }
+
+                        var anyAlive = false;
+                        ctx.fillStyle = '#0d0e12';
+                        ctx.strokeStyle = 'rgba(255,240,150,0.12)';
+                        ctx.lineWidth = 0.5;
+
+                        for (var i = 0; i < shardCount; i++) {
+                            var s = shards[i];
+                            if (!s.alive) continue;
+
+                            if (frame < s.delay) {
+                                ctx.globalAlpha = s.opacity;
+                                ctx.beginPath();
+                                for (var j = 0; j < s.relVerts.length; j++) {
+                                    var v = s.relVerts[j];
+                                    if (j === 0) ctx.moveTo(s.cx + v.x, s.cy + v.y);
+                                    else ctx.lineTo(s.cx + v.x, s.cy + v.y);
+                                }
+                                ctx.closePath();
+                                ctx.fill();
+                                anyAlive = true;
+                                continue;
+                            }
+
+                            s.vy += gravity;
+                            s.x += s.vx;
+                            s.y += s.vy;
+                            s.angle += s.va;
+                            
+                            // Cheap opacity check: use sum of absolute translation instead of sqrt
+                            var travelDist = Math.abs(s.x) + Math.abs(s.y);
+                            s.opacity = 1 - (travelDist / fadeLimit);
+
+                            if (s.y > H + 300 || s.opacity <= 0) {
+                                s.alive = false;
+                                continue;
+                            }
+                            anyAlive = true;
+
+                            ctx.save();
+                            ctx.globalAlpha = s.opacity;
+                            ctx.translate(s.cx + s.x, s.cy + s.y);
+                            ctx.rotate(s.angle);
+                            ctx.beginPath();
+                            for (var j = 0; j < s.relVerts.length; j++) {
+                                var v = s.relVerts[j];
+                                if (j === 0) ctx.moveTo(v.x, v.y);
+                                else ctx.lineTo(v.x, v.y);
+                            }
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.stroke();
+                            ctx.restore();
+                        }
+
+                        if (!anyAlive) {
+                            allDone = true;
+                            canvas.remove();
+                            svg.remove();
+                            preloader.remove();
+                            document.body.style.overflow = '';
+                            return;
+                        }
+                        requestAnimationFrame(tick);
+                    }
+
+                    // --- 6. Screen shake then launch ---
+                    var shakeFrames = 0;
+                    var maxShake = 22; // Longer shake for more impact
+                    function shake() {
+                        shakeFrames++;
+                        var mag = 10 * (1 - shakeFrames / maxShake);
+                        preloader.style.transform = 'translate(' + ((Math.random()-0.5)*mag) + 'px,' + ((Math.random()-0.5)*mag*0.5) + 'px)';
+                        if (shakeFrames < maxShake) requestAnimationFrame(shake);
+                        else { preloader.style.transform = ''; requestAnimationFrame(tick); }
+                    }
+                    requestAnimationFrame(shake);
+
+                    // Absolute safety cleanup
+                    setTimeout(function() {
+                        allDone = true;
+                        try { canvas.remove(); svg.remove(); preloader.remove(); } catch(e) {}
+                        document.body.style.overflow = '';
+                    }, 3500);
+                }
+
+                // Failsafe: never freeze beyond 4s
+                var failsafe = setTimeout(function() {
+                    try { preloader.remove(); } catch(e) {}
+                    document.body.style.overflow = '';
+                }, 4000);
+
+                function trigger() {
+                    clearTimeout(failsafe);
+                    setTimeout(shatterAndExit, 400);
+                }
+
                 if (document.readyState === 'complete') {
-                    triggerHide();
+                    trigger();
                 } else {
-                    window.addEventListener('load', triggerHide);
+                    window.addEventListener('load', trigger, { once: true });
                 }
             }
 
@@ -691,6 +868,27 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                     window.addEventListener('scroll', handleScroll, { passive: true });
                     handleScroll(); // init on load
                 }
+
+                // Hide floating buttons at the bottom of the page
+                const waFab = document.querySelector('.fab');
+                const chatFab = document.querySelector('.chatbot-fab');
+                const chatTooltip = document.querySelector('.chatbot-tooltip');
+                
+                const handleBottomScroll = () => {
+                    const scrollBottom = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+                    if (scrollBottom < 150) {
+                        if (waFab) waFab.classList.add('fab-hidden');
+                        if (chatFab) chatFab.classList.add('fab-hidden');
+                        if (chatTooltip) chatTooltip.classList.add('fab-hidden');
+                    } else {
+                        if (waFab) waFab.classList.remove('fab-hidden');
+                        if (chatFab) chatFab.classList.remove('fab-hidden');
+                        if (chatTooltip) chatTooltip.classList.remove('fab-hidden');
+                    }
+                };
+                
+                window.addEventListener('scroll', handleBottomScroll, { passive: true });
+                handleBottomScroll();
             });
         </script>
 		<WhatsappFloatingButton />

@@ -5,26 +5,23 @@ import path from 'path';
 import { getContent, getVal } from '../backend/content';
 
 const defaultTopics = [
-	{ title: "Low Motivation", folderKeywords: [], customImage: "/transformations/1.jpg", hint: "I know how hard it feels because I've been exactly where you are. I used to be miserable about how I looked and felt, but I started working out until I absolutely fell in love with it. That journey completely changed my reality, and now it's my mission to change yours. I will be checking in with you every single day—acting as your push forward until your own discipline kicks in!" },
+	{ title: "Low Motivation", folderKeywords: ["Low Motivation"], hint: "I know how hard it feels because I've been exactly where you are. I used to be miserable about how I looked and felt, but I started working out until I absolutely fell in love with it. That journey completely changed my reality, and now it's my mission to change yours. I will be checking in with you every single day—acting as your push forward until your own discipline kicks in!" },
 	{ title: "Emotional Eating", folderKeywords: ["Emotional Eating", "Emotional Eating 2"], hint: "Salakawy targets emotional eating by providing flexible, enjoyable meal plans that reduce restrictive mindsets, alongside daily responses to keep you accountable without guilt." },
 	{ title: "Sugar Cravings", folderKeywords: ["Sugar Craving"], hint: "Even these children did control their sugar craving, imagine what you can do. By balancing your macronutrients and ensuring you eat satisfying food, Salakawy naturally curbs intense sugar cravings without asking you to give up everything you love." },
 	{ title: "Belly Fat", folderKeywords: ["Belly Fat"], hint: "Nothing is called spot fat reduction, that's a myth. Stubborn belly fat requires a consistent caloric deficit and targeted lifestyle changes. Salakawy's precise nutrition planning ensures fat is burned efficiently over time." },
 	{ title: "Arm Fat", folderKeywords: ["Arm Fats"], hint: "Targeting overall body fat through progressive training and diet is the key. Coach Salakawy incorporates strength exercises that tone and redefine your arms." },
 	{ title: "Legs Fat", folderKeywords: ["Legs Fats"], hint: "Toning your legs comes down to a proper caloric deficit combined with targeted lower body resistance training, which Salakawy seamlessly incorporates into your plan." },
-	{ title: "Slow Metabolism", folderKeywords: [], hint: "A 'slow' metabolism is often just low activity and poor diet history. We reset it by feeding your body enough food and gradually increasing your muscle mass." },
+	{ title: "Slow Metabolism", folderKeywords: ["Slow Metabolism"], hint: "A 'slow' metabolism is often just low activity and poor diet history. We reset it by feeding your body enough food and gradually increasing your muscle mass." },
 	{ title: "Weight Plateau", folderKeywords: ["Whey Plateau"], hint: "Plateaus are normal. Coach Salakawy tweaks your macros, adjusts your workouts, or introduces diet breaks to ignite fat loss once more." },
 	{ title: "Stress", folderKeywords: ["Stress"], hint: "Stress increases cortisol, holding onto fat. We focus on sustainable habits, avoiding crash diets that add more stress to your nervous system." },
 	{ title: "Poor Sleep", folderKeywords: ["Sleeping"], hint: "Diet heavily affects sleep quality. Salakawy adjusts your meal timing to ensure your body recovers beautifully overnight." },
 	{ title: "Night Eating", folderKeywords: ["Night Eating"], hint: "Eating at night isn't inherently bad, but overeating is. We schedule your calories so you're satisfied before bed and never wake up hungry." },
-	{ title: "Hormonal Imbalance", folderKeywords: [], hint: "Conditions like PCOS or Insulin Resistance need care. The coaching platform tailors food specifically to balance your blood sugar and hormones." },
+	{ title: "Hormonal Imbalance", folderKeywords: ["Hormonal Imbalance"], hint: "Conditions like PCOS or Insulin Resistance need care. The coaching platform tailors food specifically to balance your blood sugar and hormones." },
 	{ title: "Water Retention", folderKeywords: ["Water Retention"], hint: "Hydration and sodium balancing are built into your plan. Salakawy ensures you drop that excess water weight fast and safely." },
-	{ title: "Bloating", folderKeywords: [], hint: "A healthy gut is essential. We eliminate foods that trigger you and focus on digesting smoothly so your stomach stays perfectly flat." },
-	{ title: "Hidden Eating", folderKeywords: [], hint: "It’s hard to talk about, but Coach Salakawy gets it. Unlocking the emotional reason behind hidden eating happens when you feel no judgment." },
-	{ title: "High Calories", folderKeywords: [], hint: "We teach you volume eating: eating huge, delicious meals that are surprisingly low in calories to keep you full all day." },
+	{ title: "Hidden Eating", folderKeywords: ["Hidden Eating"], hint: "It’s hard to talk about, but Coach Salakawy gets it. Unlocking the emotional reason behind hidden eating happens when you feel no judgment." },
+	{ title: "High Calories", folderKeywords: ["High Calories"], hint: "We teach you volume eating: eating huge, delicious meals that are surprisingly low in calories to keep you full all day." },
 	{ title: "Inconsistency", folderKeywords: ["Inconsistency"], hint: "By removing extreme restrictions, Salakawy makes the diet so easy and enjoyable that being consistent becomes second nature." },
 	{ title: "Injuries", folderKeywords: ["Injuries"], hint: "Got an injury? No problem. The diet adjusts to your lower activity levels, and workouts are modified to focus on what you CAN do, not what you can't." },
-	{ title: "Laziness", folderKeywords: [], hint: "It's not laziness; you're just lacking the right fuel! We adjust your carbs and nutrients to give you soaring energy levels." },
-	{ title: "Comparisons", folderKeywords: [], hint: "Social media can be tough. Salakawy roots you in your own progress through data tracking, showing how far YOU have come." },
 	{ title: "Aging", folderKeywords: ["50_plus_old_age"], hint: "Age is just a number. Coach Salakawy adapts the intensity and volume specifically to support your joints, hormones, and metabolism as you age." }
 ];
 
