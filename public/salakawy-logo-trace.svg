@@ -10,8 +10,8 @@
         stroke: #E2FF00; /* Signature Salakawy Lime */
         stroke-width: 50; /* Increased thickness */
         stroke-linecap: round;
-        /* Comet effect: Bright head (20), then decreasing segments for the tail */
-        stroke-dasharray: 20 4 10 4 5 57; 
+        /* Single short line effect, slightly longer */
+        stroke-dasharray: 20 80; 
         stroke-dashoffset: 100;
         animation: trace 3s linear infinite, glowPulse 2s ease-in-out infinite alternate;
     }

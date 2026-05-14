@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+    <defs>
+        <radialGradient id="glare" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+            <stop offset="15%" stop-color="#FFF5CC" stop-opacity="0.9"/>
+            <stop offset="40%" stop-color="#FFD700" stop-opacity="0.6"/>
+            <stop offset="70%" stop-color="#D4AF37" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#D4AF37" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="metallic" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="30%" stop-color="#FFF5CC"/>
+            <stop offset="50%" stop-color="#FFD700"/>
+            <stop offset="70%" stop-color="#D4AF37"/>
+            <stop offset="100%" stop-color="#ffffff"/>
+        </linearGradient>
+        <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2"/>
+        </filter>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+    <!-- Background wide soft glare -->
+    <circle cx="50" cy="50" r="48" fill="url(#glare)"/>
+    <!-- The star flare -->
+    <path d="M50 2 C50 42 58 50 98 50 C58 50 50 58 50 98 C50 58 42 50 2 50 C42 50 50 42 50 2 Z" fill="url(#metallic)" filter="url(#glow)"/>
+    <!-- Intense center dot -->
+    <circle cx="50" cy="50" r="8" fill="#ffffff" filter="url(#blur)"/>
+    <circle cx="50" cy="50" r="3" fill="#ffffff"/>
+</svg>

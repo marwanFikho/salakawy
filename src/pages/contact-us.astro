@@ -136,6 +136,9 @@ const col4 = bgImages.slice(36, 48);
             </div>
             <h3 class="payment-name">Instapay</h3>
             <p class="payment-desc">Fast bank-to-bank transfers via the Instapay app. The most efficient way to pay.</p>
+            <div class="payment-number-display">
+              <strong>Contact: <span data-editable="contacts:coach.phone">{c.phone}</span></strong>
+            </div>
             <div class="payment-badge">Instant & Free</div>
           </div>
 
@@ -149,6 +152,9 @@ const col4 = bgImages.slice(36, 48);
             </div>
             <h3 class="payment-name">Mobile Wallets</h3>
             <p class="payment-desc">We accept all Egyptian mobile wallets including Vodafone Cash, Etisalat, Orange, and WE.</p>
+            <div class="payment-number-display">
+              <strong>Contact: <span data-editable="contacts:coach.phone">{c.phone}</span></strong>
+            </div>
             <div class="payment-badge">Any Mobile Wallet</div>
           </div>
 
@@ -159,6 +165,9 @@ const col4 = bgImages.slice(36, 48);
             </div>
             <h3 class="payment-name">Bank Transfer</h3>
             <p class="payment-desc">Direct bank-to-bank wire transfer. Secure and reliable for long-term plans.</p>
+            <div class="payment-number-display">
+              <strong>Contact: <span data-editable="contacts:coach.phone">{c.phone}</span></strong>
+            </div>
             <div class="payment-badge">Direct Deposit</div>
           </div>
 
@@ -169,12 +178,15 @@ const col4 = bgImages.slice(36, 48);
             </div>
             <h3 class="payment-name">Card Payment</h3>
             <p class="payment-desc">Securely pay with Visa or Mastercard via <strong>Paymob</strong>. Your safety and data protection are our priority.</p>
+            <div class="payment-number-display">
+              <strong>Send receipt to: <span data-editable="contacts:coach.phone">{c.phone}</span></strong>
+            </div>
             <div class="payment-badge safe">Verified & Secure</div>
           </div>
         </div>
 
         <p class="payment-note anim-item">
-          ⚠️ <strong>Important:</strong> All money transfers and payment confirmations are handled directly through the coach's WhatsApp. Choose a contact below to start your transformation.
+          ⚠️ <strong>Important:</strong> All money transfers and payment confirmations are handled directly through the coach's WhatsApp number <strong style="color: var(--accent-color); font-size: 1.1rem;"><span data-editable="contacts:coach.phone">{c.phone}</span></strong>. Choose a contact below to start your transformation.
         </p>
       </div>
     </section>
@@ -587,9 +599,22 @@ const col4 = bgImages.slice(36, 48);
 
   .payment-desc {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     line-height: 1.5;
-    flex: 1;
+    flex-grow: 1; /* Pushes badge to bottom */
+  }
+
+  .payment-number-display {
+    background: rgba(255, 255, 0, 0.08);
+    border: 1px solid rgba(255, 255, 0, 0.3);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin: 0.5rem 0;
+    color: var(--accent-color);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-align: center;
   }
 
   .payment-badge {
