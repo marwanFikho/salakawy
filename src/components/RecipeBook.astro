@@ -35,12 +35,8 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         <div class="book-grid">
             <!-- Book Visual -->
             <div class="book-visual-wrap fade-in-up">
-                <div class="book-placeholder">
-                    <div class="placeholder-content">
-                        <div class="placeholder-icon">📖</div>
-                        <p>Book Cover Placeholder</p>
-                        <small>Add your book cover image here later</small>
-                    </div>
+                <div class="book-container">
+                    <img src="/Salakawy Book.jpeg" alt="Salakawy's Secret Recipes Book Cover" class="book-cover-img" />
                     <div class="book-spine"></div>
                     <div class="book-glare"></div>
                 </div>
@@ -50,9 +46,9 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
             <!-- Book Info -->
             <div class="book-info fade-in-up delay-100">
                 <div class="section-label">🍱 The Ultimate Guide</div>
-                <h2 class="book-title" data-editable="recipe_book:title" set:html={getVal(c, 'title', 'Salakawy’s <span class="highlight">Secret Recipes</span>')} />
+                <h2 class="book-title" data-editable="recipe_book:title" set:html={getVal(c, 'title', '<span class="highlight">Yummy or Tummy</span>: Salakawy’s Recipes')} />
                 
-                <p class="book-desc" data-editable="recipe_book:desc" set:html={getVal(c, 'desc', 'Stop guessing what to eat. Get the exact recipes I used to transform my body and the bodies of thousands of clients. Delicious, simple, and high-protein.')} />
+                <p class="book-desc" data-editable="recipe_book:desc" set:html={getVal(c, 'desc', 'Stop guessing what to eat. Get the exact recipes from <strong>Yummy or Tummy</strong> that I used to transform my body and the bodies of thousands of clients. Delicious, simple, and high-protein.')} />
 
                 <div class="price-comparison">
                     <div class="price-box">
@@ -112,11 +108,11 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         perspective: 1500px;
     }
 
-    .book-placeholder {
+    .book-container {
         width: 100%;
         max-width: 400px;
         aspect-ratio: 3/4;
-        background: linear-gradient(135deg, #1a1b1f 0%, #0d0e12 100%);
+        background: #000;
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 4px 12px 12px 4px;
         position: relative;
@@ -124,10 +120,15 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         transform-style: preserve-3d;
         box-shadow: 20px 20px 60px rgba(0,0,0,0.8),
                     0 0 40px rgba(255,255,0,0.05);
-        display: flex;
-        align-items: center;
-        justify-content: center;
         margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .book-cover-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
     }
 
     .book-spine {
@@ -142,29 +143,7 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         border-left: 1px solid rgba(255,255,255,0.1);
     }
 
-    .placeholder-content {
-        text-align: center;
-        padding: 2rem;
-        z-index: 2;
-    }
 
-    .placeholder-icon {
-        font-size: 5rem;
-        margin-bottom: 1rem;
-        filter: drop-shadow(0 0 20px rgba(255,255,0,0.3));
-    }
-
-    .placeholder-content p {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 0.5rem;
-    }
-
-    .placeholder-content small {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-    }
 
     .book-glare {
         position: absolute;
