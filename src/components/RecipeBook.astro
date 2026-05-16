@@ -130,7 +130,7 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
     .book-visual-wrap {
         --bw: 260px;
         --bh: 370px;
-        --bd: 40px;
+        --bd: 60px; /* Thicker book */
         --bhr: calc(var(--bd) / 2);
 
         position: relative;
@@ -138,6 +138,14 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         justify-content: center;
         align-items: center;
         padding-bottom: 3rem;
+    }
+
+    @media (max-width: 480px) {
+        .book-visual-wrap {
+            --bw: 200px;
+            --bh: 285px;
+            --bd: 45px;
+        }
     }
 
     .book-scene {
