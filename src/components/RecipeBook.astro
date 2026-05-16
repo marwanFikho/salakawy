@@ -4,7 +4,6 @@ import db from '../backend/db';
 
 const c = getContent('recipe_book');
 
-// Fetch assistant number as placeholder
 let bookPhone = "+20 109 215 1540";
 let whatsappNumber = "201092151540";
 
@@ -35,19 +34,36 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         <div class="book-grid">
             <!-- Book Visual -->
             <div class="book-visual-wrap fade-in-up">
-                <div class="book-container">
-                    <img src="/Salakawy Book.jpeg" alt="Salakawy's Secret Recipes Book Cover" class="book-cover-img" />
-                    <div class="book-spine"></div>
-                    <div class="book-glare"></div>
+                <div class="book-scene">
+                    <div class="book-float-wrapper">
+                        <div class="book">
+                            <!-- Front cover -->
+                            <div class="book-face book-face--front">
+                                <img src="/Salakawy Book.jpeg" alt="Yummy or Tummy – Salakawy's Recipe Book" class="book-cover-img" />
+                                <div class="book-face--front__glare"></div>
+                            </div>
+                            <!-- Left spine -->
+                            <div class="book-face book-face--spine"></div>
+                            <!-- Right pages edge -->
+                            <div class="book-face book-face--pages"></div>
+                            <!-- Top edge -->
+                            <div class="book-face book-face--top"></div>
+                            <!-- Bottom edge -->
+                            <div class="book-face book-face--bottom"></div>
+                            <!-- Back cover -->
+                            <div class="book-face book-face--back"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="visual-glow"></div>
+                <!-- Floor shadow -->
+                <div class="book-shadow"></div>
             </div>
 
             <!-- Book Info -->
             <div class="book-info fade-in-up delay-100">
                 <div class="section-label">🍱 The Ultimate Guide</div>
-                <h2 class="book-title" data-editable="recipe_book:title" set:html={getVal(c, 'title', '<span class="highlight">Yummy or Tummy</span>: Salakawy’s Recipes')} />
-                
+                <h2 class="book-title" data-editable="recipe_book:title" set:html={getVal(c, 'title', '<span class="highlight">Yummy or Tummy</span>: Salakawy\'s Recipes')} />
+
                 <p class="book-desc" data-editable="recipe_book:desc" set:html={getVal(c, 'desc', 'Stop guessing what to eat. Get the exact recipes from <strong>Yummy or Tummy</strong> that I used to transform my body and the bodies of thousands of clients. Delicious, simple, and high-protein.')} />
 
                 <div class="price-comparison">
@@ -65,7 +81,7 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
                     <div class="quotes-track">
                         {quotes.map((quote) => (
                             <div class="quote-item">
-                                <span class="quote-mark">“</span>
+                                <span class="quote-mark">"</span>
                                 <p>{quote}</p>
                             </div>
                         ))}
@@ -87,10 +103,12 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
 </section>
 
 <style>
+    /* ── Section ─────────────────────────────────── */
     .recipe-book-section {
-        padding: 8rem 0;
-        background: radial-gradient(circle at top right, rgba(255, 255, 0, 0.05), transparent 40%),
-                    radial-gradient(circle at bottom left, rgba(255, 255, 0, 0.03), transparent 30%);
+        padding: 8rem 0 10rem;
+        background:
+            radial-gradient(circle at 80% 20%, rgba(255,200,0,0.06) 0%, transparent 50%),
+            radial-gradient(circle at 10% 80%, rgba(255,200,0,0.04) 0%, transparent 40%);
         position: relative;
         overflow: hidden;
     }
@@ -102,25 +120,70 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         align-items: center;
     }
 
-    /* Book Visual */
+    /* ── 3D Book Scene ───────────────────────────── */
+    /*
+     * Book dimensions:
+     *   Width  (W) = 260px  → CSS var --bw
+     *   Height (H) = 370px  → CSS var --bh
+     *   Depth  (D) = 40px   → CSS var --bd (half = 20px)
+     */
     .book-visual-wrap {
+        --bw: 260px;
+        --bh: 370px;
+        --bd: 40px;
+        --bhr: calc(var(--bd) / 2);
+
         position: relative;
-        perspective: 1500px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 3rem;
     }
 
-    .book-container {
-        width: 100%;
-        max-width: 400px;
-        aspect-ratio: 3/4;
-        background: #000;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 4px 12px 12px 4px;
-        position: relative;
-        transform: rotateY(-15deg) rotateX(5deg);
+    .book-scene {
+        perspective: 1800px;
+        perspective-origin: 50% 45%;
+    }
+
+    @keyframes floatBook {
+        0% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+        50% { transform: translateY(-12px) rotateX(2deg) rotateY(-3deg); }
+        100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+    }
+
+    .book-float-wrapper {
+        animation: floatBook 6s ease-in-out infinite;
         transform-style: preserve-3d;
-        box-shadow: 20px 20px 60px rgba(0,0,0,0.8),
-                    0 0 40px rgba(255,255,0,0.05);
-        margin: 0 auto;
+    }
+
+    .book {
+        position: relative;
+        width: var(--bw);
+        height: var(--bh);
+        transform-style: preserve-3d;
+        transform: rotateX(8deg) rotateY(-28deg);
+        transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        cursor: pointer;
+    }
+
+    .book:hover {
+        transform: rotateX(4deg) rotateY(-14deg) scale3d(1.05, 1.05, 1.05);
+    }
+
+    .book-face {
+        position: absolute;
+        transform-style: preserve-3d;
+        backface-visibility: hidden; /* Prevent flickering on some browsers */
+    }
+
+    /* ── FRONT ───────────────────────────────────── */
+    .book-face--front {
+        width: var(--bw);
+        height: var(--bh);
+        top: 0; left: 0;
+        transform: translateZ(var(--bhr));
+        border-radius: 2px 6px 6px 2px;
+        box-shadow: inset -3px 0 8px rgba(0,0,0,0.3);
         overflow: hidden;
     }
 
@@ -131,42 +194,124 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         display: block;
     }
 
-    .book-spine {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 40px;
-        background: linear-gradient(to right, #000, #222, #000);
-        transform: rotateY(-90deg);
-        transform-origin: left;
-        border-left: 1px solid rgba(255,255,255,0.1);
-    }
-
-
-
-    .book-glare {
+    .book-face--front__glare {
         position: absolute;
         inset: 0;
-        background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 55%, transparent 60%);
+        background: linear-gradient(
+            135deg,
+            rgba(255,255,255,0.18) 0%,
+            rgba(255,255,255,0.06) 30%,
+            transparent 55%
+        );
         pointer-events: none;
     }
 
-    .visual-glow {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 120%;
-        height: 120%;
-        background: radial-gradient(circle, rgba(255, 255, 0, 0.08) 0%, transparent 70%);
-        z-index: -1;
-        filter: blur(40px);
+    /* ── BACK ────────────────────────────────────── */
+    .book-face--back {
+        width: var(--bw);
+        height: var(--bh);
+        top: 0; left: 0;
+        transform: rotateY(180deg) translateZ(var(--bhr));
+        background: #0a0a0a;
+        border-radius: 6px 2px 2px 6px; /* Inverted for back */
+        box-shadow: inset 3px 0 8px rgba(0,0,0,0.3);
     }
 
-    /* Info Section */
+    /* ── SPINE (left edge) ───────────────────────── */
+    .book-face--spine {
+        width: var(--bd);
+        height: var(--bh);
+        left: 50%; top: 0;
+        margin-left: calc(var(--bd) / -2);
+        transform: rotateY(-90deg) translateZ(calc(var(--bw) / 2));
+        background: linear-gradient(
+            to right,
+            #1a1208 0%,
+            #3a2810 25%,
+            #5a3d14 50%,
+            #3a2810 75%,
+            #1a1208 100%
+        );
+        border-radius: 2px 0 0 2px;
+        box-shadow: inset -2px 0 6px rgba(0,0,0,0.5);
+    }
+
+    /* ── PAGES (right edge) ──────────────────────── */
+    .book-face--pages {
+        width: var(--bd);
+        height: calc(var(--bh) - 4px);
+        left: 50%; top: 2px;
+        margin-left: calc(var(--bd) / -2);
+        transform: rotateY(90deg) translateZ(calc(var(--bw) / 2 - 2px));
+        background: #f2ede4;
+        background-image: repeating-linear-gradient(
+            to bottom,
+            transparent 0px,
+            transparent 3px,
+            rgba(0,0,0,0.06) 3px,
+            rgba(0,0,0,0.06) 4px
+        );
+        box-shadow:
+            inset 0 0 12px rgba(0,0,0,0.12),
+            inset 0 0 4px rgba(0,0,0,0.08);
+    }
+
+    /* ── TOP edge ────────────────────────────────── */
+    .book-face--top {
+        width: calc(var(--bw) - 4px);
+        height: var(--bd);
+        top: 50%; left: 2px;
+        margin-top: calc(var(--bd) / -2);
+        transform: rotateX(90deg) translateZ(calc(var(--bh) / 2 - 2px));
+        background: #e8e2d8;
+        background-image: repeating-linear-gradient(
+            to right,
+            transparent 0px,
+            transparent 3px,
+            rgba(0,0,0,0.05) 3px,
+            rgba(0,0,0,0.05) 4px
+        );
+    }
+
+    /* ── BOTTOM edge ─────────────────────────────── */
+    .book-face--bottom {
+        width: calc(var(--bw) - 4px);
+        height: var(--bd);
+        top: 50%; left: 2px;
+        margin-top: calc(var(--bd) / -2);
+        transform: rotateX(-90deg) translateZ(calc(var(--bh) / 2 - 2px));
+        background: #e8e2d8;
+        background-image: repeating-linear-gradient(
+            to right,
+            transparent 0px,
+            transparent 3px,
+            rgba(0,0,0,0.05) 3px,
+            rgba(0,0,0,0.05) 4px
+        );
+    }
+
+    @keyframes shadowPulse {
+        0% { transform: translateX(-50%) scale(1); opacity: 0.55; }
+        50% { transform: translateX(-50%) scale(0.9); opacity: 0.35; }
+        100% { transform: translateX(-50%) scale(1); opacity: 0.55; }
+    }
+
+    /* ── Floor shadow ────────────────────────────── */
+    .book-shadow {
+        position: absolute;
+        bottom: 0.5rem;
+        left: 50%;
+        width: 220px;
+        height: 30px;
+        background: rgba(0,0,0,0.55);
+        filter: blur(18px);
+        border-radius: 50%;
+        animation: shadowPulse 6s ease-in-out infinite;
+    }
+
+    /* ── Info Section ────────────────────────────── */
     .section-label {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 700;
         letter-spacing: 2px;
         text-transform: uppercase;
@@ -175,26 +320,29 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
     }
 
     .book-title {
-        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-size: clamp(2.2rem, 4.5vw, 3.8rem);
         margin-bottom: 1.5rem;
         line-height: 1.1;
     }
 
+    .highlight { color: var(--accent-color); }
+
     .book-desc {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         color: var(--text-muted);
         margin-bottom: 2.5rem;
-        max-width: 600px;
+        max-width: 560px;
+        line-height: 1.7;
     }
 
-    /* Price Comparison */
+    /* Price */
     .price-comparison {
         display: flex;
         gap: 2rem;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 2rem;
-        border-radius: 20px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        padding: 1.5rem 2rem;
+        border-radius: 16px;
         margin-bottom: 2.5rem;
         align-items: center;
     }
@@ -202,68 +350,65 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
     .price-box {
         display: flex;
         flex-direction: column;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        border-right: 1px solid rgba(255,255,255,0.1);
         padding-right: 2rem;
+        flex-shrink: 0;
     }
 
     .price-label {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         color: var(--text-muted);
     }
 
     .price-value {
-        font-size: 2.5rem;
+        font-size: 2.4rem;
         font-weight: 800;
         color: var(--accent-color);
+        line-height: 1.1;
     }
 
-    .comparison-text p {
-        margin: 0;
-        font-size: 1rem;
-    }
+    .comparison-text p { margin: 0; font-size: 0.95rem; }
 
     .comparison-punchline {
-        margin-top: 0.5rem !important;
-        font-size: 1.1rem !important;
+        margin-top: 0.4rem !important;
+        font-size: 1rem !important;
         color: #fff;
     }
 
-    .comparison-punchline strong {
-        color: var(--accent-color);
-    }
+    .comparison-punchline strong { color: var(--accent-color); }
 
-    /* Quotes Slider (Simple Static for now) */
-    .quotes-slider {
-        margin-bottom: 3rem;
-    }
+    /* Quotes */
+    .quotes-slider { margin-bottom: 2.5rem; }
 
     .quotes-track {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
     }
 
     .quote-item {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
         align-items: flex-start;
     }
 
     .quote-mark {
-        font-size: 3rem;
+        font-size: 2.5rem;
         line-height: 1;
         color: var(--accent-color);
-        opacity: 0.3;
+        opacity: 0.35;
         font-family: serif;
+        flex-shrink: 0;
     }
 
     .quote-item p {
         margin: 0;
         font-style: italic;
         color: var(--text-muted);
-        font-size: 1.1rem;
+        font-size: 1rem;
+        padding-top: 0.4rem;
     }
 
     /* Actions */
@@ -271,57 +416,101 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         display: flex;
         align-items: center;
         gap: 2rem;
+        flex-wrap: wrap;
     }
 
     .buy-btn {
+        display: inline-flex;
+        align-items: center;
         gap: 10px;
-        padding: 16px 32px;
-        font-size: 1.1rem;
-        box-shadow: 0 10px 30px rgba(255, 255, 0, 0.15);
+        padding: 15px 30px;
+        font-size: 1.05rem;
+        box-shadow: 0 10px 30px rgba(255,200,0,0.18);
+        white-space: nowrap;
     }
 
     .phone-label {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         color: var(--text-muted);
     }
 
     .phone-label strong {
         color: #fff;
-        margin-left: 5px;
+        margin-left: 4px;
     }
 
-    @media (max-width: 992px) {
+    /* ── Responsive ──────────────────────────────── */
+
+    /* Tablet: shrink book a bit */
+    @media (max-width: 1100px) {
+        .book-visual-wrap {
+            --bw: 220px;
+            --bh: 314px;
+            --bd: 34px;
+        }
+        .book-grid { gap: 3rem; }
+    }
+
+    /* Stack vertically below 900px */
+    @media (max-width: 900px) {
         .book-grid {
             grid-template-columns: 1fr;
             text-align: center;
-            gap: 3rem;
+            gap: 4rem;
         }
 
-        .book-desc {
-            margin-left: auto;
-            margin-right: auto;
+        .book-visual-wrap {
+            --bw: 200px;
+            --bh: 285px;
+            --bd: 32px;
+            padding-bottom: 2.5rem;
         }
+
+        /* Slightly less tilt on tablet/mobile so more of the cover shows */
+        .book { transform: rotateX(6deg) rotateY(-20deg); }
+        .book:hover { transform: rotateX(3deg) rotateY(-10deg) translateY(-6px); }
+
+        .book-desc { margin-left: auto; margin-right: auto; }
 
         .price-comparison {
             flex-direction: column;
             gap: 1rem;
+            text-align: left;
         }
 
         .price-box {
             border-right: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-right: 0;
             padding-bottom: 1rem;
             width: 100%;
         }
 
-        .quote-item {
-            justify-content: center;
-        }
+        .quote-item { justify-content: center; }
 
         .book-actions {
+            justify-content: center;
             flex-direction: column;
             gap: 1rem;
         }
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+        .recipe-book-section { padding: 5rem 0 7rem; }
+
+        .book-visual-wrap {
+            --bw: 170px;
+            --bh: 242px;
+            --bd: 28px;
+            padding-bottom: 2rem;
+        }
+
+        .book { transform: rotateX(5deg) rotateY(-18deg); }
+        .book:hover { transform: rotateX(2deg) rotateY(-9deg) translateY(-5px); }
+
+        .book-shadow { width: 150px; height: 22px; }
+
+        .book-title { font-size: 2rem; }
     }
 </style>
