@@ -5,9 +5,15 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+import fs from 'fs';
+
 // Store DB in the project root data/ folder
 // Using a path relative to this file to be safer in different environments
-const dbPath = path.resolve(__dirname, '../../data/database.sqlite');
+const dataDir = path.resolve(__dirname, '../../data');
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+}
+const dbPath = path.join(dataDir, 'database.sqlite');
 
 console.log('Attempting to open database at:', dbPath);
 
