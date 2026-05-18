@@ -4,7 +4,7 @@ import db from '../backend/db';
 
 const c = getContent('recipe_book');
 
-let bookPhone = "+201214035104";
+let bookPhone = "+20 121 403 5104";
 let whatsappNumber = "201214035104";
 
 const defaultQuotes = [
@@ -82,7 +82,26 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
                         </svg>
                         Get It on WhatsApp
                     </a>
-                    <span class="phone-label">Order now: <strong>{bookPhone}</strong></span>
+                    <div class="book-phone-wrap">
+                        <span class="phone-label">Order now:</span>
+                        <div class="book-phone-row">
+                            <strong class="book-phone-number">{bookPhone}</strong>
+                            <button class="copy-btn" id="copy-book-phone" data-number={bookPhone} aria-label="Copy order phone number">
+                                <span class="copy-default">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </span>
+                                <span class="copy-success">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Copied!
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -424,14 +443,75 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         white-space: nowrap;
     }
 
+    .book-phone-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .book-phone-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .book-phone-number {
+        font-size: 1.45rem; /* Even larger font size */
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+
+    /* Copy Button styles */
+    .copy-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-muted);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 0.78rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 24px;
+    }
+
+    .copy-btn:hover {
+        background: rgba(255, 255, 0, 0.15);
+        border-color: rgba(255, 255, 0, 0.4);
+        color: var(--accent-color);
+    }
+
+    .copy-default {
+        display: flex;
+        align-items: center;
+    }
+
+    .copy-success {
+        display: none;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .copy-btn.copied {
+        background: rgba(34, 197, 94, 0.15) !important;
+        border-color: rgba(34, 197, 94, 0.4) !important;
+        color: #22c55e !important;
+    }
+
+    .copy-btn.copied .copy-default {
+        display: none;
+    }
+
+    .copy-btn.copied .copy-success {
+        display: inline-flex;
+    }
+
     .phone-label {
         font-size: 0.9rem;
         color: var(--text-muted);
-    }
-
-    .phone-label strong {
-        color: #fff;
-        margin-left: 4px;
     }
 
     /* ── Responsive ──────────────────────────────── */
@@ -509,3 +589,44 @@ const quotes = getVal(c, 'quotes', defaultQuotes);
         .book-title { font-size: 2rem; }
     }
 </style>
+
+<script>
+    document.addEventListener('astro:page-load', () => {
+        const btn = document.getElementById('copy-book-phone');
+        if (!btn) return;
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (btn.classList.contains('copied')) return;
+
+            const number = btn.getAttribute('data-number');
+            if (!number) return;
+
+            const showCopied = () => {
+                btn.classList.add('copied');
+                setTimeout(() => btn.classList.remove('copied'), 2000);
+            };
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(number).then(showCopied).catch(() => legacyCopy(number));
+            } else {
+                legacyCopy(number);
+            }
+
+            function legacyCopy(text) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.setAttribute('readonly', '');
+                ta.style.cssText = 'position:fixed;left:-9999px;top:0;';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                ta.setSelectionRange(0, 99999);
+                const ok = document.execCommand('copy');
+                document.body.removeChild(ta);
+                if (ok) showCopied();
+            }
+        });
+    });
+</script>
