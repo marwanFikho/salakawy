@@ -4,21 +4,8 @@ import db from '../backend/db';
 
 const c = getContent('recipe_book');
 
-let bookPhone = "+20 109 215 1540";
-let whatsappNumber = "201092151540";
-
-try {
-    const contactsRow = db.prepare('SELECT content FROM site_content WHERE id = ?').get('contacts');
-    if (contactsRow && contactsRow.content) {
-        const contacts = JSON.parse(contactsRow.content);
-        if (contacts.assistant && contacts.assistant.phone) {
-            bookPhone = contacts.assistant.phone;
-            whatsappNumber = bookPhone.replace(/\D/g, '');
-        }
-    }
-} catch (e) {
-    console.error("Error fetching book phone:", e);
-}
+let bookPhone = "+201214035104";
+let whatsappNumber = "201214035104";
 
 const defaultQuotes = [
     "Abs are made in the kitchen.",
