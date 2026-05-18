@@ -1,12 +1,20 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
-
-// https://astro.build/config
+import node from '@astrojs/node';
 export default defineConfig({
   output: 'server',
-  adapter: vercel(),
+  adapter: node({
+    mode: 'standalone'
+  }),
+  devToolbar: {
+    enabled: false,
+  },
   security: {
     checkOrigin: false,
   },
+  vite: {
+    server: {
+      allowedHosts: ['salakawy7.com', 'www.salakawy7.com'],
+    }
+  }
 });
+
