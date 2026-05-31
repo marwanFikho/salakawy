@@ -42,15 +42,6 @@
 					</div>
 				</div>
 
-				<!-- Loading Step -->
-				<div class="wizard-step" id="step-load">
-					<h3>Analyzing Your Profile...</h3>
-					<div class="loader-container">
-						<div class="circuit-spinner"></div>
-					</div>
-					<p style="color:var(--text-muted); margin-top:1rem;">Feeding data into Salakawy AI...</p>
-				</div>
-
 				<!-- Result Step -->
 				<div class="wizard-step" id="step-result">
 					<span class="badge">Perfect Match</span>
@@ -161,20 +152,6 @@
 		transform: translateY(-2px);
 	}
 
-	.loader-container {
-		display: flex;
-		justify-content: center;
-		padding: 2rem 0;
-	}
-
-	.circuit-spinner {
-		width: 50px;
-		height: 50px;
-		border: 4px solid rgba(226, 255, 0, 0.2);
-		border-top-color: var(--accent-color);
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
-	}
 
     .reset-wizard {
         background: none; border: none;
@@ -183,8 +160,6 @@
         cursor: pointer; font-size: 0.9rem;
     }
     .reset-wizard:hover { color: #fff; }
-
-	@keyframes spin { 100% { transform: rotate(360deg); } }
 
 	@media (max-width: 600px) {
 		.options-grid { grid-template-columns: 1fr; }
@@ -236,8 +211,6 @@
 		});
 
 		async function submitWizard() {
-			goToStep(3); // Load step
-
 			try {
 				const res = await fetch('/api/wizard', {
 					method: 'POST',
@@ -252,11 +225,11 @@
 					resPkg.innerText = data.package;
 					resReason.innerText = data.reason;
 				}
-				goToStep(4); // Result step
+				goToStep(3); // Result step
 			} catch (e) {
 				const resPkg = document.getElementById('result-package');
 				if (resPkg) resPkg.innerText = "Silver Package";
-				goToStep(4);
+				goToStep(3);
 			}
 		}
 
