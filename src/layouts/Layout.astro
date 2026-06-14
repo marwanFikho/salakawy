@@ -92,6 +92,7 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
 					<a href="/#hero">Home</a>
 					<a href="/all-transformations">Transformations</a>
 					<a href="/common-challenges">Challenges</a>
+					<a href="/#recipe-book">Recipe Book</a>
 					<a href="/#packages">Packages</a>
 					<a href="/contact-us">Contact Us</a>
 				</nav>
@@ -111,6 +112,7 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
                 <a href="/#hero" class="mobile-link">Home</a>
                 <a href="/all-transformations" class="mobile-link">Transformations</a>
                 <a href="/common-challenges" class="mobile-link">Challenges</a>
+                <a href="/#recipe-book" class="mobile-link">Recipe Book</a>
                 <a href="/#packages" class="mobile-link">Packages</a>
                 <a href="/contact-us" class="mobile-link">Contact Us</a>
             </div>
@@ -183,6 +185,17 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
 				-webkit-tap-highlight-color: transparent !important;
 			}
 
+			.navbar .container {
+				max-width: 1400px;
+				padding: 0 2rem;
+			}
+
+			@media (max-width: 768px) {
+				.navbar .container {
+					padding: 0 1rem;
+				}
+			}
+
 			.nav-content {
 				display: flex;
 				justify-content: space-between;
@@ -204,6 +217,15 @@ const marqueeItems = getVal(c, 'marquee', defaultMarquee);
 			.nav-links {
 				display: flex;
 				gap: 1.5rem;
+			}
+
+			@media (max-width: 1024px) {
+				.nav-links {
+					gap: 1rem;
+				}
+				.nav-links a {
+					font-size: 0.95rem;
+				}
 			}
 
 			.nav-links a {
