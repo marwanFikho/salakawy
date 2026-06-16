@@ -328,7 +328,7 @@ if (!auth.authenticated) return auth.redirect;
                 role: document.getElementById('asst-role').value,
                 phone: document.getElementById('asst-phone').value,
                 whatsapp: document.getElementById('asst-whatsapp').value,
-                photo: document.getElementById('asst-photo-preview').src
+                photo: document.getElementById('asst-photo-preview').getAttribute('src') || ''
             };
 
             const idx = contactsData.assistants.findIndex(asst => asst.id === a.id);
@@ -451,7 +451,7 @@ if (!auth.authenticated) return auth.redirect;
                     role: document.getElementById('coach-role').value,
                     phone: document.getElementById('coach-phone').value,
                     whatsapp: document.getElementById('coach-whatsapp').value,
-                    photo: document.getElementById('coach-photo-preview').src
+                    photo: document.getElementById('coach-photo-preview').getAttribute('src') || ''
                 },
                 assistants: contactsData.assistants,
                 activeAssistantId: contactsData.activeAssistantId,

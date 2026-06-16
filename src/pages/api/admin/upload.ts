@@ -71,7 +71,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
             const filePath = path.join(uploadDir, filename);
             fs.writeFileSync(filePath, jpegBuffer);
 
-            return new Response(JSON.stringify({ success: true, url: `/IN_Pics/${filename}` }), { status: 200 });
+            return new Response(JSON.stringify({ success: true, url: `/api/media/IN_Pics/${filename}` }), { status: 200 });
         } else {
             // DB-based for other media
             const filename = `${timestamp}_${safeName}`;
